@@ -9,10 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 class DisasterReportController extends Controller
 {
+    public function index()
+    {
+    $disasterReports = DisasterReport::latest()->get(); // Ambil semua laporan bencana dari database, urutkan dari yang terbaru
+
+    return view('disaster_report.index', compact('disasterReports'));
+    }
+
     // Menampilkan form laporan bencana
     public function create()
     {
         return view('disaster_report.create'); // Update view sesuai dengan nama folder dan file view
+    }
+
+    public function show($id)
+    {
+    $report = DisasterReport::findOrFail($id);
+
+    return view('disaster_report.show', compact('report'));
     }
 
     // Menyimpan laporan bencana
