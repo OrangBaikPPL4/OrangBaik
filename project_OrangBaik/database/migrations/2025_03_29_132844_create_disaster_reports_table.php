@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('disaster_reports', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('lokasi');
+            $table->enum('jenis_bencana', ['banjir', 'gempa', 'kebakaran', 'longsor', 'lainnya']);
+            $table->text('deskripsi');
+            $table->json('bukti_media')->nullable(); 
+            $table->enum('status', ['pending', 'verified', 'rejected'])->default('pending'); 
             $table->timestamps();
         });
     }
