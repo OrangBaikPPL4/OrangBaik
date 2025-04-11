@@ -10,6 +10,11 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     {{ __("You're logged in!") }}
+                    <div class="mt-4">
+                        <a href="{{ route('edukasi.index') }}"
+                            class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                            Lihat Konten Edukasi Mitigasi Bencana
+                        </a>
                 </div>
             </div>
         </div>
