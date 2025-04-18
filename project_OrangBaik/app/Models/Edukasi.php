@@ -13,4 +13,14 @@ class Edukasi extends Model
 
     protected $fillable = ['title', 'content', 'category', 'image', 'video_file', 'video_link'];
 
+    public function getImageUrlAttribute()
+        {
+            return $this->image ? asset('storage/' . $this->image) : null;
+        }
+
+        public function getVideoFileUrlAttribute()
+        {
+            return $this->video_file ? asset('storage/' . $this->video_file) : null;
+        }
+
 }

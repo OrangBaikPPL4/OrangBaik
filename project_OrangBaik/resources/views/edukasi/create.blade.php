@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+
+@auth
+    @if (auth()->user()->usertype !== 'admin')
+        <p>Anda tidak memiliki akses untuk membuat konten edukasi.</p>
+        @php abort(403); @endphp
+    @endif
+@endauth
+
 <h1>Buat Konten Edukasi</h1>
 <form action="{{ route('edukasi.store') }}" method="POST" enctype="multipart/form-data">
     @csrf

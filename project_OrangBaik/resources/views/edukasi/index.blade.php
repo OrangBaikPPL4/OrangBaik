@@ -14,7 +14,11 @@
     </select>
 </form>
 
-<a href="{{ route('edukasi.create') }}">Buat Konten Baru</a>
+@auth
+    @if(auth()->user()->usertype === 'admin')
+        <a href="{{ route('edukasi.create') }}">Buat Konten Baru</a>
+    @endif
+@endauth
 
 @foreach ($edukasi as $item)
     <div>
@@ -36,12 +40,17 @@
             <p><a href="{{ $item->video_link }}" target="_blank">Tonton Video</a></p>
         @endif
 
-        <a href="{{ route('edukasi.edit', $item->id) }}">Edit</a>
-        <form action="{{ route('edukasi.destroy', $item->id) }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button type="submit">Hapus</button>
-        </form>
+        @auth
+            @if(auth()->user()->usertype === 'admin')
+                <a href="{{ route('edukasi.edit', $item->id) }}">Edit</a>
+                <form action="{{ route('edukasi.destroy', $item->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit">Hapus</button>
+                </form>
+            @endif
+        @endauth
+    
     </div>
 @endforeach
 @endsection

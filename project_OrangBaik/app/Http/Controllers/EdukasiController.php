@@ -6,9 +6,17 @@ use App\Models\Edukasi;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Middleware\Admin;
 
 class EdukasiController extends Controller
 {
+
+    public function __construct()
+    {
+        // Memastikan hanya admin yang dapat membuat, mengedit, atau menghapus konten edukasi
+        $this->middleware('admin')->only(['create', 'store', 'edit', 'update', 'destroy']);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -108,11 +116,11 @@ class EdukasiController extends Controller
      */
     public function destroy(Edukasi $edukasi)
     {
-        if ($edukasi->image) {
+        if ($edukasi->image && Storage::exist('public/' . $edukasi->image)) {
             Storage::delete('public/' . $edukasi->image);
         }
 
-        if ($edukasi->video_file) {
+        if ($edukasi->video_file && Storage::exist('public/' . $edukasi->video_file)) {
             Storage::delete('public/' . $edukasi->video_file);
         }
 
