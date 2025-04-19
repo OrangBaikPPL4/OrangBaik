@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
     <h1>{{ $edukasi->title }}</h1>
     <p><strong>Kategori:</strong> {{ ucfirst($edukasi->category) }}</p>
     <p>{{ $edukasi->content }}</p>
@@ -18,4 +16,4 @@
     @if ($edukasi->video_link)
         <p><a href="{{ $edukasi->video_link }}" target="_blank">Tonton Video Eksternal</a></p>
     @endif
-@endsection
+</x-app-layout>

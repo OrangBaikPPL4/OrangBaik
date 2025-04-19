@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Edukasi;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controller;
+
 use App\Http\Middleware\Admin;
 
 class EdukasiController extends Controller
