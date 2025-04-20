@@ -4,9 +4,11 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RelawanController;
+use App\Http\Controllers\MisiController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
 
 Route::get('/dashboard', function () {
@@ -19,6 +21,39 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+// Middleware group for authenticated users
+Route::middleware('auth')->group(function () {
+    // Relawan Routes
+    Route::get('/relawan', [RelawanController::class, 'index'])->name('relawan.index');
+    Route::get('/relawan/create', [RelawanController::class, 'create'])->name('relawan.create');
+    Route::post('/relawan', [RelawanController::class, 'store'])->name('relawan.store');
+    Route::get('/relawan/profil', [RelawanController::class, 'show'])->name('relawan.show');
+    Route::get('/relawan/{id}/edit', [RelawanController::class, 'edit'])->name('relawan.edit');
+    Route::put('/relawan/{id}', [RelawanController::class, 'update'])->name('relawan.update');
+    Route::get('/relawan/misi', [RelawanController::class, 'misiRelawan'])->name('relawan.misi');
 
-route::get('admin/dashboard',[HomeController::class,'index'])->middleware(['auth','admin']);
+    // Misi Routes
+    Route::get('/misi', [MisiController::class, 'index'])->name('misi.index');
+    Route::get('/misi/{id}', [MisiController::class, 'show'])->name('misi.show');
+    Route::post('/misi/{id}/gabung', [MisiController::class, 'gabungMisi'])->name('misi.gabung');
+    Route::post('/misi/{id}/lapor', [MisiController::class, 'laporProgress'])->name('misi.lapor');
+    
+    // Admin Routes - protected by admin middleware
+    Route::middleware('admin')->group(function () {
+        // Admin Dashboard
+        Route::get('admin/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
+        
+        // Admin Relawan Management
+        Route::post('/relawan/{id}/update-status', [RelawanController::class, 'updateStatus'])->name('relawan.updateStatus');
+        
+        // Admin Misi Management
+        Route::get('/admin/misi/create', [MisiController::class, 'create'])->name('misi.create');
+        Route::post('/misi', [MisiController::class, 'store'])->name('misi.store');
+        Route::get('/misi/{id}/edit', [MisiController::class, 'edit'])->name('misi.edit');
+        Route::put('/misi/{id}', [MisiController::class, 'update'])->name('misi.update');
+        Route::delete('/misi/{id}', [MisiController::class, 'destroy'])->name('misi.destroy');
+        Route::post('/misi/{id}/update-status', [MisiController::class, 'updateMisiStatus'])->name('misi.updateStatus');
+    });
+});
+
+require __DIR__.'/auth.php';
