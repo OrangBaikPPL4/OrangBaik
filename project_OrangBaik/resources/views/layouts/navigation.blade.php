@@ -15,6 +15,23 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    
+                    <!-- Relawan Link -->
+                    <x-nav-link :href="route('relawan.index')" :active="request()->routeIs('relawan.*')">
+                        {{ __('Relawan') }}
+                    </x-nav-link>
+                    
+                    <!-- Misi Link -->
+                    <x-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
+                        {{ __('Misi Bantuan') }}
+                    </x-nav-link>
+                    
+                    @if(Auth::user()->usertype === 'admin')
+                        <!-- Admin Dashboard -->
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                            {{ __('Admin') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -70,6 +87,23 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            
+            <!-- Responsive Relawan Link -->
+            <x-responsive-nav-link :href="route('relawan.index')" :active="request()->routeIs('relawan.*')">
+                {{ __('Relawan') }}
+            </x-responsive-nav-link>
+            
+            <!-- Responsive Misi Link -->
+            <x-responsive-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
+                {{ __('Misi Bantuan') }}
+            </x-responsive-nav-link>
+            
+            @if(Auth::user()->usertype === 'admin')
+                <!-- Responsive Admin Dashboard -->
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                    {{ __('Admin') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
