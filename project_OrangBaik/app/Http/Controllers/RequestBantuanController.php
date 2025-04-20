@@ -37,4 +37,26 @@ class RequestBantuanController extends Controller
 
         return view('request-bantuan.index', compact('requests'));
     }
+
+    public function adminIndex()
+    {
+    $requests = \App\Models\RequestBantuan::orderBy('created_at', 'desc')->get();
+
+    return view('admin.request.index', compact('requests'));
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+    $request->validate([
+        'status' => 'required|in:pending,diproses,selesai,ditolak',
+    ]);
+
+    $req = \App\Models\RequestBantuan::findOrFail($id);
+    $req->status = $request->status;
+    $req->save();
+
+    return redirect()->route('admin.request-bantuan.index')->with('success', 'Status berhasil diperbarui.');
+    }
+
 }
+
