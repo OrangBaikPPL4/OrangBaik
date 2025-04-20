@@ -8,7 +8,7 @@ use App\Http\Controllers\RelawanController;
 use App\Http\Controllers\MisiController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
 
 Route::get('/dashboard', function () {
