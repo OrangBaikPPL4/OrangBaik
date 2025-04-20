@@ -59,8 +59,6 @@ Route::middleware('auth')->group(function () {
 });
 
 
-route::get('admin/dashboard',[HomeController::class,'index'])->middleware(['auth','admin']);
-
 Route::get('/disaster-report/create', [DisasterReportController::class, 'create'])->name('disaster_report.create');
 Route::post('/disaster-report', [DisasterReportController::class, 'store'])->name('disaster_report.store');
 Route::get('/disaster-report', [DisasterReportController::class, 'index'])->name('disaster_report.index');
