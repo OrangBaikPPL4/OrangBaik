@@ -34,3 +34,5 @@ Route::get('admin/dashboard', [HomeController::class, 'index'])->middleware(['au
 
 // Auth routes
 require __DIR__.'/auth.php';
+
+Route::middleware('auth')->get('/request-bantuan', [RequestBantuanController::class, 'index'])->name('request-bantuan.index');
