@@ -9,17 +9,22 @@ use Illuminate\Support\Facades\Auth;
 
 class RelawanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // For admins - show all volunteers
-        if (Auth::user()->usertype === 'admin') {
-            $relawans = Relawan::with('user')->get();
-            return view('relawan.index', compact('relawans'));
+        $query = Relawan::query();
+
+        // Handle search
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama', 'like', '%' . $search . '%')
+                  ->orWhere('peran', 'like', '%' . $search . '%')
+                  ->orWhere('lokasi', 'like', '%' . $search . '%');
+            });
         }
-        
-        // For regular users - show only their own volunteer data
-        $relawan = Relawan::where('user_id', Auth::id())->first();
-        return view('relawan.show', compact('relawan'));
+
+        $relawans = $query->get();
+        return view('relawan.index', compact('relawans'));
     }
 
     public function create()

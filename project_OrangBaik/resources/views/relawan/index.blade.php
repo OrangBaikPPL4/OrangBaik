@@ -9,6 +9,25 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    <!-- Search Form -->
+                    <div class="mb-6">
+                        <form action="{{ route('relawan.index') }}" method="GET" class="flex items-center gap-4">
+                            <div class="flex-1">
+                                <input type="text" name="search" value="{{ request('search') }}" 
+                                       class="w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" 
+                                       placeholder="Cari relawan berdasarkan nama, peran, atau lokasi...">
+                            </div>
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-600 focus:bg-indigo-600 active:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                Cari
+                            </button>
+                            @if(request('search'))
+                                <a href="{{ route('relawan.index') }}" class="text-gray-500 hover:text-gray-700">
+                                    Reset
+                                </a>
+                            @endif
+                        </form>
+                    </div>
+
                     @if (session('success'))
                         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
                             {{ session('success') }}
