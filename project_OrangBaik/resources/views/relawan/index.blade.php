@@ -64,6 +64,11 @@
                                                 <option value="selesai" {{ $relawan->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
                                             </select>
                                         </form>
+                                        <a href="{{ route('relawan.edit', $relawan->id) }}" class="inline-block ml-2 text-blue-600 hover:text-blue-900">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </a>
                                         <form method="POST" action="{{ route('relawan.destroy', $relawan->id) }}" class="inline-block ml-2" onsubmit="return confirm('Apakah Anda yakin ingin menghapus relawan ini?');">
                                             @csrf
                                             @method('DELETE')
