@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/relawan/profil', [RelawanController::class, 'show'])->name('relawan.show');
     Route::get('/relawan/{id}/edit', [RelawanController::class, 'edit'])->name('relawan.edit');
     Route::put('/relawan/{id}', [RelawanController::class, 'update'])->name('relawan.update');
+    Route::delete('/relawan/{id}', [RelawanController::class, 'destroy'])->name('relawan.destroy');
     Route::get('/relawan/misi', [RelawanController::class, 'misiRelawan'])->name('relawan.misi');
 
     // Misi Routes

@@ -24,13 +24,6 @@ class RelawanController extends Controller
 
     public function create()
     {
-        // Check if user already has a volunteer profile
-        $existingRelawan = Relawan::where('user_id', Auth::id())->first();
-        
-        if ($existingRelawan) {
-            return redirect()->route('relawan.show')->with('error', 'Anda sudah terdaftar sebagai relawan!');
-        }
-        
         return view('relawan.create');
     }
 
@@ -44,7 +37,7 @@ class RelawanController extends Controller
             'peran' => 'required',
         ]);
 
-        // Create relawan and associate with logged in user
+        // Create new profile
         $relawan = new Relawan($request->all());
         $relawan->user_id = Auth::id();
         $relawan->save();
@@ -124,5 +117,19 @@ class RelawanController extends Controller
             ->get();
         
         return view('relawan.misi', compact('relawan', 'misiRelawan', 'misiTersedia'));
+    }
+
+    public function destroy($id)
+    {
+        $relawan = Relawan::findOrFail($id);
+        
+        // Only allow deletion if user is admin or owns this volunteer profile
+        if (Auth::user()->usertype !== 'admin' && $relawan->user_id !== Auth::id()) {
+            return redirect()->route('relawan.index')->with('error', 'Anda tidak memiliki izin!');
+        }
+        
+        $relawan->delete();
+        
+        return redirect()->route('relawan.index')->with('success', 'Relawan berhasil dihapus!');
     }
 }
