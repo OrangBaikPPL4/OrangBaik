@@ -69,8 +69,14 @@ class MisiController extends Controller
         if ($relawan) {
             $isJoined = $relawan->misi->contains($id);
         }
+
+        // Get available volunteers for admin
+        $relawanTersedia = null;
+        if (Auth::user()->usertype === 'admin') {
+            $relawanTersedia = Relawan::whereNotIn('id', $misi->relawan->pluck('id'))->get();
+        }
         
-        return view('misi.show', compact('misi', 'relawan', 'isJoined'));
+        return view('misi.show', compact('misi', 'relawan', 'isJoined', 'relawanTersedia'));
     }
     
     public function edit($id)
@@ -195,5 +201,52 @@ class MisiController extends Controller
         }
         
         return redirect()->back()->with('success', 'Status misi diperbarui!');
+    }
+
+    public function tambahRelawan(Request $request, $id)
+    {
+        // Only admin can add volunteers
+        if (Auth::user()->usertype !== 'admin') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin!');
+        }
+
+        $request->validate([
+            'relawan_id' => 'required|exists:relawans,id'
+        ]);
+
+        $misi = Misi::findOrFail($id);
+        $relawan = Relawan::findOrFail($request->relawan_id);
+
+        // Check if volunteer is already in the mission
+        if ($misi->relawan->contains($relawan->id)) {
+            return redirect()->back()->with('error', 'Relawan sudah bergabung dalam misi ini!');
+        }
+
+        // Add volunteer to mission
+        $misi->relawan()->attach($relawan->id);
+        
+        // Update volunteer status to "bertugas"
+        $relawan->update(['status' => 'bertugas']);
+
+        return redirect()->back()->with('success', 'Relawan berhasil ditambahkan ke misi!');
+    }
+
+    public function hapusRelawan($misi_id, $relawan_id)
+    {
+        // Only admin can remove volunteers
+        if (Auth::user()->usertype !== 'admin') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin!');
+        }
+
+        $misi = Misi::findOrFail($misi_id);
+        $relawan = Relawan::findOrFail($relawan_id);
+
+        // Remove volunteer from mission
+        $misi->relawan()->detach($relawan->id);
+        
+        // Update volunteer status to "aktif"
+        $relawan->update(['status' => 'aktif']);
+
+        return redirect()->back()->with('success', 'Relawan berhasil dihapus dari misi!');
     }
 }

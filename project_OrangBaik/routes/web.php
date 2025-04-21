@@ -41,6 +41,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/misi/{id}', [MisiController::class, 'show'])->name('misi.show');
     Route::post('/misi/{id}/gabung', [MisiController::class, 'gabungMisi'])->name('misi.gabung');
     Route::post('/misi/{id}/lapor', [MisiController::class, 'laporProgress'])->name('misi.lapor');
+    Route::post('/misi/{id}/tambah-relawan', [MisiController::class, 'tambahRelawan'])->name('misi.tambahRelawan');
+    Route::delete('/misi/{misi_id}/relawan/{relawan_id}', [MisiController::class, 'hapusRelawan'])->name('misi.hapusRelawan');
     
     // Admin Routes - protected by admin middleware
     Route::middleware('admin')->group(function () {
