@@ -2,13 +2,30 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Relawan extends Model
 {
     use HasFactory;
-
-    protected $fillable = ['nama', 'email', 'no_telepon', 'peran_id', 'lokasi_id'];
+    
+    protected $fillable = [
+        'nama', 
+        'email', 
+        'telepon', 
+        'lokasi', 
+        'peran', 
+        'status',
+        'user_id'
+    ];
+    
+    public function misi()
+    {
+        return $this->belongsToMany(Misi::class, 'relawan_misi')->withPivot('laporan')->withTimestamps();
+    }
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
-
