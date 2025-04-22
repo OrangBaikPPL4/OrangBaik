@@ -73,8 +73,17 @@ class EdukasiController extends Controller
      */
     public function show(Edukasi $edukasi)
     {
-        return view('edukasi.show', compact('edukasi'));
+    $query = Edukasi::where('id', '!=', $edukasi->id);
+
+    if (request()->has('category') && request('category') !== '') {
+        $query->where('category', request('category'));
     }
+
+    $kontenLain = $query->latest()->take(6)->get();
+
+    return view('edukasi.show', compact('edukasi', 'kontenLain'));
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -94,7 +103,7 @@ class EdukasiController extends Controller
             'content' => 'required',
             'category' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'video_file' => 'nullable|mimes:mp4,mov,avi|max:10000',
+            'video_file' => 'nullable|mimes:mp4,mov,avi|max:1000000',
             'video_link' => 'nullable|url',
         ]);
 
@@ -116,17 +125,18 @@ class EdukasiController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(Edukasi $edukasi)
-    {
-        if ($edukasi->image && Storage::exist('public/' . $edukasi->image)) {
-            Storage::delete('public/' . $edukasi->image);
-        }
-
-        if ($edukasi->video_file && Storage::exist('public/' . $edukasi->video_file)) {
-            Storage::delete('public/' . $edukasi->video_file);
-        }
-
-        $edukasi->delete();
-
-        return redirect()->route('edukasi.index')->with('success', 'Konten edukasi berhasil dihapus.');
+{
+    if ($edukasi->image && Storage::exists('public/' . $edukasi->image)) {
+        Storage::delete('public/' . $edukasi->image);
     }
+
+    if ($edukasi->video_file && Storage::exists('public/' . $edukasi->video_file)) {
+        Storage::delete('public/' . $edukasi->video_file);
+    }
+
+    $edukasi->delete();
+
+    return redirect()->route('edukasi.index')->with('success', 'Konten edukasi berhasil dihapus.');
+}
+
 }
