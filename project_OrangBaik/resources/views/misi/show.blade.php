@@ -51,6 +51,72 @@
                             </div>
                         </div>
 
+                        @if(Auth::user()->usertype === 'admin')
+                            <div class="mt-8">
+                                <h3 class="text-lg font-semibold mb-4">Manajemen Relawan</h3>
+                                
+                                <!-- Form untuk menambah relawan -->
+                                <div class="mb-6">
+                                    <form method="POST" action="{{ route('misi.tambahRelawan', $misi->id) }}" class="flex items-end gap-4">
+                                        @csrf
+                                        <div class="flex-1">
+                                            <label for="relawan_id" class="block text-sm font-medium text-gray-700 mb-1">Tambah Relawan</label>
+                                            <select name="relawan_id" id="relawan_id" class="w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                                                <option value="">Pilih Relawan</option>
+                                                @foreach($relawanTersedia as $relawan)
+                                                    <option value="{{ $relawan->id }}">{{ $relawan->nama }} ({{ $relawan->peran }})</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 focus:bg-green-600 active:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                            Tambah
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Daftar relawan dalam misi -->
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full bg-white">
+                                        <thead>
+                                            <tr>
+                                                <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nama</th>
+                                                <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Peran</th>
+                                                <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                                                <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($misi->relawan as $relawan)
+                                                <tr>
+                                                    <td class="py-2 px-4 border-b border-gray-200">{{ $relawan->nama }}</td>
+                                                    <td class="py-2 px-4 border-b border-gray-200">{{ $relawan->peran }}</td>
+                                                    <td class="py-2 px-4 border-b border-gray-200">
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                            {{ $relawan->status == 'aktif' ? 'bg-green-100 text-green-800' : 
+                                                              ($relawan->status == 'bertugas' ? 'bg-blue-100 text-blue-800' : 
+                                                               'bg-gray-100 text-gray-800') }}">
+                                                            {{ $relawan->status }}
+                                                        </span>
+                                                    </td>
+                                                    <td class="py-2 px-4 border-b border-gray-200">
+                                                        <form method="POST" action="{{ route('misi.hapusRelawan', [$misi->id, $relawan->id]) }}" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus relawan ini dari misi?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="text-red-600 hover:text-red-900">
+                                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                </svg>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @endif
+
                         @if($relawan && !$isJoined && $misi->status == 'aktif')
                             <div class="mt-6">
                                 <form method="POST" action="{{ route('misi.gabung', $misi->id) }}">
