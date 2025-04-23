@@ -31,5 +31,5 @@ require __DIR__.'/auth.php';
 route::get('admin/dashboard',[HomeController::class,'index'])->middleware(['auth','admin']);
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::resource('/edukasi', EdukasiController::class);
+    Route::resource('/edukasi', EdukasiController::class)->except(['show']);
 });

@@ -61,13 +61,34 @@
                 {{-- Tombol Admin --}}
                 @auth
                     @if(auth()->user()->usertype === 'admin')
-                        <div class="flex gap-4 mt-auto pt-2">
-                            <a href="{{ route('edukasi.edit', $item->id) }}" class="text-yellow-500 hover:underline text-sm">Edit</a>
-                            <form action="{{ route('edukasi.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:underline text-sm">Hapus</button>
-                            </form>
-                        </div>
+                    <div class="flex items-center gap-3 mt-auto pt-2 text-sm">
+    {{-- Tombol Edit --}}
+    <a href="{{ route('edukasi.edit', $item->id) }}" 
+       class="flex items-center gap-1 text-yellow-600 hover:text-yellow-700 transition">
+        {{-- Icon edit --}}
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+        Edit
+    </a>
+
+    {{-- Tombol Hapus --}}
+    <form action="{{ route('edukasi.destroy', $item->id) }}" method="POST" 
+          onsubmit="return confirm('Yakin ingin menghapus konten ini?')">
+        @csrf @method('DELETE')
+        <button type="submit" 
+                class="flex items-center gap-1 text-red-600 hover:text-red-700 transition">
+            {{-- Icon hapus --}}
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m10 0H5" />
+            </svg>
+            Hapus
+        </button>
+    </form>
+</div>
+
                     @endif
                 @endauth
             </div>
