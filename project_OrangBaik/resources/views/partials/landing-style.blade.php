@@ -67,14 +67,6 @@
     .testimoni-user { font-weight: 600; color: #1976D2; margin-top: 8px; }
 
     /* Footer */
-    .footer { background: #1976D2; color: #fff; text-align: center; padding: 30px 0 20px 0; margin-top: 44px; }
-    .footer .footer-links { margin-bottom: 12px; }
-    .footer .footer-links a { color: #fff; margin: 0 10px; font-weight: 500; font-size: 1.05em; opacity: 0.9; }
-    .footer .footer-links a:hover { text-decoration: underline; opacity: 1; }
-    .footer-logo { display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; margin-bottom: 10px; }
-    .footer-logo img { height: 32px; margin-right: 8px; }
-    .footer-copy { font-size: 0.98em; color: #e0e7ef; margin-top: 8px; }
-
     @media (max-width: 900px) {
         .hero-grid { flex-direction: column; gap: 26px; }
     }
