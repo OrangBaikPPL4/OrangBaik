@@ -28,8 +28,6 @@
   height: 38px;
   margin-right: 6px;
   border-radius: 9px;
-  background: #e3f0fa;
-  box-shadow: 0 1px 4px rgba(25,118,210,0.07);
 }
 .navbar-menu {
   display: flex;
