@@ -14,4 +14,16 @@
             </div>
         </div>
     </div>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <h3 class="text-lg font-semibold mb-2">Manajemen Konten Edukasi</h3>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><a href="{{ route('edukasi.index') }}" class="text-blue-600 hover:underline">Lihat Semua Konten</a></li>
+                    <li><a href="{{ route('edukasi.create') }}" class="text-blue-600 hover:underline">Tambah Konten Baru</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </x-app-layout>

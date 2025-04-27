@@ -9,28 +9,26 @@ use Illuminate\Support\Facades\Auth;
 
 class RelawanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // For admins - show all volunteers
-        if (Auth::user()->usertype === 'admin') {
-            $relawans = Relawan::with('user')->get();
-            return view('relawan.index', compact('relawans'));
+        $query = Relawan::query();
+
+        // Handle search
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama', 'like', '%' . $search . '%')
+                  ->orWhere('peran', 'like', '%' . $search . '%')
+                  ->orWhere('lokasi', 'like', '%' . $search . '%');
+            });
         }
-        
-        // For regular users - show only their own volunteer data
-        $relawan = Relawan::where('user_id', Auth::id())->first();
-        return view('relawan.show', compact('relawan'));
+
+        $relawans = $query->get();
+        return view('relawan.index', compact('relawans'));
     }
 
     public function create()
     {
-        // Check if user already has a volunteer profile
-        $existingRelawan = Relawan::where('user_id', Auth::id())->first();
-        
-        if ($existingRelawan) {
-            return redirect()->route('relawan.show')->with('error', 'Anda sudah terdaftar sebagai relawan!');
-        }
-        
         return view('relawan.create');
     }
 
@@ -44,7 +42,7 @@ class RelawanController extends Controller
             'peran' => 'required',
         ]);
 
-        // Create relawan and associate with logged in user
+        // Create new profile
         $relawan = new Relawan($request->all());
         $relawan->user_id = Auth::id();
         $relawan->save();
@@ -124,5 +122,19 @@ class RelawanController extends Controller
             ->get();
         
         return view('relawan.misi', compact('relawan', 'misiRelawan', 'misiTersedia'));
+    }
+
+    public function destroy($id)
+    {
+        $relawan = Relawan::findOrFail($id);
+        
+        // Only allow deletion if user is admin or owns this volunteer profile
+        if (Auth::user()->usertype !== 'admin' && $relawan->user_id !== Auth::id()) {
+            return redirect()->route('relawan.index')->with('error', 'Anda tidak memiliki izin!');
+        }
+        
+        $relawan->delete();
+        
+        return redirect()->route('relawan.index')->with('success', 'Relawan berhasil dihapus!');
     }
 }
