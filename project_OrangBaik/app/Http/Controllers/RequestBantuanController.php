@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Auth;
 
 class RequestBantuanController extends Controller
 {
-    // Menyimpan permintaan bantuan
+    /**
+     * Menyimpan permintaan bantuan dari korban
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -28,7 +30,9 @@ class RequestBantuanController extends Controller
             ->with('success', 'Permintaan bantuan berhasil dikirim.');
     }
 
-    // Menampilkan riwayat permintaan bantuan user
+    /**
+     * Menampilkan riwayat permintaan bantuan user (korban)
+     */
     public function index()
     {
         $requests = RequestBantuan::where('user_id', Auth::id())
@@ -38,25 +42,38 @@ class RequestBantuanController extends Controller
         return view('request-bantuan.index', compact('requests'));
     }
 
-    public function adminIndex()
+    /**
+     * Menampilkan semua permintaan bantuan untuk admin (bisa difilter berdasarkan jenis bantuan)
+     */
+    public function adminIndex(Request $request)
     {
-    $requests = \App\Models\RequestBantuan::orderBy('created_at', 'desc')->get();
+        $query = RequestBantuan::query();
 
-    return view('admin.request.index', compact('requests'));
+        // Filter berdasarkan jenis kebutuhan jika ada
+        if ($request->filled('jenis_kebutuhan')) {
+            $query->where('jenis_kebutuhan', $request->jenis_kebutuhan);
+        }
+
+        $requests = $query->orderBy('created_at', 'desc')->get();
+
+        return view('admin.request.index', compact('requests'));
     }
 
+    /**
+     * Mengupdate status permintaan bantuan (oleh admin)
+     */
     public function updateStatus(Request $request, $id)
     {
-    $request->validate([
-        'status' => 'required|in:pending,diproses,selesai,ditolak',
-    ]);
+        $request->validate([
+            'status' => 'required|in:pending,diproses,selesai,ditolak',
+        ]);
 
-    $req = \App\Models\RequestBantuan::findOrFail($id);
-    $req->status = $request->status;
-    $req->save();
+        $req = RequestBantuan::findOrFail($id);
+        $req->status = $request->status;
+        $req->save();
 
-    return redirect()->route('admin.request-bantuan.index')->with('success', 'Status berhasil diperbarui.');
+        return redirect()
+            ->route('admin.request-bantuan.index')
+            ->with('success', 'Status berhasil diperbarui.');
     }
-
 }
-
