@@ -10,17 +10,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Halaman Dashboard (User setelah login & verified)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 // Routing untuk user yang sudah login
 Route::middleware('auth')->group(function () {
     // Profile User
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Dashboard User (ganti dari /dashboard ke /dashboard-user)
+    Route::get('/dashboard-user', function () {
+        return view('user.dashboard'); // View dashboard user nanti dibuat
+    })->name('dashboard.user');
 
     // Form Request Bantuan (PBI#29)
     Route::get('/request-bantuan/create', function () {
@@ -36,10 +36,7 @@ Route::middleware('auth')->group(function () {
 
 // Routing untuk Admin
 Route::middleware(['auth', 'admin'])->group(function () {
-    // Admin Dashboard
-    Route::get('/admin/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
-
-    // Menampilkan Semua Permintaan Bantuan Korban (PBI#30)
+    // Admin Dashboard (langsung ke semua request bantuan)
     Route::get('/admin/request-bantuan', [RequestBantuanController::class, 'adminIndex'])->name('admin.request-bantuan.index');
 
     // Update Status Permintaan Bantuan (PBI#30 + PBI#31)
