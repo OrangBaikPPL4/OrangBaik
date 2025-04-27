@@ -8,6 +8,7 @@ use App\Http\Controllers\RelawanController;
 use App\Http\Controllers\MisiController;
 
 use App\Http\Controllers\DisasterReportController;
+use App\Http\Controllers\DonationController;
 
 Route::get('/', function () {
     return view('landing');
@@ -58,6 +59,15 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+// Public donation routes
+Route::resource('donations', DonationController::class);
+
+// Only authenticated users can upload proof, confirm, or reject
+Route::middleware(['auth'])->group(function () {
+    Route::post('donations/{donation}/upload-proof', [DonationController::class, 'uploadProof'])->name('donations.upload-proof');
+    Route::post('donations/{donation}/confirm', [DonationController::class, 'confirm'])->name('donations.confirm');
+    Route::post('donations/{donation}/reject', [DonationController::class, 'reject'])->name('donations.reject');
+});
 
 Route::get('/disaster-report/create', [DisasterReportController::class, 'create'])->name('disaster_report.create');
 Route::post('/disaster-report', [DisasterReportController::class, 'store'])->name('disaster_report.store');
