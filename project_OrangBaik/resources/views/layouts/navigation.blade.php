@@ -25,6 +25,11 @@
                     <x-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
                         {{ __('Misi Bantuan') }}
                     </x-nav-link>
+
+                     <!-- Disaster Report -->
+                    <x-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">
+                        {{ __('Laporan Bencana') }}
+                        </x-nav-link>
                     
                     @if(Auth::user()->usertype === 'admin')
                         <!-- Admin Dashboard -->
