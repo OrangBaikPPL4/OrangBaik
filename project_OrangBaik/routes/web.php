@@ -54,3 +54,12 @@ Route::get('/admin/login', [\App\Http\Controllers\Auth\AdminLoginController::cla
 
 // Proses Login Admin
 Route::post('/admin/login', [\App\Http\Controllers\Auth\AdminLoginController::class, 'login'])->name('admin.login.submit');
+
+use App\Http\Controllers\DashboardUserController;
+
+Route::get('/dashboard-user', [DashboardUserController::class, 'index'])->middleware(['auth']);
+
+
+use App\Http\Controllers\DashboardAdminController;
+
+Route::get('/dashboard-admin', [DashboardAdminController::class, 'index'])->middleware(['auth', 'admin']); 
