@@ -53,7 +53,7 @@ class DisasterReportController extends Controller
             $media = [];
             foreach ($request->file('bukti_media') as $file) {
                 // Menyimpan file dan mendapatkan path-nya
-                $path = $file->store('bukti_bencana'); // Di dalam folder storage/app/bukti_bencana
+                $path = $file->store('bukti_bencana', 'public'); // Di dalam folder storage/app/public/bukti_bencana
                 $media[] = $path;
             }
             $disasterReport->bukti_media = json_encode($media); // Menyimpan path media dalam format JSON
