@@ -10,6 +10,10 @@ use App\Http\Controllers\MisiController;
 use App\Http\Controllers\DisasterReportController;
 use App\Http\Controllers\DonationController;
 
+use Illuminate\Support\Facades\Mail;
+use App\Notifications\PaymentProofUploaded;
+use App\Models\Donation;
+
 Route::get('/', function () {
     return view('landing');
 });
@@ -73,6 +77,24 @@ Route::get('/disaster-report/create', [DisasterReportController::class, 'create'
 Route::post('/disaster-report', [DisasterReportController::class, 'store'])->name('disaster_report.store');
 Route::get('/disaster-report', [DisasterReportController::class, 'index'])->name('disaster_report.index');
 Route::get('/disaster-report/{id}', [DisasterReportController::class, 'show'])->name('disaster_report.show');
+
+Route::get('/test-email', function () {
+    try {
+        // Create a test donation
+        $donation = Donation::first();
+        
+        if (!$donation) {
+            return "No donation found to test with";
+        }
+
+        // Try to send the notification
+        $donation->user->notify(new PaymentProofUploaded($donation));
+        
+        return "Email test completed. Check Mailtrap inbox.";
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
 
 require __DIR__.'/auth.php';
 

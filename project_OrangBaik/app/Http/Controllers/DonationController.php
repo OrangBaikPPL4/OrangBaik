@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Donation;
 use App\Models\PaymentProof;
 use App\Notifications\DonationConfirmed;
+use App\Notifications\PaymentProofUploaded;
+use App\Notifications\WhatsAppPaymentProof;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class DonationController extends Controller
 {
@@ -175,5 +178,38 @@ class DonationController extends Controller
         
         return redirect()->route('donations.show', $donation)
             ->with('success', 'Donation marked as failed.');
+    }
+
+    public function storePaymentProof(Request $request, $id)
+    {
+        $request->validate([
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $donation = Donation::findOrFail($id);
+        
+        if ($request->hasFile('payment_proof')) {
+            $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+            $donation->payment_proof = $path;
+            $donation->status = 'pending';
+            $donation->save();
+
+            try {
+                // Send WhatsApp notification
+                $donation->user->notify(new WhatsAppPaymentProof($donation));
+
+                return redirect()->route('donations.show', $donation->id)
+                    ->with('success', 'Bukti pembayaran berhasil diunggah. Notifikasi WhatsApp telah dikirim.');
+            } catch (\Exception $e) {
+                Log::error('Failed to send WhatsApp notification', [
+                    'donation_id' => $donation->id,
+                    'error' => $e->getMessage()
+                ]);
+
+                return back()->with('error', 'Bukti pembayaran berhasil diunggah, tetapi notifikasi WhatsApp gagal dikirim.');
+            }
+        }
+
+        return back()->with('error', 'Gagal mengunggah bukti pembayaran.');
     }
 }
