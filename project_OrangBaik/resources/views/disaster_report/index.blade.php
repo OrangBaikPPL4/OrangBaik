@@ -48,6 +48,9 @@
                                     <a href="{{ route('disaster_report.show', $report->id) }}" class="btn btn-sm btn-outline-info">
                                         Detail
                                     </a>
+                                    <a href="{{ route('disaster_report.edit', $report->id) }}" class="btn btn-sm btn-outline-warning">
+                                        Edit
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach
