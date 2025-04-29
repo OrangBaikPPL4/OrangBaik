@@ -60,6 +60,11 @@ Route::middleware('auth')->group(function () {
         Route::put('/misi/{id}', [MisiController::class, 'update'])->name('misi.update');
         Route::delete('/misi/{id}', [MisiController::class, 'destroy'])->name('misi.destroy');
         Route::post('/misi/{id}/update-status', [MisiController::class, 'updateMisiStatus'])->name('misi.updateStatus');
+
+        // Admin Donation Management
+        Route::get('/admin/donations', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donations.index');
+        Route::get('/admin/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'show'])->name('admin.donations.show');
+        Route::post('/admin/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
     });
 });
 
