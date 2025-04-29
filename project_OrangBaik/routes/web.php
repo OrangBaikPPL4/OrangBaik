@@ -17,9 +17,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Dashboard User (ganti dari /dashboard ke /dashboard-user)
+    // Dashboard User
     Route::get('/dashboard-user', function () {
-        return view('user.dashboard'); // View dashboard user nanti dibuat
+        return view('dashboard-user.dashboard');
     })->name('dashboard.user');
 
     // Form Request Bantuan (PBI#29)
@@ -36,12 +36,21 @@ Route::middleware('auth')->group(function () {
 
 // Routing untuk Admin
 Route::middleware(['auth', 'admin'])->group(function () {
-    // Admin Dashboard (langsung ke semua request bantuan)
+    // Admin Dashboard
+    Route::get('/admin/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
+
+    // Menampilkan Semua Permintaan Bantuan Korban (PBI#30)
     Route::get('/admin/request-bantuan', [RequestBantuanController::class, 'adminIndex'])->name('admin.request-bantuan.index');
 
-    // Update Status Permintaan Bantuan (PBI#30 + PBI#31)
+    // Update Status Permintaan Bantuan (PBI#31)
     Route::post('/admin/request-bantuan/{id}/update-status', [RequestBantuanController::class, 'updateStatus'])->name('admin.request-bantuan.update-status');
 });
 
 // Authentication routes
 require __DIR__.'/auth.php';
+
+// Login Admin Form
+Route::get('/admin/login', [\App\Http\Controllers\Auth\AdminLoginController::class, 'showLoginForm'])->name('admin.login');
+
+// Proses Login Admin
+Route::post('/admin/login', [\App\Http\Controllers\Auth\AdminLoginController::class, 'login'])->name('admin.login.submit');

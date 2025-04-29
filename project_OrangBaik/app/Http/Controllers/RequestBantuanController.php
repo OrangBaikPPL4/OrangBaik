@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class RequestBantuanController extends Controller
 {
-    /**
-     * Menyimpan permintaan bantuan dari korban
-     */
+    // Menyimpan permintaan bantuan (PBI29)
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -30,9 +28,7 @@ class RequestBantuanController extends Controller
             ->with('success', 'Permintaan bantuan berhasil dikirim.');
     }
 
-    /**
-     * Menampilkan riwayat permintaan bantuan user (korban)
-     */
+    // Menampilkan riwayat permintaan bantuan user (PBI32)
     public function index()
     {
         $requests = RequestBantuan::where('user_id', Auth::id())
@@ -42,14 +38,11 @@ class RequestBantuanController extends Controller
         return view('request-bantuan.index', compact('requests'));
     }
 
-    /**
-     * Menampilkan semua permintaan bantuan untuk admin (bisa difilter berdasarkan jenis bantuan)
-     */
+    // Menampilkan semua permintaan untuk admin dengan filter jenis kebutuhan (PBI30+31)
     public function adminIndex(Request $request)
     {
         $query = RequestBantuan::query();
 
-        // Filter berdasarkan jenis kebutuhan jika ada
         if ($request->filled('jenis_kebutuhan')) {
             $query->where('jenis_kebutuhan', $request->jenis_kebutuhan);
         }
@@ -59,9 +52,7 @@ class RequestBantuanController extends Controller
         return view('admin.request.index', compact('requests'));
     }
 
-    /**
-     * Mengupdate status permintaan bantuan (oleh admin)
-     */
+    // Update status permintaan bantuan oleh admin (PBI31)
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -72,8 +63,6 @@ class RequestBantuanController extends Controller
         $req->status = $request->status;
         $req->save();
 
-        return redirect()
-            ->route('admin.request-bantuan.index')
-            ->with('success', 'Status berhasil diperbarui.');
+        return redirect()->route('admin.request-bantuan.index')->with('success', 'Status berhasil diperbarui.');
     }
 }

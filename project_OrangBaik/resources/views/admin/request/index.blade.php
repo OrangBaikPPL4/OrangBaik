@@ -9,30 +9,24 @@
     <div class="container py-5">
         <h2>Semua Permintaan Bantuan Korban</h2>
 
-        {{-- Filter Jenis Kebutuhan --}}
-        <form action="{{ route('admin.request-bantuan.index') }}" method="GET" class="mb-4">
+        <!-- Filter berdasarkan jenis kebutuhan -->
+        <form method="GET" class="mb-3">
             <div class="row">
                 <div class="col-md-4">
                     <select name="jenis_kebutuhan" class="form-select" onchange="this.form.submit()">
-                        <option value="">-- Semua Jenis Bantuan --</option>
+                        <option value="">-- Semua Jenis Kebutuhan --</option>
                         <option value="makanan" {{ request('jenis_kebutuhan') == 'makanan' ? 'selected' : '' }}>Makanan</option>
                         <option value="obat" {{ request('jenis_kebutuhan') == 'obat' ? 'selected' : '' }}>Obat</option>
                         <option value="pakaian" {{ request('jenis_kebutuhan') == 'pakaian' ? 'selected' : '' }}>Pakaian</option>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    @if(request('jenis_kebutuhan'))
-                        <a href="{{ route('admin.request-bantuan.index') }}" class="btn btn-secondary">Reset Filter</a>
-                    @endif
-                </div>
             </div>
         </form>
 
-        {{-- Tabel Daftar Permintaan --}}
         @if ($requests->isEmpty())
             <div class="alert alert-info">Belum ada permintaan.</div>
         @else
-            <table class="table table-bordered table-hover bg-white">
+            <table class="table table-bordered table-hover bg-white mt-3">
                 <thead class="table-light">
                     <tr>
                         <th>#</th>
@@ -40,8 +34,8 @@
                         <th>Jenis Kebutuhan</th>
                         <th>Deskripsi</th>
                         <th>Status</th>
+                        <th>Update Status</th>
                         <th>Tanggal</th>
-                        <th>Ubah Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,12 +54,11 @@
                                     default => 'dark'
                                 } }}">{{ ucfirst($req->status) }}</span>
                             </td>
-                            <td>{{ $req->created_at->format('d M Y H:i') }}</td>
                             <td>
                                 <form action="{{ route('admin.request-bantuan.update-status', $req->id) }}" method="POST">
                                     @csrf
-                                    <div class="input-group input-group-sm">
-                                        <select name="status" class="form-select" onchange="this.form.submit()">
+                                    <div class="input-group">
+                                        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                                             <option value="pending" {{ $req->status == 'pending' ? 'selected' : '' }}>Pending</option>
                                             <option value="diproses" {{ $req->status == 'diproses' ? 'selected' : '' }}>Diproses</option>
                                             <option value="selesai" {{ $req->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
@@ -74,6 +67,7 @@
                                     </div>
                                 </form>
                             </td>
+                            <td>{{ $req->created_at->format('d M Y H:i') }}</td>
                         </tr>
                     @endforeach
                 </tbody>
