@@ -26,10 +26,17 @@
                         {{ __('Misi Bantuan') }}
                     </x-nav-link>
 
+
                     <!-- Donations Link -->
                     <x-nav-link :href="route('donations.index')" :active="request()->routeIs('donations.*')">
                         {{ __('Donasi') }}
                     </x-nav-link>
+
+                     <!-- Disaster Report -->
+                    <x-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">
+                        {{ __('Laporan Bencana') }}
+                        </x-nav-link>
+
                     
                     @if(Auth::user()->usertype === 'admin')
                         <!-- Admin Dashboard -->

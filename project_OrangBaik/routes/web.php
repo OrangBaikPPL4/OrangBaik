@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EdukasiController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\HomeController;
@@ -14,18 +15,26 @@ use Illuminate\Support\Facades\Mail;
 use App\Notifications\PaymentProofUploaded;
 use App\Models\Donation;
 
+use App\Models\Edukasi;
+
 Route::get('/', function () {
     return view('landing');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $edukasi = Edukasi::latest()->take(5)->get();
+    return view('dashboard', compact('edukasi'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+
+    Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
+    Route::get('/edukasi/{edukasi}', [EdukasiController::class, 'show'])->name('edukasi.show');
+
 });
 
 // Middleware group for authenticated users
@@ -37,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/relawan/profil', [RelawanController::class, 'show'])->name('relawan.show');
     Route::get('/relawan/{id}/edit', [RelawanController::class, 'edit'])->name('relawan.edit');
     Route::put('/relawan/{id}', [RelawanController::class, 'update'])->name('relawan.update');
+    Route::delete('/relawan/{id}', [RelawanController::class, 'destroy'])->name('relawan.destroy');
     Route::get('/relawan/misi', [RelawanController::class, 'misiRelawan'])->name('relawan.misi');
 
     // Misi Routes
@@ -44,6 +54,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/misi/{id}', [MisiController::class, 'show'])->name('misi.show');
     Route::post('/misi/{id}/gabung', [MisiController::class, 'gabungMisi'])->name('misi.gabung');
     Route::post('/misi/{id}/lapor', [MisiController::class, 'laporProgress'])->name('misi.lapor');
+    Route::post('/misi/{id}/tambah-relawan', [MisiController::class, 'tambahRelawan'])->name('misi.tambahRelawan');
+    Route::delete('/misi/{misi_id}/relawan/{relawan_id}', [MisiController::class, 'hapusRelawan'])->name('misi.hapusRelawan');
     
     // Admin Routes - protected by admin middleware
     Route::middleware('admin')->group(function () {
@@ -102,4 +114,10 @@ Route::get('/test-email', function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::resource('/edukasi', EdukasiController::class)->except(['show']);
+});
 
