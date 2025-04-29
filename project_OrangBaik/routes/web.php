@@ -9,6 +9,11 @@ use App\Http\Controllers\RelawanController;
 use App\Http\Controllers\MisiController;
 
 use App\Http\Controllers\DisasterReportController;
+use App\Http\Controllers\DonationController;
+
+use Illuminate\Support\Facades\Mail;
+use App\Notifications\PaymentProofUploaded;
+use App\Models\Donation;
 
 use App\Models\Edukasi;
 
@@ -67,14 +72,46 @@ Route::middleware('auth')->group(function () {
         Route::put('/misi/{id}', [MisiController::class, 'update'])->name('misi.update');
         Route::delete('/misi/{id}', [MisiController::class, 'destroy'])->name('misi.destroy');
         Route::post('/misi/{id}/update-status', [MisiController::class, 'updateMisiStatus'])->name('misi.updateStatus');
+
+        // Admin Donation Management
+        Route::get('/admin/donations', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donations.index');
+        Route::get('/admin/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'show'])->name('admin.donations.show');
+        Route::post('/admin/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
     });
 });
 
+// Public donation routes
+Route::resource('donations', DonationController::class);
+
+// Only authenticated users can upload proof, confirm, or reject
+Route::middleware(['auth'])->group(function () {
+    Route::post('donations/{donation}/upload-proof', [DonationController::class, 'uploadProof'])->name('donations.upload-proof');
+    Route::post('donations/{donation}/confirm', [DonationController::class, 'confirm'])->name('donations.confirm');
+    Route::post('donations/{donation}/reject', [DonationController::class, 'reject'])->name('donations.reject');
+});
 
 Route::get('/disaster-report/create', [DisasterReportController::class, 'create'])->name('disaster_report.create');
 Route::post('/disaster-report', [DisasterReportController::class, 'store'])->name('disaster_report.store');
 Route::get('/disaster-report', [DisasterReportController::class, 'index'])->name('disaster_report.index');
 Route::get('/disaster-report/{id}', [DisasterReportController::class, 'show'])->name('disaster_report.show');
+
+Route::get('/test-email', function () {
+    try {
+        // Create a test donation
+        $donation = Donation::first();
+        
+        if (!$donation) {
+            return "No donation found to test with";
+        }
+
+        // Try to send the notification
+        $donation->user->notify(new PaymentProofUploaded($donation));
+        
+        return "Email test completed. Check Mailtrap inbox.";
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
 
 require __DIR__.'/auth.php';
 
