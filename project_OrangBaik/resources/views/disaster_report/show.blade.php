@@ -1,76 +1,83 @@
-@php
-    use Illuminate\Support\Str;
-@endphp
+@extends('layouts.app')
 
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Laporan Bencana</title>
+@section('content')
+<div class="container mx-auto px-4 py-8">
+    <a href="{{ route('disaster_report.index') }}" class="inline-flex items-center mb-6 text-sm text-indigo-600 hover:text-indigo-900">
+        <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        Kembali ke Daftar
+    </a>
 
-    <!-- Link Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-
-    <div class="w-full max-w-3xl bg-white rounded-xl shadow-lg p-8 m-4">
-        <h1 class="text-3xl font-bold text-center text-blue-700 mb-10">Detail Laporan Bencana</h1>
-
-        <div class="space-y-6">
-            <!-- Lokasi -->
-            <div>
-                <label class="block text-sm font-bold text-gray-600 mb-1">Lokasi:</label>
-                <div class="p-3 bg-gray-100 rounded-md">{{ $report->lokasi }}</div>
-            </div>
-
-            <!-- Jenis Bencana -->
-            <div>
-                <label class="block text-sm font-bold text-gray-600 mb-1">Jenis Bencana:</label>
-                <div class="p-3 bg-gray-100 rounded-md">{{ ucfirst($report->jenis_bencana) }}</div>
-            </div>
-
-            <!-- Deskripsi -->
-            <div>
-                <label class="block text-sm font-bold text-gray-600 mb-1">Deskripsi:</label>
-                <div class="p-3 bg-gray-100 rounded-md">{{ $report->deskripsi }}</div>
-            </div>
-
-            <!-- Status -->
-            <div>
-                <label class="block text-sm font-bold text-gray-600 mb-1">Status:</label>
-                <div class="p-3 bg-gray-100 rounded-md">{{ ucfirst($report->status) }}</div>
-            </div>
-
-            <!-- Bukti Media -->
-            <div>
-                <label class="block text-sm font-bold text-gray-600 mb-1">Bukti Media:</label>
-                <div class="bg-gray-100 p-3 rounded-md flex flex-col items-center">
-                    @if($report->bukti_media)
-                        @foreach(json_decode($report->bukti_media, true) as $media)
-                            @if(Str::endsWith($media, ['.jpg', '.jpeg', '.png', '.gif']))
-                                <img src="{{ asset('storage/bukti_bencana/' . basename($media)) }}" alt="Bukti Gambar" class="rounded-md shadow-md max-w-full my-4">
-                            @elseif(Str::endsWith($media, ['.mp4', '.webm']))
-                                <video controls class="rounded-md shadow-md max-w-full my-4">
-                                    <source src="{{ asset('storage/bukti_bencana/' . basename($media)) }}" type="video/mp4">
-                                    Browser tidak mendukung tag video.
-                                </video>
-                            @endif
-                        @endforeach
-                    @else
-                        <p class="italic text-gray-500">Tidak ada media yang dilampirkan.</p>
-                    @endif
-                </div>
-            </div>
+    <div class="sm:flex sm:items-center mb-6">
+        <div class="sm:flex-auto">
+            <h1 class="text-3xl font-bold text-gray-900">Detail Laporan Bencana</h1>
+            <p class="mt-2 text-sm text-gray-700">Informasi lengkap mengenai laporan yang dikirimkan oleh pengguna.</p>
         </div>
-
-        <div class="flex justify-center mt-8">
-            <a href="{{ route('disaster_report.index') }}" 
-               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200">
-                Kembali ke Daftar
+        <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+            <a href="{{ route('disaster_report.edit', $report->id) }}"
+               class="inline-flex items-center justify-center rounded-md border border-transparent bg-yellow-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 sm:w-auto">
+                ✏️ Edit Laporan
             </a>
         </div>
     </div>
 
-</body>
-</html>
+    <div class="bg-white shadow rounded-lg p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
+            <div>
+                <p class="font-semibold text-gray-500 mb-1">📍 Lokasi</p>
+                <div class="bg-gray-100 p-3 rounded-md">{{ $report->lokasi }}</div>
+            </div>
+            <div>
+                <p class="font-semibold text-gray-500 mb-1">🌋 Jenis Bencana</p>
+                <div class="bg-gray-100 p-3 rounded-md">{{ ucfirst($report->jenis_bencana) }}</div>
+            </div>
+            <div>
+                <p class="font-semibold text-gray-500 mb-1">📌 Status</p>
+                <span class="inline-block px-3 py-1 rounded-md text-white text-xs font-semibold
+                    {{ $report->status === 'pending' ? 'bg-yellow-500' : ($report->status === 'diterima' ? 'bg-green-600' : 'bg-gray-500') }}">
+                    {{ ucfirst($report->status) }}
+                </span>
+            </div>
+            <div class="md:col-span-2">
+                <p class="font-semibold text-gray-500 mb-1">📝 Deskripsi</p>
+                <div class="bg-gray-100 p-4 rounded-md leading-relaxed">
+                    {!! nl2br(e($report->deskripsi)) !!}
+                </div>
+            </div>
+        </div>
+
+        {{-- Bukti Media --}}
+        @php
+            $mediaList = json_decode($report->bukti_media ?? '[]', true);
+            $mediaList = is_array($mediaList) ? $mediaList : [];
+        @endphp
+
+        <div>
+             <h2 class="text-lg font-semibold text-gray-700 mb-3">📎 Bukti Media</h2>
+            @if (count($mediaList))
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    @foreach($mediaList as $media)
+                        @php
+                            $mediaPath = Str::startsWith($media, 'bukti_bencana/')
+                                ? 'storage/' . $media
+                                : 'storage/bukti_bencana/' . $media;
+                        @endphp
+
+                        @if(Str::endsWith($media, ['.jpg', '.jpeg', '.png', '.gif']))
+                            <img src="{{ asset($mediaPath) }}" alt="Bukti Gambar"
+                                 class="rounded-md shadow w-full">
+                        @elseif(Str::endsWith($media, ['.mp4', '.webm']))
+                            <video controls class="w-full rounded-md shadow bg-gray-100 h-56 object-cover">
+                                <source src="{{ asset($mediaPath) }}" type="video/mp4">
+                            </video>
+                        @endif
+                    @endforeach
+                </div>
+            @else
+                <p class="italic text-gray-500">Tidak ada media yang dilampirkan.</p>
+            @endif
+        </div>
+    </div>
+</div>
+@endsection
