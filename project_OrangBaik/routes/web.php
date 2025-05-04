@@ -136,6 +136,9 @@ Route::get('/disaster-report/create', [DisasterReportController::class, 'create'
 Route::post('/disaster-report', [DisasterReportController::class, 'store'])->name('disaster_report.store');
 Route::get('/disaster-report', [DisasterReportController::class, 'index'])->name('disaster_report.index');
 Route::get('/disaster-report/{id}', [DisasterReportController::class, 'show'])->name('disaster_report.show');
+Route::get('/disaster-report/{id}/edit', [DisasterReportController::class, 'edit'])->name('disaster_report.edit');
+Route::put('/disaster-report/{id}', [DisasterReportController::class, 'update'])->name('disaster_report.update');
+
 
 Route::get('/test-email', function () {
     try {
