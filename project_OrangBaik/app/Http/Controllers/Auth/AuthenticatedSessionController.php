@@ -28,12 +28,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if($request->user()->usertype === 'admin')
-        {
-            return redirect('admin/dashboard');
-        }
+        // ✅ Perbaiki bagian redirect berdasarkan usertype
+        $user = Auth::user();
 
-        return redirect()->intended(route('dashboard'));
+        if ($user->usertype === 'admin') {
+            return redirect('/admin/request-bantuan'); // Halaman dashboard admin
+        } else {
+            return redirect('/dashboard-user'); // Halaman dashboard user biasa
+        }
     }
 
     /**
