@@ -13,8 +13,37 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                        {{ __('Beranda') }}
                     </x-nav-link>
+                    
+                    <!-- Relawan Link -->
+                    <x-nav-link :href="route('relawan.index')" :active="request()->routeIs('relawan.*')">
+                        {{ __('Relawan') }}
+                    </x-nav-link>
+                    
+                    <!-- Misi Link -->
+                    <x-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
+                        {{ __('Misi Bantuan') }}
+                    </x-nav-link>
+
+
+                    <!-- Donations Link -->
+                    <x-nav-link :href="route('donations.index')" :active="request()->routeIs('donations.*')">
+                        {{ __('Donasi') }}
+                    </x-nav-link>
+
+                     <!-- Disaster Report -->
+                    <x-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">
+                        {{ __('Laporan Bencana') }}
+                        </x-nav-link>
+
+                    
+                    @if(Auth::user()->usertype === 'admin')
+                        <!-- Admin Dashboard -->
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                            {{ __('Admin') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -35,7 +64,7 @@
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('Profil') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -45,7 +74,7 @@
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                {{ __('Keluar') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
@@ -68,8 +97,30 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+                {{ __('Beranda') }}
             </x-responsive-nav-link>
+            
+            <!-- Responsive Relawan Link -->
+            <x-responsive-nav-link :href="route('relawan.index')" :active="request()->routeIs('relawan.*')">
+                {{ __('Relawan') }}
+            </x-responsive-nav-link>
+            
+            <!-- Responsive Misi Link -->
+            <x-responsive-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
+                {{ __('Misi Bantuan') }}
+            </x-responsive-nav-link>
+
+            <!-- Responsive Donations Link -->
+            <x-responsive-nav-link :href="route('donations.index')" :active="request()->routeIs('donations.*')">
+                {{ __('Donasi') }}
+            </x-responsive-nav-link>
+            
+            @if(Auth::user()->usertype === 'admin')
+                <!-- Responsive Admin Dashboard -->
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                    {{ __('Admin') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -81,7 +132,7 @@
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                    {{ __('Profil') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
@@ -91,7 +142,7 @@
                     <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault();
                                         this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                        {{ __('Keluar') }}
                     </x-responsive-nav-link>
                 </form>
             </div>
