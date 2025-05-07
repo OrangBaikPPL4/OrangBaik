@@ -37,4 +37,9 @@ class Donation extends Model
     {
         return $this->hasOne(PaymentProof::class);
     }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(DonationStatusHistory::class);
+    }
 }

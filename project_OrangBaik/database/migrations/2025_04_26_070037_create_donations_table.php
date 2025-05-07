@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('contact_phone')->nullable();
             $table->text('message')->nullable();
             $table->string('transaction_id')->unique();
-            $table->enum('status', ['pending', 'confirmed', 'failed'])->default('pending');
+            $table->enum('status', ['pending', 'confirmed', 'failed', 'distributed'])->default('pending');
             $table->timestamps();
         });
     }

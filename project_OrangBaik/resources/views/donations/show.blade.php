@@ -1,3 +1,5 @@
+@@@
+THIS IS THE PUBLIC DONATION SHOW FILE
 @extends('layouts.app')
 
 @section('content')
@@ -60,9 +62,11 @@
                         <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                 {{ $donation->status === 'confirmed' ? 'bg-green-100 text-green-800' : 
-                                   ($donation->status === 'failed' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                   ($donation->status === 'failed' ? 'bg-red-100 text-red-800' : 
+                                   ($donation->status === 'distributed' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800')) }}">
                                 {{ $donation->status === 'pending' ? 'Menunggu' : 
-                                   ($donation->status === 'confirmed' ? 'Dikonfirmasi' : 'Gagal') }}
+                                   ($donation->status === 'confirmed' ? 'Dikonfirmasi' : 
+                                   ($donation->status === 'failed' ? 'Gagal' : 'Disalurkan')) }}
                             </span>
                         </dd>
                     </div>

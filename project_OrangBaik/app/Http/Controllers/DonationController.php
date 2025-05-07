@@ -94,16 +94,19 @@ class DonationController extends Controller
      */
     public function show(Donation $donation)
     {
+        // If admin, redirect to admin donation detail page
+        if (auth()->check() && auth()->user()->isAdmin()) {
+            return redirect()->route('admin.donations.show', ['donation' => $donation->id])
+                ->with('error', 'Admin harus mengakses detail donasi melalui halaman admin.');
+        }
         // Add authorization check
         if (!auth()->user() && $donation->user_id !== null) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
-
         // If the donation belongs to a user, check if current user owns it
         if ($donation->user_id && $donation->user_id !== auth()->id()) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
-
         return view('donations.show', compact('donation'));
     }
 
@@ -211,5 +214,22 @@ class DonationController extends Controller
         }
 
         return back()->with('error', 'Gagal mengunggah bukti pembayaran.');
+    }
+
+    /**
+     * Show the public donation dashboard.
+     */
+    public function publicDashboard()
+    {
+        $totalAmount = Donation::where('status', 'confirmed')
+            ->orWhere('status', 'distributed')
+            ->sum('amount');
+        $totalDonations = Donation::where('status', 'confirmed')
+            ->orWhere('status', 'distributed')
+            ->count();
+        $recentDonations = Donation::where('status', 'confirmed')
+            ->orWhere('status', 'distributed')
+            ->latest()->take(10)->get();
+        return view('donations.dashboard', compact('totalAmount', 'totalDonations', 'recentDonations'));
     }
 }
