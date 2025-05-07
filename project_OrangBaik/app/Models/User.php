@@ -45,6 +45,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function requestBantuans()
+    {
+        return $this->hasMany(RequestBantuan::class);
+    }
     
     public function relawan()
     {

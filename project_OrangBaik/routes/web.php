@@ -1,31 +1,47 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\EdukasiController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 
+use App\Models\Donation;
+use App\Models\Edukasi;
+use App\Notifications\PaymentProofUploaded;
+
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RequestBantuanController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\EdukasiController;
 use App\Http\Controllers\RelawanController;
 use App\Http\Controllers\MisiController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 use App\Http\Controllers\DisasterReportController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\AdminController;
-
-use Illuminate\Support\Facades\Mail;
-use App\Notifications\PaymentProofUploaded;
-use App\Models\Donation;
-use App\Models\Edukasi;
+use App\Http\Controllers\DashboardUserController;
+use App\Http\Controllers\DashboardAdminController;
+use App\Http\Controllers\Auth\AdminLoginController;
 
 // Public Routes
 Route::get('/', function () {
     return view('landing');
 });
 
+// Dashboard utama (menampilkan edukasi terbaru)
 Route::get('/dashboard', function () {
     $edukasi = Edukasi::latest()->take(5)->get();
     return view('dashboard', compact('edukasi'));
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Authentication routes
+require __DIR__.'/auth.php';
+
+// Login Admin
+Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login.submit');
+
+// Dashboard khusus user & admin
+Route::get('/dashboard-user', [DashboardUserController::class, 'index'])->middleware(['auth'])->name('dashboard.user');
+Route::get('/dashboard-admin', [DashboardAdminController::class, 'index'])->middleware(['auth', 'admin'])->name('dashboard.admin');
 
 // Public Donation Routes
 Route::get('donations', [DonationController::class, 'index'])->name('donations.index');
@@ -40,6 +56,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Request Bantuan
+    Route::get('/request-bantuan/create', fn() => view('request-bantuan.create'))->name('request-bantuan.create');
+    Route::post('/request-bantuan', [RequestBantuanController::class, 'store'])->name('request-bantuan.store');
+    Route::get('/request-bantuan', [RequestBantuanController::class, 'index'])->name('request-bantuan.index');
     
     // Edukasi Routes
     Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
@@ -55,12 +76,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/relawan/create', [RelawanController::class, 'create'])->name('relawan.create');
     Route::post('/relawan', [RelawanController::class, 'store'])->name('relawan.store');
     Route::get('/relawan/profil', [RelawanController::class, 'show'])->name('relawan.show');
-    Route::get('/relawan/{id}/edit', [RelawanController::class, 'edit'])->name('relawan.edit');
-    Route::put('/relawan/{id}', [RelawanController::class, 'update'])->name('relawan.update');
-    Route::delete('/relawan/{id}', [RelawanController::class, 'destroy'])->name('relawan.destroy');
     Route::get('/relawan/misi', [RelawanController::class, 'misiRelawan'])->name('relawan.misi');
 
-    // Misi Routes
+    // Misi
     Route::get('/misi', [MisiController::class, 'index'])->name('misi.index');
     Route::get('/misi/{id}', [MisiController::class, 'show'])->name('misi.show');
     Route::post('/misi/{id}/gabung', [MisiController::class, 'gabungMisi'])->name('misi.gabung');
@@ -99,26 +117,31 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
         // Admin Management
         Route::resource('admins', \App\Http\Controllers\Admin\AdminController::class);
+
+        // Admin Request Bantuan Management
+        Route::get('/request-bantuan', [RequestBantuanController::class, 'adminIndex'])->name('request-bantuan.index');
+        Route::post('/request-bantuan/{id}/update-status', [RequestBantuanController::class, 'updateStatus'])->name('request-bantuan.update-status');
     });
 });
 
+// Disaster Report
 Route::get('/disaster-report/create', [DisasterReportController::class, 'create'])->name('disaster_report.create');
 Route::post('/disaster-report', [DisasterReportController::class, 'store'])->name('disaster_report.store');
 Route::get('/disaster-report', [DisasterReportController::class, 'index'])->name('disaster_report.index');
 Route::get('/disaster-report/{id}', [DisasterReportController::class, 'show'])->name('disaster_report.show');
+Route::get('/disaster-report/{id}/edit', [DisasterReportController::class, 'edit'])->name('disaster_report.edit');
+Route::put('/disaster-report/{id}', [DisasterReportController::class, 'update'])->name('disaster_report.update');
 
+// Test Email
 Route::get('/test-email', function () {
     try {
         $donation = Donation::first();
         if (!$donation) {
             return "No donation found to test with";
         }
-        $donation->user->notify(new PaymentProofUploaded($donation));
-        return "Email test completed. Check Mailtrap inbox.";
+        Mail::to('test@example.com')->send(new PaymentProofUploaded($donation));
+        return "Email sent successfully";
     } catch (\Exception $e) {
-        return "Error: " . $e->getMessage();
+        return "Error sending email: " . $e->getMessage();
     }
 });
-
-require __DIR__.'/auth.php';
-
