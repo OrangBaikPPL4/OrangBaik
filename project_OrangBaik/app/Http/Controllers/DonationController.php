@@ -29,7 +29,8 @@ class DonationController extends Controller
             // Guest: show nothing
             $donations = collect([]);
         }
-        return view('donations.index', compact('donations'));
+        $totalAmount = \App\Models\Donation::whereIn('status', ['confirmed', 'distributed'])->sum('amount');
+        return view('donations.index', compact('donations', 'totalAmount'));
     }
 
     /**

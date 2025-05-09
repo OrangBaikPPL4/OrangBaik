@@ -17,6 +17,12 @@
         Kembali
     </a>
     <div class="max-w-5xl mx-auto">
+        <div class="mb-6">
+            <div class="bg-white shadow rounded-lg p-6 text-center">
+                <div class="text-gray-500 text-sm">Total Donasi Terkumpul</div>
+                <div class="text-2xl font-bold text-green-600 mt-2">Rp {{ number_format($totalAmount, 0, ',', '.') }}</div>
+            </div>
+        </div>
         <h2 class="text-2xl font-bold mb-2">Donasi</h2>
         @if(!auth()->user() || !auth()->user()->isAdmin())
             <div class="mb-4 flex justify-end">
