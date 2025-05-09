@@ -1,4 +1,11 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Edit Konten Edukasi') }}
+        </h2>
+    </x-slot>
+
+    @section('content')
     @auth
         @if (auth()->user()->usertype !== 'admin')
             <div class="max-w-4xl mx-auto py-10 px-4 text-center">
@@ -64,4 +71,5 @@
             </div>
         </form>
     </div>
+    @endsection
 </x-app-layout>

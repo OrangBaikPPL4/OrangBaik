@@ -1,4 +1,11 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Detail Edukasi') }}
+        </h2>
+    </x-slot>
+
+    @section('content')
     <div class="max-w-6xl mx-auto py-10 px-6 space-y-8">
         {{-- Header --}}
     <div class="{{ $edukasi->image ? 'grid md:grid-cols-2 gap-6 items-start' : 'flex flex-col md:flex-row gap-6' }}">
@@ -13,7 +20,8 @@
         <div class="space-y-3 {{ $edukasi->image ? '' : 'md:w-1/2' }}">
             <h1 class="text-3xl font-bold text-blue-800">{{ $edukasi->title }}</h1>
             <p class="text-sm text-gray-600">
-                <strong>Kategori:</strong> {{ ucfirst($edukasi->category) }}
+                <strong>Kategori:</strong> {{ ucfirst($edukasi->category) }} <br>
+                <strong></strong> {{ $edukasi->created_at->translatedFormat('d F Y') }}
             </p>
             <div class="text-gray-800 leading-relaxed">
                 {!! nl2br(e($edukasi->content)) !!}
@@ -51,7 +59,7 @@
 
         {{-- Filter Kategori --}}
         <form method="GET" action="{{ route('edukasi.show', $edukasi->id) }}" class="max-w-xs">
-            <label class="block mb-1 text-gray-700 font-medium">Filter Kategori:</label>
+            <label class="block mb-1 text-gray-700 font-medium">🏷️Filter Kategori:</label>
             <select name="category" onchange="this.form.submit()"
                     class="w-full border border-gray-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Semua</option>
@@ -74,7 +82,7 @@
                                  class="w-full h-36 object-cover rounded mb-3 border border-gray-200" alt="">
                         @endif
 
-                        <p class="text-sm text-gray-700 mb-2">{{ Str::limit($item->content, 100) }}</p>
+                        <p class="text-sm text-gray-700 mb-2">{{ Str::limit($item->content, 200) }}</p>
 
                         <a href="{{ route('edukasi.show', $item->id) }}"
                            class="text-blue-600 text-sm hover:underline">Lihat Detail</a>
@@ -87,5 +95,5 @@
     </div>
 </div>
 
-
+    @endsection
 </x-app-layout>

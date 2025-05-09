@@ -5,6 +5,7 @@
         </h2>
     </x-slot>
 
+    @section('content')
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -31,7 +32,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('misi.update', $misi->id) }}">
+                    <form method="POST" action="{{ route('misi.update', $misi->id) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -69,6 +70,18 @@
                                     <option value="selesai" {{ old('status', $misi->status) == 'selesai' ? 'selected' : '' }}>Selesai</option>
                                 </select>
                             </div>
+                            
+                            <div class="md:col-span-2">
+                                <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Gambar Misi</label>
+                                @if($misi->image_url)
+                                    <div class="mb-2">
+                                        <img src="{{ $misi->image_url }}" alt="{{ $misi->nama_misi }}" class="h-32 w-auto object-cover rounded-md border border-gray-300">
+                                        <p class="text-xs text-gray-500 mt-1">Gambar saat ini</p>
+                                    </div>
+                                @endif
+                                <input type="file" name="image" id="image" class="w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2" accept="image/*">
+                                <p class="text-xs text-gray-500 mt-1">Upload gambar baru untuk misi (format: JPG, PNG, maksimal 2MB). Biarkan kosong jika tidak ingin mengubah gambar.</p>
+                            </div>
                         </div>
 
                         <div class="flex items-center justify-between">
@@ -84,4 +97,5 @@
             </div>
         </div>
     </div>
+    @endsection
 </x-app-layout> 

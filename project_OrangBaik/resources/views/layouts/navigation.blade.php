@@ -15,32 +15,26 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Beranda') }}
                     </x-nav-link>
-                    
-                    <!-- Relawan Link -->
                     <x-nav-link :href="route('relawan.index')" :active="request()->routeIs('relawan.*')">
                         {{ __('Relawan') }}
                     </x-nav-link>
-                    
-                    <!-- Misi Link -->
                     <x-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
                         {{ __('Misi Bantuan') }}
                     </x-nav-link>
-
-
-                    <!-- Donations Link -->
                     <x-nav-link :href="route('donations.index')" :active="request()->routeIs('donations.*')">
                         {{ __('Donasi') }}
                     </x-nav-link>
-
-                    <!-- Disaster Report -->
+                    <x-nav-link :href="route('admin.request-bantuan.index')" :active="request()->routeIs('admin.request-bantuan.*')">
+                        {{ __('Request Bantuan') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('edukasi.index')" :active="request()->routeIs('edukasi.*')">
+                        {{ __('Edukasi') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">
                         {{ __('Laporan Bencana') }}
-                        </x-nav-link>
-
-                    
+                    </x-nav-link>
                     @if(Auth::user()->usertype === 'admin')
-                        <!-- Admin Dashboard -->
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                        <x-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('admin.*')">
                             {{ __('Admin') }}
                         </x-nav-link>
                     @endif
@@ -129,9 +123,24 @@
                 {{ __('Donasi') }}
             </x-responsive-nav-link>
             
+            <!-- Responsive Request Bantuan Link -->
+            <x-responsive-nav-link :href="route('admin.request-bantuan.index')" :active="request()->routeIs('admin.request-bantuan.*')">
+                {{ __('Request Bantuan') }}
+            </x-responsive-nav-link>
+            
+            <!-- Responsive Edukasi Link -->
+            <x-responsive-nav-link :href="route('edukasi.index')" :active="request()->routeIs('edukasi.*')">
+                {{ __('Edukasi') }}
+            </x-responsive-nav-link>
+            
+            <!-- Responsive Disaster Report Link -->
+            <x-responsive-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">
+                {{ __('Laporan Bencana') }}
+            </x-responsive-nav-link>
+            
             @if(Auth::user()->usertype === 'admin')
                 <!-- Responsive Admin Dashboard -->
-                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                <x-responsive-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('admin.*')">
                     {{ __('Admin') }}
                 </x-responsive-nav-link>
             @endif
