@@ -37,7 +37,7 @@
                                     <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Lokasi</th>
                                     <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Periode</th>
                                     <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                                    <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Jumlah Relawan</th>
+                                    <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Relawan (Terdaftar/Kuota)</th>
                                     <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
@@ -60,7 +60,11 @@
                                             </select>
                                         </form>
                                     </td>
-                                    <td class="py-2 px-4 border-b border-gray-200">{{ $misi->relawan->count() }}</td>
+                                    <td class="py-2 px-4 border-b border-gray-200">
+                                        <span class="{{ $misi->kuota_relawan > 0 && $misi->relawan->count() >= $misi->kuota_relawan ? 'text-red-600 font-semibold' : '' }}">
+                                            {{ $misi->relawan->count() }} / {{ $misi->kuota_relawan > 0 ? $misi->kuota_relawan : '∞' }}
+                                        </span>
+                                    </td>
                                     <td class="py-2 px-4 border-b border-gray-200">
                                         <div class="flex space-x-2">
                                             <a href="{{ route('misi.admin.show', $misi->id) }}" class="text-blue-500 hover:text-blue-700">
