@@ -20,10 +20,15 @@ class DonationController extends Controller
      */
     public function index()
     {
-        $donations = Donation::with('user', 'paymentProof')
-            ->latest()
-            ->paginate(10);
-            
+        if (auth()->check()) {
+            // Both admin and user: show all donations (no user_id filter)
+            $donations = Donation::with('user', 'paymentProof')
+                ->latest()
+                ->paginate(10);
+        } else {
+            // Guest: show nothing
+            $donations = collect([]);
+        }
         return view('donations.index', compact('donations'));
     }
 
@@ -231,5 +236,29 @@ class DonationController extends Controller
             ->orWhere('status', 'distributed')
             ->latest()->take(10)->get();
         return view('donations.dashboard', compact('totalAmount', 'totalDonations', 'recentDonations'));
+    }
+
+    public function updateStatus(Request $request, Donation $donation)
+    {
+        if (!auth()->user() || !auth()->user()->isAdmin()) {
+            abort(403);
+        }
+        $validated = $request->validate([
+            'status' => 'required|in:pending,confirmed,failed,distributed',
+            'comment' => 'nullable|string|max:1000',
+        ]);
+        $donation->update(['status' => $validated['status']]);
+        // Log status change
+        \App\Models\DonationStatusHistory::create([
+            'donation_id' => $donation->id,
+            'status' => $validated['status'],
+            'changed_by' => auth()->id(),
+            'comment' => $validated['comment'] ?? null,
+        ]);
+        // Send notification to user
+        if ($donation->user) {
+            $donation->user->notify(new \App\Notifications\DonationStatusUpdated($donation, $validated['comment'] ?? null));
+        }
+        return redirect()->back()->with('success', 'Status donasi berhasil diperbarui.');
     }
 }

@@ -169,7 +169,7 @@
                     <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                     Update Status Donasi
                 </h3>
-                <form action="{{ route('admin.donations.updateStatus', $donation->id) }}" method="POST" class="mb-6 flex flex-col md:flex-row md:items-end md:space-x-4">
+                <form id="statusUpdateForm" action="{{ route('admin.donations.updateStatus', $donation->id) }}" method="POST" class="mb-6 flex flex-col md:flex-row md:items-end md:space-x-4" @submit.prevent="showModal = true">
                     @csrf
                     <div class="mb-4 md:mb-0 flex-1">
                         <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
@@ -179,21 +179,31 @@
                             <option value="failed" {{ $donation->status === 'failed' ? 'selected' : '' }}>Gagal</option>
                             <option value="distributed" {{ $donation->status === 'distributed' ? 'selected' : '' }}>Disalurkan</option>
                         </select>
-                        <label for="comment" class="block text-sm font-medium text-gray-700 mt-2">Komentar (opsional)</label>
-                        <textarea name="comment" id="comment" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Tulis komentar untuk perubahan status ini..."></textarea>
                     </div>
                     <div class="flex space-x-2">
                         <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             Update Status
                         </button>
-                        <button type="submit" name="status" value="confirmed" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            Approve
-                        </button>
-                        <button type="submit" name="status" value="failed" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                            Reject
-                        </button>
                     </div>
                 </form>
+                <div x-data="{ showModal: false }" x-cloak>
+                    <template x-if="showModal">
+                        <div class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                                <h2 class="text-lg font-semibold mb-4">Masukkan Komentar untuk Perubahan Status</h2>
+                                <form id="modalStatusForm" action="{{ route('admin.donations.updateStatus', $donation->id) }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="status" :value="document.getElementById('status').value">
+                                    <textarea name="comment" rows="3" class="w-full border rounded p-2 mb-4" placeholder="Tulis komentar untuk perubahan status ini..."></textarea>
+                                    <div class="flex justify-end space-x-2">
+                                        <button type="button" @click="showModal = false" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
+                                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Kirim</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </template>
+                </div>
             </div>
         </div>
     </div>

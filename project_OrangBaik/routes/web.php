@@ -100,6 +100,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/donations/{donation}/edit', [AdminDonationController::class, 'edit'])->name('donations.edit');
         Route::put('/donations/{donation}', [AdminDonationController::class, 'update'])->name('donations.update');
         Route::delete('/donations/{donation}', [AdminDonationController::class, 'destroy'])->name('donations.destroy');
+        Route::post('/donations/bulk-destroy', [AdminDonationController::class, 'bulkDestroy'])->name('donations.bulkDestroy');
         
         // Admin Relawan Management
         Route::post('/relawan/{id}/update-status', [RelawanController::class, 'updateStatus'])->name('relawan.updateStatus');
@@ -145,3 +146,9 @@ Route::get('/test-email', function () {
         return "Error sending email: " . $e->getMessage();
     }
 });
+
+Route::post('donations/{donation}/update-status', [DonationController::class, 'updateStatus'])->name('donations.updateStatus');
+
+Route::get('/notifications', function () {
+    return 'Notifikasi belum tersedia.';
+})->name('notifications.index');

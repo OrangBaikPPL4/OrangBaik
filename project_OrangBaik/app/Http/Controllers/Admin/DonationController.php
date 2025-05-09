@@ -44,6 +44,11 @@ class DonationController extends Controller
             'comment' => $request->input('comment'),
         ]);
         
+        // Send notification to user
+        if ($donation->user) {
+            $donation->user->notify(new \App\Notifications\DonationStatusUpdated($donation, $validated['comment'] ?? null));
+        }
+        
         return redirect()->back()->with('success', 'Status donasi berhasil diperbarui.');
     }
 
@@ -69,5 +74,12 @@ class DonationController extends Controller
     {
         $donation->delete();
         return redirect()->route('admin.donations.index')->with('success', 'Donasi berhasil dihapus.');
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $ids = explode(',', $request->input('ids'));
+        Donation::whereIn('id', $ids)->delete();
+        return redirect()->back()->with('success', 'Donasi terpilih berhasil dihapus.');
     }
 } 

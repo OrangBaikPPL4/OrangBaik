@@ -32,13 +32,7 @@
                         {{ __('Donasi') }}
                     </x-nav-link>
 
-                    @if(Auth::user()->usertype === 'admin')
-                        <x-nav-link :href="url('/admin/donations')" :active="request()->is('admin/donations*')">
-                            {{ __('Manajemen Donasi (Admin)') }}
-                        </x-nav-link>
-                    @endif
-
-                     <!-- Disaster Report -->
+                    <!-- Disaster Report -->
                     <x-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">
                         {{ __('Laporan Bencana') }}
                         </x-nav-link>
@@ -63,7 +57,6 @@
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
-
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -73,14 +66,25 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <div class="px-4 py-2 border-b border-gray-100">
+                            <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                            <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                            <div class="mt-2">
+                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold
+                                    {{ Auth::user()->usertype === 'admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-green-100 text-green-700' }}">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    {{ Auth::user()->usertype === 'admin' ? 'Admin' : 'User' }}
+                                </span>
+                            </div>
+                        </div>
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profil') }}
                         </x-dropdown-link>
-
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
@@ -126,12 +130,6 @@
             </x-responsive-nav-link>
             
             @if(Auth::user()->usertype === 'admin')
-                <x-responsive-nav-link :href="url('/admin/donations')" :active="request()->is('admin/donations*')">
-                    {{ __('Manajemen Donasi (Admin)') }}
-                </x-responsive-nav-link>
-            @endif
-            
-            @if(Auth::user()->usertype === 'admin')
                 <!-- Responsive Admin Dashboard -->
                 <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
                     {{ __('Admin') }}
@@ -164,16 +162,4 @@
             </div>
         </div>
     </div>
-
-    @if(Auth::check())
-        <!-- Debug info - remove this later -->
-        <div class="bg-gray-100 px-4 py-2">
-            User Type: {{ Auth::user()->usertype }}
-            @if(Auth::user()->usertype === 'admin')
-                (You are an admin)
-            @else
-                (You are not an admin)
-            @endif
-        </div>
-    @endif
 </nav>
