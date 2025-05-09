@@ -15,7 +15,8 @@ class Misi extends Model
         'status',
         'lokasi',
         'tanggal_mulai',
-        'tanggal_selesai'
+        'tanggal_selesai',
+        'image_url'
     ];
     
     public function relawan()

@@ -40,7 +40,7 @@ Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin
 
 // Dashboard khusus user & admin
 Route::get('/dashboard-user', [DashboardUserController::class, 'index'])->middleware(['auth'])->name('dashboard.user');
-Route::get('/dashboard-admin', [DashboardAdminController::class, 'index'])->middleware(['auth', 'admin'])->name('dashboard.admin');
+Route::get('/dashboard-admin', [HomeController::class, 'index'])->name('dashboard.admin');
 
 // Profile User
 Route::middleware('auth')->group(function () {
@@ -54,8 +54,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/request-bantuan', [RequestBantuanController::class, 'index'])->name('request-bantuan.index');
 
     // Relawan
-    Route::resource('relawan', RelawanController::class)->except(['show']);
+    Route::get('/relawan', [RelawanController::class, 'index'])->name('relawan.index');
+    Route::get('/relawan/create', [RelawanController::class, 'create'])->name('relawan.create');
+    Route::post('/relawan', [RelawanController::class, 'store'])->name('relawan.store');
+    Route::get('/relawan/{id}/edit', [RelawanController::class, 'edit'])->name('relawan.edit');
+    Route::put('/relawan/{id}', [RelawanController::class, 'update'])->name('relawan.update');
+    Route::delete('/relawan/{id}', [RelawanController::class, 'destroy'])->name('relawan.destroy');
     Route::get('/relawan/profil', [RelawanController::class, 'show'])->name('relawan.show');
+    Route::get('/relawan/{id}/show', [RelawanController::class, 'show'])->name('relawan.admin.show');
     Route::get('/relawan/misi', [RelawanController::class, 'misiRelawan'])->name('relawan.misi');
 
     // Misi
@@ -92,6 +98,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/misi/{id}', [MisiController::class, 'update'])->name('misi.update');
     Route::delete('/misi/{id}', [MisiController::class, 'destroy'])->name('misi.destroy');
     Route::post('/misi/{id}/update-status', [MisiController::class, 'updateMisiStatus'])->name('misi.updateStatus');
+    Route::get('/misi/{id}/admin-show', [MisiController::class, 'show'])->name('misi.admin.show');
 
     Route::get('/admin/donations', [AdminDonationController::class, 'index'])->name('admin.donations.index');
     Route::get('/admin/donations/{donation}', [AdminDonationController::class, 'show'])->name('admin.donations.show');
