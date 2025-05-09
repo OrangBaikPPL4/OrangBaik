@@ -50,10 +50,21 @@ class MisiController extends Controller
             'lokasi' => 'required',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-            'status' => 'required|in:aktif,dalam proses,selesai'
+            'status' => 'required|in:aktif,dalam proses,selesai',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
         
-        Misi::create($request->all());
+        $data = $request->except('image');
+        
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images/misi'), $imageName);
+            $data['image_url'] = '/images/misi/' . $imageName;
+        }
+        
+        Misi::create($data);
         
         return redirect()->route('misi.index')->with('success', 'Misi bantuan berhasil dibuat!');
     }
@@ -74,6 +85,7 @@ class MisiController extends Controller
         $relawanTersedia = null;
         if (Auth::user()->usertype === 'admin') {
             $relawanTersedia = Relawan::whereNotIn('id', $misi->relawan->pluck('id'))->get();
+            return view('misi.admin-show', compact('misi', 'relawan', 'isJoined', 'relawanTersedia'));
         }
         
         return view('misi.show', compact('misi', 'relawan', 'isJoined', 'relawanTersedia'));
@@ -104,11 +116,27 @@ class MisiController extends Controller
             'lokasi' => 'required',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-            'status' => 'required|in:aktif,dalam proses,selesai'
+            'status' => 'required|in:aktif,dalam proses,selesai',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
         
         $misi = Misi::findOrFail($id);
-        $misi->update($request->all());
+        $data = $request->except('image');
+        
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($misi->image_url && file_exists(public_path($misi->image_url))) {
+                @unlink(public_path($misi->image_url));
+            }
+            
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images/misi'), $imageName);
+            $data['image_url'] = '/images/misi/' . $imageName;
+        }
+        
+        $misi->update($data);
         
         return redirect()->route('misi.index')->with('success', 'Data misi berhasil diperbarui!');
     }

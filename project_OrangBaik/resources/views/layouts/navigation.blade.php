@@ -32,15 +32,25 @@
                         {{ __('Donasi') }}
                     </x-nav-link>
 
+                    <!-- Request Bantuan Link -->
+                    <x-nav-link :href="route('admin.request-bantuan.index')" :active="request()->routeIs('admin.request-bantuan.*')">
+                        {{ __('Request Bantuan') }}
+                    </x-nav-link>
+
+                    <!-- Edukasi Link -->
+                    <x-nav-link :href="route('edukasi.index')" :active="request()->routeIs('edukasi.*')">
+                        {{ __('Edukasi') }}
+                    </x-nav-link>
+
                      <!-- Disaster Report -->
                     <x-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">
                         {{ __('Laporan Bencana') }}
-                        </x-nav-link>
+                    </x-nav-link>
 
                     
                     @if(Auth::user()->usertype === 'admin')
                         <!-- Admin Dashboard -->
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                        <x-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('admin.*')">
                             {{ __('Admin') }}
                         </x-nav-link>
                     @endif
@@ -115,9 +125,24 @@
                 {{ __('Donasi') }}
             </x-responsive-nav-link>
             
+            <!-- Responsive Request Bantuan Link -->
+            <x-responsive-nav-link :href="route('admin.request-bantuan.index')" :active="request()->routeIs('admin.request-bantuan.*')">
+                {{ __('Request Bantuan') }}
+            </x-responsive-nav-link>
+            
+            <!-- Responsive Edukasi Link -->
+            <x-responsive-nav-link :href="route('edukasi.index')" :active="request()->routeIs('edukasi.*')">
+                {{ __('Edukasi') }}
+            </x-responsive-nav-link>
+            
+            <!-- Responsive Disaster Report Link -->
+            <x-responsive-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">
+                {{ __('Laporan Bencana') }}
+            </x-responsive-nav-link>
+            
             @if(Auth::user()->usertype === 'admin')
                 <!-- Responsive Admin Dashboard -->
-                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                <x-responsive-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('admin.*')">
                     {{ __('Admin') }}
                 </x-responsive-nav-link>
             @endif

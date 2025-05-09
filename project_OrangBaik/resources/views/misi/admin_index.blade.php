@@ -5,6 +5,7 @@
         </h2>
     </x-slot>
 
+    @section('content')
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -62,7 +63,7 @@
                                     <td class="py-2 px-4 border-b border-gray-200">{{ $misi->relawan->count() }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200">
                                         <div class="flex space-x-2">
-                                            <a href="{{ route('misi.show', $misi->id) }}" class="text-blue-500 hover:text-blue-700">
+                                            <a href="{{ route('misi.admin.show', $misi->id) }}" class="text-blue-500 hover:text-blue-700">
                                                 Detail
                                             </a>
                                             <a href="{{ route('misi.edit', $misi->id) }}" class="text-green-500 hover:text-green-700">
@@ -92,4 +93,5 @@
             </div>
         </div>
     </div>
+    @endsection
 </x-app-layout> 

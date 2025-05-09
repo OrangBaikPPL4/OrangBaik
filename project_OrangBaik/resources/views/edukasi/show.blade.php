@@ -1,4 +1,11 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Detail Edukasi') }}
+        </h2>
+    </x-slot>
+
+    @section('content')
     <div class="max-w-6xl mx-auto py-10 px-6 space-y-8">
         {{-- Header --}}
     <div class="{{ $edukasi->image ? 'grid md:grid-cols-2 gap-6 items-start' : 'flex flex-col md:flex-row gap-6' }}">
@@ -88,5 +95,5 @@
     </div>
 </div>
 
-
+    @endsection
 </x-app-layout>

@@ -5,6 +5,7 @@
         </h2>
     </x-slot>
 
+    @section('content')
     <div class="py-8">
         <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8">
             <form action="{{ route('edukasi.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
@@ -75,4 +76,5 @@
             </form>
         </div>
     </div>
+    @endsection
 </x-app-layout>

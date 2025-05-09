@@ -11,24 +11,52 @@ class RelawanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Relawan::query();
-
-        // Handle search
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('nama', 'like', '%' . $search . '%')
-                  ->orWhere('peran', 'like', '%' . $search . '%')
-                  ->orWhere('lokasi', 'like', '%' . $search . '%');
-            });
+        // For admins - show all volunteers with search functionality
+        if (Auth::user()->usertype === 'admin') {
+            try {
+                $query = Relawan::query();
+                
+                // Handle search
+                if ($request->has('search')) {
+                    $search = $request->search;
+                    $query->where(function($q) use ($search) {
+                        $q->where('nama', 'like', '%' . $search . '%')
+                          ->orWhere('peran', 'like', '%' . $search . '%')
+                          ->orWhere('lokasi', 'like', '%' . $search . '%');
+                    });
+                }
+                
+                $relawans = $query->get();
+                return view('relawan.index', compact('relawans'));
+            } catch (\Exception $e) {
+                // Tangkap error jika ada
+                return view('relawan.index', [
+                    'relawans' => collect(),
+                    'error' => $e->getMessage()
+                ]);
+            }
         }
-
-        $relawans = $query->get();
-        return view('relawan.index', compact('relawans'));
+        
+        // For regular users - redirect to their own volunteer profile
+        $relawan = Relawan::where('user_id', Auth::id())->first();
+        if ($relawan) {
+            return redirect()->route('relawan.show');
+        } else {
+            // If user doesn't have a volunteer profile yet, show the index with empty data
+            $relawans = collect();
+            return view('relawan.index', compact('relawans'));
+        }
     }
 
     public function create()
     {
+        // Check if user already has a volunteer profile
+        $existingRelawan = Relawan::where('user_id', Auth::id())->first();
+        
+        if ($existingRelawan) {
+            return redirect()->route('relawan.show')->with('error', 'Anda sudah terdaftar sebagai relawan!');
+        }
+        
         return view('relawan.create');
     }
 
@@ -50,8 +78,15 @@ class RelawanController extends Controller
         return redirect()->route('relawan.index')->with('success', 'Relawan berhasil ditambahkan!');
     }
     
-    public function show()
+    public function show($id = null)
     {
+        // If admin is viewing a specific relawan
+        if (Auth::user()->usertype === 'admin' && $id) {
+            $relawan = Relawan::with('misi')->findOrFail($id);
+            $misiRelawan = $relawan->misi;
+            return view('relawan.admin-show', compact('relawan', 'misiRelawan'));
+        }
+        
         // Show individual relawan profile for the logged in user
         $relawan = Relawan::with('misi')->where('user_id', Auth::id())->firstOrFail();
         
@@ -70,7 +105,12 @@ class RelawanController extends Controller
             return redirect()->route('relawan.index')->with('error', 'Anda tidak memiliki izin!');
         }
         
-        return view('relawan.edit', compact('relawan'));
+        // Use different view for admin and regular users
+        if (Auth::user()->usertype === 'admin') {
+            return view('relawan.admin-edit', compact('relawan'));
+        } else {
+            return view('relawan.edit', compact('relawan'));
+        }
     }
     
     public function update(Request $request, $id)
