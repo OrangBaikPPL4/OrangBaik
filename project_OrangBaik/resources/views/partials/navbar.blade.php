@@ -121,18 +121,18 @@
 </style>
 <div class="navbar-custom">
   <div class="navbar-logo">
-    <a href="/" style="display:flex; align-items:center; text-decoration:none; color:inherit;">
+    <a href="{{ route('landing') }}" style="display:flex; align-items:center; text-decoration:none; color:inherit;">
       <img src="/images/orangbaiklogo.png" alt="OrangBaik" style="height:38px; width:auto; margin-right:7px;">
       OrangBaik
     </a>
   </div>
   <div class="navbar-menu">
-    <a href="/">Home</a>
-    <a href="/#aksi">Aksi</a>
-    <a href="/#fitur">Fitur</a>
-    <a href="/#berita">Berita</a>
-    <a href="/#testimoni">Testimoni</a>
-    <a href="/#kontak">Kontak</a>
+    <a href="{{ route('landing') }}">Home</a>
+    <a href="{{ route('landing') }}#aksi">Aksi</a>
+    <a href="{{ route('landing') }}#fitur">Fitur</a>
+    <a href="{{ route('landing') }}#berita">Berita</a>
+    <a href="{{ route('landing') }}#testimoni">Testimoni</a>
+    <a href="{{ route('landing') }}#kontak">Kontak</a>
   </div>
   <div class="navbar-actions" style="position:relative;">
   @auth

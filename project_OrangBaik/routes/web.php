@@ -23,7 +23,7 @@ use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 // Halaman Welcome (Guest)
 Route::get('/', function () {
     return view('landing');
-});
+})->name('landing');
 
 // Dashboard utama (menampilkan edukasi terbaru)
 Route::get('/dashboard', function () {
