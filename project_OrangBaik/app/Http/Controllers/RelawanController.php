@@ -73,9 +73,10 @@ class RelawanController extends Controller
         // Create new profile
         $relawan = new Relawan($request->all());
         $relawan->user_id = Auth::id();
+        $relawan->verification_status = 'pending';
         $relawan->save();
 
-        return redirect()->route('relawan.index')->with('success', 'Relawan berhasil ditambahkan!');
+        return redirect()->route('relawan.index')->with('success', 'Pendaftaran relawan berhasil dikirim dan sedang menunggu verifikasi admin!');
     }
     
     public function show($id = null)
@@ -143,6 +144,19 @@ class RelawanController extends Controller
         }
         
         $relawan = Relawan::findOrFail($id);
+        
+        // Jika request berisi verification_status, update status verifikasi
+        if ($request->has('verification_status')) {
+            $relawan->update(['verification_status' => $request->verification_status]);
+            
+            $message = $request->verification_status == 'approved' 
+                ? 'Pendaftaran relawan berhasil disetujui!' 
+                : 'Pendaftaran relawan ditolak!';
+                
+            return redirect()->back()->with('success', $message);
+        }
+        
+        // Jika tidak, update status biasa
         $relawan->update(['status' => $request->status]);
         
         return redirect()->back()->with('success', 'Status relawan diperbarui!');

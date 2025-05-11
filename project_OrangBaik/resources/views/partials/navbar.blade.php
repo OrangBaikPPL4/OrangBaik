@@ -121,26 +121,42 @@
 </style>
 <div class="navbar-custom">
   <div class="navbar-logo">
-    <img src="/images/orangbaiklogo.png" alt="OrangBaik" style="height:38px; width:auto; margin-right:7px;">
-    OrangBaik
+    <a href="{{ route('landing') }}" style="display:flex; align-items:center; text-decoration:none; color:inherit;">
+      <img src="/images/orangbaiklogo.png" alt="OrangBaik" style="height:38px; width:auto; margin-right:7px;">
+      OrangBaik
+    </a>
   </div>
   <div class="navbar-menu">
-    <a href="#">Home</a>
-    <a href="#aksi">Aksi</a>
-    <a href="#fitur">Fitur</a>
-    <a href="#berita">Berita</a>
-    <a href="#testimoni">Testimoni</a>
-    <a href="#kontak">Kontak</a>
+    <a href="{{ route('landing') }}">Home</a>
+    <a href="{{ route('landing') }}#aksi">Aksi</a>
+    <a href="{{ route('landing') }}#fitur">Fitur</a>
+    <a href="{{ route('landing') }}#berita">Berita</a>
+    <a href="{{ route('landing') }}#testimoni">Testimoni</a>
+    <a href="{{ route('landing') }}#kontak">Kontak</a>
   </div>
   <div class="navbar-actions" style="position:relative;">
-  <button id="accountDropdownBtn" onclick="toggleAccountDropdown(event)" style="border:2px solid #1976D2; background:rgba(255,255,255,0.68); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); color:#1976D2; font-weight:700; border-radius:8px; padding:7px 18px; font-size:1.04rem; display:flex; align-items:center; gap:7px; cursor:pointer;">
-    Masuk / Buat Akun
-    <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" stroke="#1976D2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </button>
-  <div id="accountDropdownMenu" style="display:none; position:absolute; top:48px; right:0; min-width:160px; background:#fff; border-radius:10px; box-shadow:0 6px 32px rgba(30,40,60,0.14); padding:12px 0; z-index:200;">
-    <a href="/login" style="display:block; padding:12px 20px; color:#222; font-weight:500; text-decoration:none; transition:background 0.13s;">Masuk</a>
-    <a href="/register" style="display:block; padding:12px 20px; color:#222; font-weight:500; text-decoration:none; transition:background 0.13s;">Buat Akun</a>
-  </div>
+  @auth
+    <button id="accountDropdownBtn" onclick="toggleAccountDropdown(event)" style="border:2px solid #1976D2; background:rgba(255,255,255,0.68); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); color:#1976D2; font-weight:700; border-radius:8px; padding:7px 18px; font-size:1.04rem; display:flex; align-items:center; gap:7px; cursor:pointer;">
+      {{ Auth::user()->name }}
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" stroke="#1976D2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div id="accountDropdownMenu" style="display:none; position:absolute; top:48px; right:0; min-width:160px; background:#fff; border-radius:10px; box-shadow:0 6px 32px rgba(30,40,60,0.14); padding:12px 0; z-index:200;">
+      <a href="{{ route('dashboard') }}" style="display:block; padding:12px 20px; color:#222; font-weight:500; text-decoration:none; transition:background 0.13s;">Dashboard</a>
+      <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" style="display:block; padding:12px 20px; color:#222; font-weight:500; text-decoration:none; transition:background 0.13s;">Keluar</a>
+      </form>
+    </div>
+  @else
+    <button id="accountDropdownBtn" onclick="toggleAccountDropdown(event)" style="border:2px solid #1976D2; background:rgba(255,255,255,0.68); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); color:#1976D2; font-weight:700; border-radius:8px; padding:7px 18px; font-size:1.04rem; display:flex; align-items:center; gap:7px; cursor:pointer;">
+      Masuk / Buat Akun
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" stroke="#1976D2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div id="accountDropdownMenu" style="display:none; position:absolute; top:48px; right:0; min-width:160px; background:#fff; border-radius:10px; box-shadow:0 6px 32px rgba(30,40,60,0.14); padding:12px 0; z-index:200;">
+      <a href="{{ route('login') }}" style="display:block; padding:12px 20px; color:#222; font-weight:500; text-decoration:none; transition:background 0.13s;">Masuk</a>
+      <a href="{{ route('register') }}" style="display:block; padding:12px 20px; color:#222; font-weight:500; text-decoration:none; transition:background 0.13s;">Buat Akun</a>
+    </div>
+  @endauth
 </div>
 <script>
 function toggleAccountDropdown(e) {

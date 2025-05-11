@@ -38,7 +38,7 @@
                     </x-nav-link>
 
                     <!-- Edukasi Link -->
-                    <x-nav-link :href="route('edukasi.index')" :active="request()->routeIs('edukasi.*')">
+                    <x-nav-link :href="route('edukasi.menu')" :active="request()->routeIs('edukasi.*')">
                         {{ __('Edukasi') }}
                     </x-nav-link>
 

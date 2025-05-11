@@ -165,9 +165,20 @@ class MisiController extends Controller
             return redirect()->route('relawan.create')->with('error', 'Anda harus mendaftar sebagai relawan terlebih dahulu!');
         }
         
+        // Check if the volunteer is verified
+        if ($relawan->verification_status !== 'approved') {
+            return back()->with('error', 'Pendaftaran relawan Anda masih menunggu verifikasi atau ditolak. Anda hanya dapat bergabung dengan misi setelah pendaftaran disetujui.');
+        }
+        
         // Check if already joined
         if ($relawan->misi->contains($id)) {
             return back()->with('error', 'Anda sudah bergabung dengan misi ini!');
+        }
+        
+        // Check if mission has reached its volunteer quota
+        $currentVolunteers = $misi->relawan->count();
+        if ($misi->kuota_relawan > 0 && $currentVolunteers >= $misi->kuota_relawan) {
+            return back()->with('error', 'Kuota relawan untuk misi ini sudah penuh!');
         }
         
         // Join the mission
@@ -248,6 +259,12 @@ class MisiController extends Controller
         // Check if volunteer is already in the mission
         if ($misi->relawan->contains($relawan->id)) {
             return redirect()->back()->with('error', 'Relawan sudah bergabung dalam misi ini!');
+        }
+        
+        // Check if mission has reached its volunteer quota
+        $currentVolunteers = $misi->relawan->count();
+        if ($misi->kuota_relawan > 0 && $currentVolunteers >= $misi->kuota_relawan) {
+            return redirect()->back()->with('error', 'Kuota relawan untuk misi ini sudah penuh!');
         }
 
         // Add volunteer to mission

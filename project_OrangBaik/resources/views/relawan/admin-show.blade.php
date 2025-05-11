@@ -35,9 +35,45 @@
                                     <p><strong>Lokasi:</strong> {{ $relawan->lokasi ?: 'Belum diisi' }}</p>
                                     <p><strong>Peran:</strong> {{ $relawan->peran }}</p>
                                     <p><strong>Status:</strong> {{ $relawan->status }}</p>
+                                    <p><strong>Status Verifikasi:</strong> 
+                                        @if($relawan->verification_status == 'pending')
+                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">Menunggu Verifikasi</span>
+                                        @elseif($relawan->verification_status == 'approved')
+                                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">Disetujui</span>
+                                        @elseif($relawan->verification_status == 'rejected')
+                                            <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold">Ditolak</span>
+                                        @endif
+                                    </p>
                                 </div>
                             </div>
                             <div class="mt-4">
+                                <!-- Tombol Verifikasi Relawan -->
+                                @if($relawan->verification_status == 'pending')
+                                <div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <h4 class="font-semibold text-yellow-800 mb-2">Permintaan Pendaftaran Relawan</h4>
+                                    <p class="text-sm text-yellow-700 mb-3">Relawan ini menunggu persetujuan Anda. Silakan tinjau data di atas dan berikan keputusan.</p>
+                                    
+                                    <div class="flex space-x-2">
+                                        <form method="POST" action="{{ route('relawan.updateStatus', $relawan->id) }}">
+                                            @csrf
+                                            <input type="hidden" name="verification_status" value="approved">
+                                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                                Setujui Pendaftaran
+                                            </button>
+                                        </form>
+                                        
+                                        <form method="POST" action="{{ route('relawan.updateStatus', $relawan->id) }}">
+                                            @csrf
+                                            <input type="hidden" name="verification_status" value="rejected">
+                                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                                Tolak Pendaftaran
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                @endif
+                                
+                                <!-- Tombol Aksi Lainnya -->
                                 <a href="{{ route('relawan.edit', $relawan->id) }}" class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                     Edit Profil
                                 </a>

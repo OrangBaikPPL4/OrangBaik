@@ -23,7 +23,7 @@ use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 // Halaman Welcome (Guest)
 Route::get('/', function () {
     return view('landing');
-});
+})->name('landing');
 
 // Dashboard utama (menampilkan edukasi terbaru)
 Route::get('/dashboard', function () {
@@ -78,12 +78,20 @@ Route::middleware('auth')->group(function () {
     Route::post('donations/{donation}/reject', [DonationController::class, 'reject'])->name('donations.reject');
 });
 
-// Edukasi publik & admin
-Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
-Route::get('/edukasi/{edukasi}', [EdukasiController::class, 'show'])->name('edukasi.show');
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::resource('/edukasi', EdukasiController::class)->except(['show']);
+// Manajemen konten edukasi (diluar dashboard)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/manajemen-edukasi', [EdukasiController::class, 'menu'])->name('edukasi.menu');
+    Route::get('/konten-edukasi', [EdukasiController::class, 'adminIndex'])->name('edukasi.admin');
+    Route::get('/edukasi/create', [EdukasiController::class, 'create'])->name('edukasi.create');
+    Route::post('/edukasi', [EdukasiController::class, 'store'])->name('edukasi.store');
+    Route::get('/edukasi/{edukasi}/edit', [EdukasiController::class, 'edit'])->name('edukasi.edit');
+    Route::put('/edukasi/{edukasi}', [EdukasiController::class, 'update'])->name('edukasi.update');
+    Route::delete('/edukasi/{edukasi}', [EdukasiController::class, 'destroy'])->name('edukasi.destroy');
 });
+
+// Edukasi publik
+Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
+Route::get('/edukasi/{edukasi}', [EdukasiController::class, 'show'])->name('edukasi.show')->where('edukasi', '[0-9]+');
 
 // Admin tambahan
 Route::middleware(['auth', 'admin'])->group(function () {

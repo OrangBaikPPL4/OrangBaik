@@ -69,7 +69,13 @@
                                                 </select>
                                             </form>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $req->created_at->format('d M Y H:i') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            @if($req->status == 'diproses' || $req->status == 'selesai')
+                                                {{ $req->updated_at->setTimezone('Asia/Jakarta')->format('d M Y H:i') }} WIB
+                                            @else
+                                                {{ $req->created_at->setTimezone('Asia/Jakarta')->format('d M Y H:i') }} WIB
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
