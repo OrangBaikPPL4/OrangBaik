@@ -7,9 +7,6 @@ use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\EdukasiController;
-use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RelawanController;
 use App\Http\Controllers\MisiController;
 
@@ -22,25 +19,20 @@ use App\Models\Donation;
 
 use App\Models\Edukasi;
 
->>>>>>>>> Temporary merge branch 2
 Route::get('/', function () {
     return view('landing');
 });
 
-<<<<<<<<< Temporary merge branch 1
 // Routing untuk user yang sudah login
-=========
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
->>>>>>>>> Temporary merge branch 2
 Route::middleware('auth')->group(function () {
     // Profile User
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-<<<<<<<<< Temporary merge branch 1
 
     // Dashboard User
     Route::get('/dashboard-user', function () {
@@ -57,7 +49,6 @@ Route::middleware('auth')->group(function () {
 
     // Menampilkan Riwayat Permintaan Bantuan Korban (PBI#32)
     Route::get('/request-bantuan', [RequestBantuanController::class, 'index'])->name('request-bantuan.index');
-=========
     
 
     Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
@@ -139,7 +130,6 @@ Route::get('/test-email', function () {
     } catch (\Exception $e) {
         return "Error: " . $e->getMessage();
     }
->>>>>>>>> Temporary merge branch 2
 });
 
 // Routing untuk Admin
@@ -157,7 +147,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // Authentication routes
 require __DIR__.'/auth.php';
 
-<<<<<<<<< Temporary merge branch 1
 // Login Admin Form
 Route::get('/admin/login', [\App\Http\Controllers\Auth\AdminLoginController::class, 'showLoginForm'])->name('admin.login');
 
@@ -172,11 +161,9 @@ Route::get('/dashboard-user', [DashboardUserController::class, 'index'])->middle
 use App\Http\Controllers\DashboardAdminController;
 
 Route::get('/dashboard-admin', [DashboardAdminController::class, 'index'])->middleware(['auth', 'admin']); 
-=========
 
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('/edukasi', EdukasiController::class)->except(['show']);
 });
 
->>>>>>>>> Temporary merge branch 2
