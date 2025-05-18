@@ -17,6 +17,7 @@ use App\Http\Controllers\DisasterReportController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DashboardAdminController;
+use App\Http\Controllers\TestimoniController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 
@@ -76,6 +77,10 @@ Route::middleware('auth')->group(function () {
     Route::post('donations/{donation}/upload-proof', [DonationController::class, 'uploadProof'])->name('donations.upload-proof');
     Route::post('donations/{donation}/confirm', [DonationController::class, 'confirm'])->name('donations.confirm');
     Route::post('donations/{donation}/reject', [DonationController::class, 'reject'])->name('donations.reject');
+
+    // Testimoni
+    Route::get('/testimoni/create', [TestimoniController::class, 'create'])->name('testimoni.create');
+    Route::post('/testimoni', [TestimoniController::class, 'store'])->name('testimoni.store');
 });
 
 // Manajemen konten edukasi (diluar dashboard)
@@ -92,6 +97,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // Edukasi publik
 Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
 Route::get('/edukasi/{edukasi}', [EdukasiController::class, 'show'])->name('edukasi.show')->where('edukasi', '[0-9]+');
+
+// Testimoni publik
+Route::get('/testimoni', [TestimoniController::class, 'index'])->name('testimoni.index');
 
 // Admin tambahan
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -111,6 +119,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/donations', [AdminDonationController::class, 'index'])->name('admin.donations.index');
     Route::get('/admin/donations/{donation}', [AdminDonationController::class, 'show'])->name('admin.donations.show');
     Route::post('/admin/donations/{donation}/status', [AdminDonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
+
+    Route::get('/admin/testimoni/moderasi', [TestimoniController::class, 'moderation'])->name('testimoni.moderation');
+    Route::post('/admin/testimoni/{id}/approve', [TestimoniController::class, 'approve'])->name('testimoni.approve');
+    Route::post('/admin/testimoni/{id}/reject', [TestimoniController::class, 'reject'])->name('testimoni.reject');
 });
 
 // Donasi umum
