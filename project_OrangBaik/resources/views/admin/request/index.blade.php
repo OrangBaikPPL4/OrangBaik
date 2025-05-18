@@ -1,78 +1,89 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Data Permintaan Bantuan - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container py-5">
-        <h2>Semua Permintaan Bantuan Korban</h2>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Data Permintaan Bantuan') }}
+        </h2>
+    </x-slot>
 
-        <!-- Filter berdasarkan jenis kebutuhan -->
-        <form method="GET" class="mb-3">
-            <div class="row">
-                <div class="col-md-4">
-                    <select name="jenis_kebutuhan" class="form-select" onchange="this.form.submit()">
-                        <option value="">-- Semua Jenis Kebutuhan --</option>
-                        <option value="makanan" {{ request('jenis_kebutuhan') == 'makanan' ? 'selected' : '' }}>Makanan</option>
-                        <option value="obat" {{ request('jenis_kebutuhan') == 'obat' ? 'selected' : '' }}>Obat</option>
-                        <option value="pakaian" {{ request('jenis_kebutuhan') == 'pakaian' ? 'selected' : '' }}>Pakaian</option>
-                    </select>
-                </div>
+    @section('content')
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <h2 class="text-lg font-semibold mb-4">Semua Permintaan Bantuan Korban</h2>
+
+                <!-- Filter berdasarkan jenis kebutuhan -->
+                <form method="GET" class="mb-6">
+                    <div class="flex items-center">
+                        <label for="jenis_kebutuhan" class="mr-2 text-sm font-medium text-gray-700">Filter:</label>
+                        <select name="jenis_kebutuhan" id="jenis_kebutuhan" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" onchange="this.form.submit()">
+                            <option value="">-- Semua Jenis Kebutuhan --</option>
+                            <option value="makanan" {{ request('jenis_kebutuhan') == 'makanan' ? 'selected' : '' }}>Makanan</option>
+                            <option value="obat" {{ request('jenis_kebutuhan') == 'obat' ? 'selected' : '' }}>Obat</option>
+                            <option value="pakaian" {{ request('jenis_kebutuhan') == 'pakaian' ? 'selected' : '' }}>Pakaian</option>
+                        </select>
+                    </div>
+                </form>
+
+                @if ($requests->isEmpty())
+                    <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+                        <p>Belum ada permintaan bantuan.</p>
+                    </div>
+                @else
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Korban</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis Kebutuhan</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Update Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach ($requests as $i => $req)
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $i + 1 }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $req->user->name ?? 'Tidak diketahui' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($req->jenis_kebutuhan) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $req->deskripsi ?? '-' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ match($req->status) {
+                                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                                'diproses' => 'bg-blue-100 text-blue-800',
+                                                'selesai' => 'bg-green-100 text-green-800',
+                                                'ditolak' => 'bg-red-100 text-red-800',
+                                                default => 'bg-gray-100 text-gray-800'
+                                            } }}">{{ ucfirst($req->status) }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <form action="{{ route('admin.request-bantuan.update-status', $req->id) }}" method="POST">
+                                                @csrf
+                                                <select name="status" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm" onchange="this.form.submit()">
+                                                    <option value="pending" {{ $req->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                                    <option value="diproses" {{ $req->status == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                                                    <option value="selesai" {{ $req->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                                    <option value="ditolak" {{ $req->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                                                </select>
+                                            </form>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            @if($req->status == 'diproses' || $req->status == 'selesai')
+                                                {{ $req->updated_at->setTimezone('Asia/Jakarta')->format('d M Y H:i') }} WIB
+                                            @else
+                                                {{ $req->created_at->setTimezone('Asia/Jakarta')->format('d M Y H:i') }} WIB
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
             </div>
-        </form>
-
-        @if ($requests->isEmpty())
-            <div class="alert alert-info">Belum ada permintaan.</div>
-        @else
-            <table class="table table-bordered table-hover bg-white mt-3">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Nama Korban</th>
-                        <th>Jenis Kebutuhan</th>
-                        <th>Deskripsi</th>
-                        <th>Status</th>
-                        <th>Update Status</th>
-                        <th>Tanggal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($requests as $i => $req)
-                        <tr>
-                            <td>{{ $i + 1 }}</td>
-                            <td>{{ $req->user->name ?? 'Tidak diketahui' }}</td>
-                            <td>{{ ucfirst($req->jenis_kebutuhan) }}</td>
-                            <td>{{ $req->deskripsi ?? '-' }}</td>
-                            <td>
-                                <span class="badge bg-{{ match($req->status) {
-                                    'pending' => 'secondary',
-                                    'diproses' => 'warning',
-                                    'selesai' => 'success',
-                                    'ditolak' => 'danger',
-                                    default => 'dark'
-                                } }}">{{ ucfirst($req->status) }}</span>
-                            </td>
-                            <td>
-                                <form action="{{ route('admin.request-bantuan.update-status', $req->id) }}" method="POST">
-                                    @csrf
-                                    <div class="input-group">
-                                        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-                                            <option value="pending" {{ $req->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="diproses" {{ $req->status == 'diproses' ? 'selected' : '' }}>Diproses</option>
-                                            <option value="selesai" {{ $req->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                                            <option value="ditolak" {{ $req->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
-                                        </select>
-                                    </div>
-                                </form>
-                            </td>
-                            <td>{{ $req->created_at->format('d M Y H:i') }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        @endif
+        </div>
     </div>
-</body>
-</html>
+    @endsection
+</x-app-layout>

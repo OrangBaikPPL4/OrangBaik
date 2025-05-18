@@ -30,9 +30,35 @@ class EdukasiController extends Controller
         }
     
         return view('edukasi.index', [
-            'edukasi' => $query->get(),
+            'edukasi' => $query->orderBy('created_at', 'desc')->get(),
             'selectedCategory' => $request->category ?? '',
-        ]);    }
+        ]);
+    }
+    
+    /**
+     * Display a listing of the resource for admin management.
+     */
+    public function adminIndex(Request $request)
+    {
+        $query = Edukasi::query();
+
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
+    
+        return view('edukasi.admin-index', [
+            'edukasi' => $query->orderBy('created_at', 'desc')->get(),
+            'selectedCategory' => $request->category ?? '',
+        ]);
+    }
+    
+    /**
+     * Display the menu for edukasi management.
+     */
+    public function menu()
+    {
+        return view('edukasi.menu');
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -51,8 +77,8 @@ class EdukasiController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required',
             'category' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'video_file' => 'nullable|mimes:mp4,mov,avi|max:10000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
+            'video_file' => 'nullable|mimes:mp4,mov,avi|max:1000000',
             'video_link' => 'nullable|url',
         ]);
 
@@ -75,11 +101,12 @@ class EdukasiController extends Controller
     {
     $query = Edukasi::where('id', '!=', $edukasi->id);
 
-    if (request()->has('category') && request('category') !== '') {
+    if (filled(request('category'))) {
         $query->where('category', request('category'));
     }
+    
 
-    $kontenLain = $query->latest()->take(6)->get();
+    $kontenLain = $query->orderBy('created_at', 'desc')->take(9)->get();
 
     return view('edukasi.show', compact('edukasi', 'kontenLain'));
     }
@@ -102,7 +129,7 @@ class EdukasiController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required',
             'category' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
             'video_file' => 'nullable|mimes:mp4,mov,avi|max:1000000',
             'video_link' => 'nullable|url',
         ]);

@@ -13,9 +13,11 @@ class Misi extends Model
         'nama_misi',
         'deskripsi',
         'status',
+        'kuota_relawan',
         'lokasi',
         'tanggal_mulai',
-        'tanggal_selesai'
+        'tanggal_selesai',
+        'image_url'
     ];
     
     public function relawan()

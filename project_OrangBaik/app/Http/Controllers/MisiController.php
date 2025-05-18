@@ -50,10 +50,21 @@ class MisiController extends Controller
             'lokasi' => 'required',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-            'status' => 'required|in:aktif,dalam proses,selesai'
+            'status' => 'required|in:aktif,dalam proses,selesai',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
         
-        Misi::create($request->all());
+        $data = $request->except('image');
+        
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images/misi'), $imageName);
+            $data['image_url'] = '/images/misi/' . $imageName;
+        }
+        
+        Misi::create($data);
         
         return redirect()->route('misi.index')->with('success', 'Misi bantuan berhasil dibuat!');
     }
@@ -74,6 +85,7 @@ class MisiController extends Controller
         $relawanTersedia = null;
         if (Auth::user()->usertype === 'admin') {
             $relawanTersedia = Relawan::whereNotIn('id', $misi->relawan->pluck('id'))->get();
+            return view('misi.admin-show', compact('misi', 'relawan', 'isJoined', 'relawanTersedia'));
         }
         
         return view('misi.show', compact('misi', 'relawan', 'isJoined', 'relawanTersedia'));
@@ -104,11 +116,27 @@ class MisiController extends Controller
             'lokasi' => 'required',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-            'status' => 'required|in:aktif,dalam proses,selesai'
+            'status' => 'required|in:aktif,dalam proses,selesai',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
         
         $misi = Misi::findOrFail($id);
-        $misi->update($request->all());
+        $data = $request->except('image');
+        
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($misi->image_url && file_exists(public_path($misi->image_url))) {
+                @unlink(public_path($misi->image_url));
+            }
+            
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images/misi'), $imageName);
+            $data['image_url'] = '/images/misi/' . $imageName;
+        }
+        
+        $misi->update($data);
         
         return redirect()->route('misi.index')->with('success', 'Data misi berhasil diperbarui!');
     }
@@ -137,9 +165,20 @@ class MisiController extends Controller
             return redirect()->route('relawan.create')->with('error', 'Anda harus mendaftar sebagai relawan terlebih dahulu!');
         }
         
+        // Check if the volunteer is verified
+        if ($relawan->verification_status !== 'approved') {
+            return back()->with('error', 'Pendaftaran relawan Anda masih menunggu verifikasi atau ditolak. Anda hanya dapat bergabung dengan misi setelah pendaftaran disetujui.');
+        }
+        
         // Check if already joined
         if ($relawan->misi->contains($id)) {
             return back()->with('error', 'Anda sudah bergabung dengan misi ini!');
+        }
+        
+        // Check if mission has reached its volunteer quota
+        $currentVolunteers = $misi->relawan->count();
+        if ($misi->kuota_relawan > 0 && $currentVolunteers >= $misi->kuota_relawan) {
+            return back()->with('error', 'Kuota relawan untuk misi ini sudah penuh!');
         }
         
         // Join the mission
@@ -220,6 +259,12 @@ class MisiController extends Controller
         // Check if volunteer is already in the mission
         if ($misi->relawan->contains($relawan->id)) {
             return redirect()->back()->with('error', 'Relawan sudah bergabung dalam misi ini!');
+        }
+        
+        // Check if mission has reached its volunteer quota
+        $currentVolunteers = $misi->relawan->count();
+        if ($misi->kuota_relawan > 0 && $currentVolunteers >= $misi->kuota_relawan) {
+            return redirect()->back()->with('error', 'Kuota relawan untuk misi ini sudah penuh!');
         }
 
         // Add volunteer to mission
