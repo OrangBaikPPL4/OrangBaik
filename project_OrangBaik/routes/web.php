@@ -19,6 +19,8 @@ use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
+use App\Http\Controllers\Admin\DisasterReportController as AdminDisasterReportController;
+
 
 // Halaman Welcome (Guest)
 Route::get('/', function () {
@@ -111,6 +113,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/donations', [AdminDonationController::class, 'index'])->name('admin.donations.index');
     Route::get('/admin/donations/{donation}', [AdminDonationController::class, 'show'])->name('admin.donations.show');
     Route::post('/admin/donations/{donation}/status', [AdminDonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
+    Route::get('/admin/disaster-reports', [AdminDisasterReportController::class, 'index'])->name('admin.disaster_reports.index');
+    Route::get('/admin/disaster-reports/{id}', [AdminDisasterReportController::class, 'show'])->name('admin.disaster_reports.show');
 });
 
 // Donasi umum
