@@ -71,6 +71,12 @@
                                 </select>
                             </div>
                             
+                            <div>
+                                <label for="kuota_relawan" class="block text-sm font-medium text-gray-700 mb-1">Kuota Relawan</label>
+                                <input type="number" name="kuota_relawan" id="kuota_relawan" value="{{ old('kuota_relawan', $misi->kuota_relawan) }}" min="1" class="w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                                <p class="text-xs text-gray-500 mt-1">Jumlah maksimal relawan yang dapat bergabung</p>
+                            </div>
+                            
                             <div class="md:col-span-2">
                                 <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Gambar Misi</label>
                                 @if($misi->image_url)

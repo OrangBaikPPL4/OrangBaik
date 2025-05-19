@@ -27,7 +27,9 @@
                     <x-nav-link :href="route('admin.request-bantuan.index')" :active="request()->routeIs('admin.request-bantuan.*')">
                         {{ __('Request Bantuan') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('edukasi.index')" :active="request()->routeIs('edukasi.*')">
+
+                    <!-- Edukasi Link -->
+                    <x-nav-link :href="route('edukasi.menu')" :active="request()->routeIs('edukasi.*')">
                         {{ __('Edukasi') }}
                     </x-nav-link>
                     <x-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">

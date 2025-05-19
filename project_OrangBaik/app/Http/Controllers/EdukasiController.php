@@ -32,7 +32,33 @@ class EdukasiController extends Controller
         return view('edukasi.index', [
             'edukasi' => $query->orderBy('created_at', 'desc')->get(),
             'selectedCategory' => $request->category ?? '',
-        ]);    }
+        ]);
+    }
+    
+    /**
+     * Display a listing of the resource for admin management.
+     */
+    public function adminIndex(Request $request)
+    {
+        $query = Edukasi::query();
+
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
+    
+        return view('edukasi.admin-index', [
+            'edukasi' => $query->orderBy('created_at', 'desc')->get(),
+            'selectedCategory' => $request->category ?? '',
+        ]);
+    }
+    
+    /**
+     * Display the menu for edukasi management.
+     */
+    public function menu()
+    {
+        return view('edukasi.menu');
+    }
 
     /**
      * Show the form for creating a new resource.

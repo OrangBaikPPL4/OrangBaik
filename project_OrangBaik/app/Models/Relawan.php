@@ -16,7 +16,8 @@ class Relawan extends Model
         'lokasi', 
         'peran', 
         'status',
-        'user_id'
+        'user_id',
+        'verification_status'
     ];
     
     public function misi()

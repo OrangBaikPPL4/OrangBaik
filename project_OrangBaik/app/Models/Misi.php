@@ -13,6 +13,7 @@ class Misi extends Model
         'nama_misi',
         'deskripsi',
         'status',
+        'kuota_relawan',
         'lokasi',
         'tanggal_mulai',
         'tanggal_selesai',

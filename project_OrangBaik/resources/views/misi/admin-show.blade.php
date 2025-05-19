@@ -48,7 +48,14 @@
                             </div>
                             <div>
                                 <h4 class="text-md font-semibold mb-2">Relawan</h4>
-                                <p class="text-sm text-gray-600">{{ $misi->relawan->count() }} relawan bergabung</p>
+                                <p class="text-sm text-gray-600">
+                                    <span class="{{ $misi->kuota_relawan > 0 && $misi->relawan->count() >= $misi->kuota_relawan ? 'text-red-600 font-semibold' : '' }}">
+                                        {{ $misi->relawan->count() }} / {{ $misi->kuota_relawan > 0 ? $misi->kuota_relawan : '∞' }} relawan bergabung
+                                    </span>
+                                </p>
+                                @if($misi->kuota_relawan > 0 && $misi->relawan->count() >= $misi->kuota_relawan)
+                                    <p class="text-xs text-red-600 mt-1">Kuota relawan sudah penuh</p>
+                                @endif
                             </div>
                         </div>
 
