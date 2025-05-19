@@ -91,9 +91,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/misi/{misi_id}/relawan/{relawan_id}', [MisiController::class, 'hapusRelawan'])->name('misi.hapusRelawan');
 });
 
-<<<<<<< HEAD
-// Admin Routes
-=======
 // Manajemen konten edukasi (diluar dashboard)
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/manajemen-edukasi', [EdukasiController::class, 'menu'])->name('edukasi.menu');
@@ -110,7 +107,6 @@ Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index
 Route::get('/edukasi/{edukasi}', [EdukasiController::class, 'show'])->name('edukasi.show')->where('edukasi', '[0-9]+');
 
 // Admin tambahan
->>>>>>> origin/Main
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         // Admin Dashboard
