@@ -14,8 +14,8 @@ class DonationController extends Controller
         $donations = Donation::with(['user', 'paymentProof'])
             ->latest()
             ->paginate(20);
-
-        return view('admin.donations.index', compact('donations'));
+        $disasters = \App\Models\DisasterReport::all();
+        return view('admin.donations.index', compact('donations', 'disasters'));
     }
 
     public function show(Donation $donation)
@@ -81,5 +81,45 @@ class DonationController extends Controller
         $ids = explode(',', $request->input('ids'));
         Donation::whereIn('id', $ids)->delete();
         return redirect()->back()->with('success', 'Donasi terpilih berhasil dihapus.');
+    }
+
+    public function export(Request $request)
+    {
+        $donations = Donation::with(['user', 'paymentProof', 'statusHistories.admin', 'disasterReport'])
+            ->latest()
+            ->get();
+
+        return $this->exportToPdf($donations);
+    }
+
+    private function exportToPdf($donations)
+    {
+        $pdf = \PDF::loadView('admin.donations.export-pdf', ['donations' => $donations]);
+        return $pdf->download('donations_' . date('Y-m-d_His') . '.pdf');
+    }
+
+    public function distribute(Request $request, Donation $donation)
+    {
+        $validated = $request->validate([
+            'disaster_report_id' => 'required|exists:disaster_reports,id',
+        ]);
+        $donation->disaster_report_id = $validated['disaster_report_id'];
+        $donation->status = 'distributed';
+        $donation->save();
+
+        // Log status change
+        \App\Models\DonationStatusHistory::create([
+            'donation_id' => $donation->id,
+            'status' => 'distributed',
+            'changed_by' => auth()->id(),
+            'comment' => 'Donasi didistribusikan ke bencana.'
+        ]);
+
+        // Notify user
+        if ($donation->user) {
+            $donation->user->notify(new \App\Notifications\DonationStatusUpdated($donation, 'Donasi Anda telah didistribusikan ke bencana.'));
+        }
+
+        return redirect('/donations')->with('success', 'Donasi berhasil didistribusikan.');
     }
 } 

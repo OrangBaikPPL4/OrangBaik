@@ -136,6 +136,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         // Admin Request Bantuan Management
         Route::get('/request-bantuan', [RequestBantuanController::class, 'adminIndex'])->name('request-bantuan.index');
         Route::post('/request-bantuan/{id}/update-status', [RequestBantuanController::class, 'updateStatus'])->name('request-bantuan.update-status');
+        // Admin Donation Distribution
+        Route::post('/donations/{donation}/distribute', [\App\Http\Controllers\Admin\DonationController::class, 'distribute'])->name('admin.donations.distribute');
+        // Admin Donation Export
+        Route::get('/donations/export', [App\Http\Controllers\Admin\DonationController::class, 'export'])->name('admin.donations.export');
     });
 });
 

@@ -62,6 +62,9 @@
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-600 hover:text-red-900 bg-transparent border-none p-0 m-0 cursor-pointer">Delete</button>
                                             </form>
+                                            @if($donation->status === 'confirmed')
+                                            <button type="button" class="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs font-semibold" onclick="openDistributeModal({{ $donation->id }})">Distribusikan</button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -75,4 +78,40 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal for Distribution -->
+    <div id="distributeModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
+            <button onclick="closeDistributeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+            <h2 class="text-lg font-semibold mb-4">Distribusikan Donasi</h2>
+            <form id="distributeForm" method="POST">
+                @csrf
+                <input type="hidden" name="donation_id" id="distributeDonationId">
+                <div class="mb-4">
+                    <label for="disasterSelect" class="block text-sm font-medium text-gray-700">Pilih Bencana</label>
+                    <select name="disaster_report_id" id="disasterSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        @foreach($disasters as $disaster)
+                            <option value="{{ $disaster->id }}">{{ $disaster->jenis_bencana }} - {{ $disaster->lokasi }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeDistributeModal()" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Distribusikan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    function openDistributeModal(donationId) {
+        document.getElementById('distributeModal').classList.remove('hidden');
+        document.getElementById('distributeDonationId').value = donationId;
+        document.getElementById('distributeForm').action = `/admin/donations/${donationId}/distribute`;
+    }
+    function closeDistributeModal() {
+        document.getElementById('distributeModal').classList.add('hidden');
+        document.getElementById('distributeForm').reset();
+    }
+    </script>
 </x-app-layout> 

@@ -42,4 +42,9 @@ class Donation extends Model
     {
         return $this->hasMany(DonationStatusHistory::class);
     }
+
+    public function disasterReport()
+    {
+        return $this->belongsTo(DisasterReport::class);
+    }
 }

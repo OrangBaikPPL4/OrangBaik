@@ -5,7 +5,7 @@
     <h1 class="text-3xl font-bold mb-6">Transparansi Donasi</h1>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white shadow rounded-lg p-6 text-center">
-            <div class="text-gray-500 text-sm">Total Donasi Terkumpul</div>
+            <div class="text-gray-500 text-sm">Total Donasi Terkumpul Di Platform</div>
             <div class="text-2xl font-bold text-green-600 mt-2">Rp {{ number_format($totalAmount, 0, ',', '.') }}</div>
         </div>
         <div class="bg-white shadow rounded-lg p-6 text-center">

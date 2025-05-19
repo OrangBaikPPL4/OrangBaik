@@ -22,7 +22,7 @@ class DonationController extends Controller
     {
         if (auth()->check()) {
             // Both admin and user: show all donations (no user_id filter)
-            $donations = Donation::with('user', 'paymentProof')
+            $donations = Donation::with(['user', 'paymentProof', 'statusHistories.admin', 'disasterReport'])
                 ->latest()
                 ->paginate(10);
         } else {
@@ -30,7 +30,53 @@ class DonationController extends Controller
             $donations = collect([]);
         }
         $totalAmount = \App\Models\Donation::whereIn('status', ['confirmed', 'distributed'])->sum('amount');
-        return view('donations.index', compact('donations', 'totalAmount'));
+        $totalDistributed = \App\Models\Donation::where('status', 'distributed')->sum('amount');
+        $disasters = \App\Models\DisasterReport::all();
+
+        // Totals by status
+        $statusTotals = [
+            'pending' => [
+                'count' => Donation::where('status', 'pending')->count(),
+                'amount' => Donation::where('status', 'pending')->sum('amount'),
+            ],
+            'confirmed' => [
+                'count' => Donation::where('status', 'confirmed')->count(),
+                'amount' => Donation::where('status', 'confirmed')->sum('amount'),
+            ],
+            'failed' => [
+                'count' => Donation::where('status', 'failed')->count(),
+                'amount' => Donation::where('status', 'failed')->sum('amount'),
+            ],
+            'distributed' => [
+                'count' => Donation::where('status', 'distributed')->count(),
+                'amount' => Donation::where('status', 'distributed')->sum('amount'),
+            ],
+        ];
+
+        // Distribution statistics: total distributed per disaster type
+        $distributionStats = \App\Models\Donation::where('status', 'distributed')
+            ->whereNotNull('disaster_report_id')
+            ->with('disasterReport')
+            ->get()
+            ->groupBy(function($donation) {
+                return $donation->disasterReport ? $donation->disasterReport->jenis_bencana : 'Lainnya';
+            })
+            ->map(function($group) {
+                return [
+                    'count' => $group->count(),
+                    'amount' => $group->sum('amount'),
+                    'locations' => $group->groupBy(function($donation) {
+                        return $donation->disasterReport ? $donation->disasterReport->lokasi : 'Lainnya';
+                    })->map(function($locGroup) {
+                        return [
+                            'count' => $locGroup->count(),
+                            'amount' => $locGroup->sum('amount'),
+                        ];
+                    })
+                ];
+            });
+
+        return view('donations.index', compact('donations', 'totalAmount', 'totalDistributed', 'disasters', 'statusTotals', 'distributionStats'));
     }
 
     /**
