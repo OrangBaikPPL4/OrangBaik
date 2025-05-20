@@ -115,6 +115,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/donations/{donation}/status', [AdminDonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
     Route::get('/admin/disaster-reports', [AdminDisasterReportController::class, 'index'])->name('admin.disaster_reports.index');
     Route::get('/admin/disaster-reports/{id}', [AdminDisasterReportController::class, 'show'])->name('admin.disaster_reports.show');
+    Route::put('/admin/disaster-reports/{id}/verify', [AdminDisasterReportController::class, 'verify'])->name('admin.disaster_reports.verify');
+
 });
 
 // Donasi umum

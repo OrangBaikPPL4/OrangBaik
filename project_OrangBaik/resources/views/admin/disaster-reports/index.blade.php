@@ -42,10 +42,15 @@
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-700">{{ $report->lokasi }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-700">{{ ucfirst($report->jenis_bencana) }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                            {{ $report->status === 'valid' ? 'bg-green-100 text-green-800' : 
-                                               ($report->status === 'invalid' ? 'bg-red-100 text-red-800' : 
-                                               ($report->status === 'proses' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
+                                        @php
+                                            $statusColors = [
+                                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                                'verified' => 'bg-green-100 text-green-800',
+                                                'rejected' => 'bg-red-100 text-red-800',
+                                            ];
+                                            $colorClass = $statusColors[$report->status] ?? 'bg-gray-100 text-gray-800';
+                                        @endphp
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $colorClass }}">
                                             {{ ucfirst($report->status) }}
                                         </span>
                                     </td>
