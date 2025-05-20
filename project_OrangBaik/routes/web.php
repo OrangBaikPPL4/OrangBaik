@@ -64,6 +64,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/relawan/profil', [RelawanController::class, 'show'])->name('relawan.show');
     Route::get('/relawan/{id}/show', [RelawanController::class, 'show'])->name('relawan.admin.show');
     Route::get('/relawan/misi', [RelawanController::class, 'misiRelawan'])->name('relawan.misi');
+    
+    // Volunteer untuk relawan
+    Route::get('/volunteer', [VolunteerController::class, 'index'])->name('volunteer.index');
+    Route::get('/volunteer/{id}', [VolunteerController::class, 'show'])->name('volunteer.show');
+    Route::post('/volunteer/{id}/gabung', [VolunteerController::class, 'gabungVolunteer'])->name('volunteer.gabung');
 
     // Misi
     Route::get('/misi', [MisiController::class, 'index'])->name('misi.index');

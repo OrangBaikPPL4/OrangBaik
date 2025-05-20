@@ -29,4 +29,9 @@ class Relawan extends Model
     {
         return $this->belongsTo(User::class);
     }
+    
+    public function volunteer()
+    {
+        return $this->belongsToMany(Volunteer::class, 'relawan_volunteer')->withPivot('status_kehadiran')->withTimestamps();
+    }
 }

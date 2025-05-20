@@ -286,4 +286,41 @@ class VolunteerController extends Controller
         
         return redirect()->back()->with('success', 'Status kehadiran relawan berhasil diperbarui!');
     }
+    
+    /**
+     * Allow a volunteer to join an event.
+     */
+    public function gabungVolunteer(Request $request, $id)
+    {
+        // Get the volunteer event
+        $volunteer = Volunteer::findOrFail($id);
+        
+        // Check if event is active
+        if ($volunteer->status !== 'aktif') {
+            return back()->with('error', 'Acara ini tidak menerima pendaftaran baru!');
+        }
+        
+        // Get the volunteer profile of the current user
+        $relawan = Relawan::where('user_id', Auth::id())->first();
+        
+        if (!$relawan) {
+            return back()->with('error', 'Anda harus mendaftar sebagai relawan terlebih dahulu!');
+        }
+        
+        // Check if volunteer is already part of this event
+        if ($volunteer->relawan->contains($relawan->id)) {
+            return back()->with('error', 'Anda sudah terdaftar dalam acara ini!');
+        }
+        
+        // Check if event has reached its volunteer quota
+        $currentVolunteers = $volunteer->relawan->count();
+        if ($volunteer->kuota_relawan > 0 && $currentVolunteers >= $volunteer->kuota_relawan) {
+            return back()->with('error', 'Kuota relawan untuk acara ini sudah penuh!');
+        }
+        
+        // Join the event
+        $volunteer->relawan()->attach($relawan->id);
+        
+        return back()->with('success', 'Berhasil bergabung dengan acara volunteer!');
+    }
 }
