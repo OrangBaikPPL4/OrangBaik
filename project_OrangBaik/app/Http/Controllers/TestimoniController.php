@@ -14,7 +14,7 @@ class TestimoniController extends Controller
      */
     public function index()
     {
-        $testimonis = Testimoni::where('status', 'verified')->latest()->get();
+        $testimonis = Testimoni::latest()->get();
         return view('testimoni.index', compact('testimonis'));
     }
 
@@ -47,7 +47,9 @@ class TestimoniController extends Controller
         Testimoni::create([
             'nama' => Auth::user()->name,
             'lokasi' => $request->lokasi,
-            'jenis_bencana' => $request->jenis_bencana === 'lainnya' ? $request->jenis_bencana_lain : $request->jenis_bencana,
+            'jenis_bencana' => $request->jenis_bencana === 'lainnya'
+                ? $request->jenis_bencana_lain
+                : $request->jenis_bencana,
             'isicerita' => $request->isicerita,
             'foto' => $fotoPath,
             'status' => 'pending',
@@ -55,13 +57,19 @@ class TestimoniController extends Controller
 
         return redirect()->route('testimoni.index')->with('success', 'Testimoni berhasil dikirim dan menunggu persetujuan admin.');
     }
+
+    /**
+     * Show pending testimonies for moderation.
+     */
     public function moderation()
     {
         $testimonis = Testimoni::where('status', 'pending')->get();
         return view('admin.testimoni.moderation', compact('testimonis'));
     }
 
-    // PBI#41: Menyetujui testimoni
+    /**
+     * Approve a testimoni.
+     */
     public function approve($id)
     {
         $testimoni = Testimoni::findOrFail($id);
@@ -71,7 +79,9 @@ class TestimoniController extends Controller
         return redirect()->back()->with('success', 'Testimoni telah disetujui.');
     }
 
-    // PBI#41: Menolak testimoni
+    /**
+     * Reject a testimoni.
+     */
     public function reject($id)
     {
         $testimoni = Testimoni::findOrFail($id);
