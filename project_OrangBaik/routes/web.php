@@ -20,6 +20,7 @@ use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 use App\Http\Controllers\VolunteerController;
+use App\Http\Controllers\VolunteerNotificationController;
 
 // Halaman Welcome (Guest)
 Route::get('/', function () {
@@ -67,6 +68,13 @@ Route::middleware('auth')->group(function () {
     
     // Volunteer untuk relawan
     Route::get('/volunteer', [VolunteerController::class, 'index'])->name('volunteer.index');
+    
+    // Notifikasi volunteer
+    Route::get('/volunteer-notifications', [VolunteerNotificationController::class, 'index'])->name('volunteer.notifications.index');
+    Route::post('/volunteer-notifications/{id}/mark-read', [VolunteerNotificationController::class, 'markAsRead'])->name('volunteer.notifications.mark-read');
+    Route::post('/volunteer-notifications/mark-all-read', [VolunteerNotificationController::class, 'markAllAsRead'])->name('volunteer.notifications.mark-all-read');
+    Route::delete('/volunteer-notifications/{id}', [VolunteerNotificationController::class, 'destroy'])->name('volunteer.notifications.destroy');
+    
     Route::get('/volunteer/{id}', [VolunteerController::class, 'show'])->name('volunteer.show');
     Route::post('/volunteer/{id}/gabung', [VolunteerController::class, 'gabungVolunteer'])->name('volunteer.gabung');
 

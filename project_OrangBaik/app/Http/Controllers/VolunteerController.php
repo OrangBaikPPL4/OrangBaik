@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Volunteer;
 use App\Models\Relawan;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\VolunteerNotificationController;
+use App\Models\VolunteerNotification;
 
 class VolunteerController extends Controller
 {
@@ -141,6 +143,15 @@ class VolunteerController extends Controller
         $volunteer = Volunteer::findOrFail($id);
         $data = $request->except('image');
         
+        // Save original data for comparison to determine what changed
+        $originalData = [
+            'nama_acara' => $volunteer->nama_acara,
+            'lokasi' => $volunteer->lokasi,
+            'tanggal_mulai' => $volunteer->tanggal_mulai,
+            'tanggal_selesai' => $volunteer->tanggal_selesai,
+            'status' => $volunteer->status
+        ];
+        
         // Handle image upload
         if ($request->hasFile('image')) {
             // Remove old image if exists
@@ -155,6 +166,38 @@ class VolunteerController extends Controller
         }
         
         $volunteer->update($data);
+        
+        // Check what changed and send notifications to relawan
+        $changesMessage = [];
+        
+        if ($originalData['nama_acara'] !== $data['nama_acara']) {
+            $changesMessage[] = "Nama acara diubah dari '{$originalData['nama_acara']}' menjadi '{$data['nama_acara']}'";
+        }
+        
+        if ($originalData['lokasi'] !== $data['lokasi']) {
+            $changesMessage[] = "Lokasi diubah dari '{$originalData['lokasi']}' menjadi '{$data['lokasi']}'";
+        }
+        
+        if ($originalData['tanggal_mulai'] !== $data['tanggal_mulai']) {
+            $changesMessage[] = "Tanggal mulai diubah dari '" . date('d/m/Y', strtotime($originalData['tanggal_mulai'])) . "' menjadi '" . date('d/m/Y', strtotime($data['tanggal_mulai'])) . "'";
+        }
+        
+        if ($originalData['tanggal_selesai'] !== $data['tanggal_selesai']) {
+            $changesMessage[] = "Tanggal selesai diubah dari '" . date('d/m/Y', strtotime($originalData['tanggal_selesai'])) . "' menjadi '" . date('d/m/Y', strtotime($data['tanggal_selesai'])) . "'";
+        }
+        
+        if ($originalData['status'] !== $data['status']) {
+            $changesMessage[] = "Status acara diubah dari '{$originalData['status']}' menjadi '{$data['status']}'";
+        }
+        
+        // If there are changes, send notification to all relawan in this event
+        if (!empty($changesMessage)) {
+            $title = "Perubahan pada acara '{$data['nama_acara']}'";
+            $message = "Berikut perubahan pada acara volunteer yang Anda ikuti:\n" . implode("\n", $changesMessage);
+            
+            // Send notification to all relawan in this event
+            VolunteerNotificationController::notifyVolunteers($id, $title, $message, 'warning');
+        }
         
         return redirect()->route('volunteer.index')->with('success', 'Acara volunteer berhasil diperbarui!');
     }
@@ -176,6 +219,10 @@ class VolunteerController extends Controller
             unlink(public_path($volunteer->image_url));
         }
         
+        // Detach all relawan
+        $volunteer->relawan()->detach();
+        
+        // Delete volunteer event
         $volunteer->delete();
         
         return redirect()->route('volunteer.index')->with('success', 'Acara volunteer berhasil dihapus!');
@@ -196,10 +243,29 @@ class VolunteerController extends Controller
         ]);
         
         $volunteer = Volunteer::findOrFail($id);
-        $volunteer->update(['status' => $request->status]);
+        $oldStatus = $volunteer->status;
+        $newStatus = $request->status;
+        
+        $volunteer->update(['status' => $newStatus]);
+        
+        // If status has changed, notify all relawan in this event
+        if ($oldStatus !== $newStatus) {
+            $statusMessages = [
+                'aktif' => 'Acara ini sekarang aktif dan menerima pendaftaran relawan baru.',
+                'dalam proses' => 'Acara ini sekarang sedang berlangsung. Pastikan Anda hadir sesuai jadwal.',
+                'selesai' => 'Acara ini telah selesai. Terima kasih atas partisipasi Anda.'
+            ];
+            
+            $title = "Status acara '{$volunteer->nama_acara}' telah berubah";
+            $message = "Status acara volunteer yang Anda ikuti telah berubah dari '{$oldStatus}' menjadi '{$newStatus}'.
+{$statusMessages[$newStatus]}";
+            
+            // Send notification to all relawan in this event
+            VolunteerNotificationController::notifyVolunteers($id, $title, $message, 'info');
+        }
         
         // If volunteer event is completed, update the status of all volunteers in this event
-        if ($request->status === 'selesai') {
+        if ($newStatus === 'selesai') {
             foreach ($volunteer->relawan as $relawan) {
                 // Update pivot table with status_kehadiran if needed
                 // $volunteer->relawan()->updateExistingPivot($relawan->id, ['status_kehadiran' => 'hadir']);
@@ -207,6 +273,61 @@ class VolunteerController extends Controller
         }
         
         return redirect()->back()->with('success', 'Status acara volunteer diperbarui!');
+    }
+    
+    /**
+     * Allow a volunteer to join an event.
+     */
+    public function gabungVolunteer(Request $request, $id)
+    {
+        // Check if user is authenticated and has relawan profile
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+        
+        $relawan = Relawan::where('user_id', Auth::id())->first();
+        
+        if (!$relawan) {
+            return redirect()->route('relawan.create')
+                ->with('error', 'Anda harus mendaftar sebagai relawan terlebih dahulu!');
+        }
+        
+        $volunteer = Volunteer::findOrFail($id);
+        
+        // Check if volunteer event is active
+        if ($volunteer->status !== 'aktif') {
+            return redirect()->back()->with('error', 'Acara volunteer ini tidak menerima pendaftaran!');
+        }
+        
+        // Check if relawan already joined this volunteer event
+        if ($volunteer->relawan()->where('relawan_id', $relawan->id)->exists()) {
+            return redirect()->back()->with('error', 'Anda sudah terdaftar dalam acara volunteer ini!');
+        }
+        
+        // Check if volunteer quota is full
+        if ($volunteer->relawan()->count() >= $volunteer->kuota_relawan) {
+            return redirect()->back()->with('error', 'Kuota relawan untuk acara ini sudah penuh!');
+        }
+        
+        // Add relawan to volunteer event
+        $volunteer->relawan()->attach($relawan->id);
+        
+        // Send notification to the relawan
+        VolunteerNotification::create([
+            'relawan_id' => $relawan->id,
+            'volunteer_id' => $volunteer->id,
+            'title' => 'Pendaftaran Berhasil: ' . $volunteer->nama_acara,
+            'message' => "Selamat! Anda telah berhasil terdaftar sebagai relawan untuk acara '{$volunteer->nama_acara}'.
+
+Detail acara:
+Tanggal: " . date('d/m/Y', strtotime($volunteer->tanggal_mulai)) . " - " . date('d/m/Y', strtotime($volunteer->tanggal_selesai)) . "
+Lokasi: {$volunteer->lokasi}
+
+Silahkan cek halaman detail acara untuk informasi lebih lanjut.",
+            'type' => 'success'
+        ]);
+        
+        return redirect()->back()->with('success', 'Anda berhasil bergabung dengan acara volunteer ini!');
     }
     
     /**
@@ -261,7 +382,7 @@ class VolunteerController extends Controller
 
         return redirect()->back()->with('success', 'Relawan berhasil dihapus dari acara!');
     }
-    
+
     /**
      * Update volunteer attendance status.
      */
@@ -285,42 +406,5 @@ class VolunteerController extends Controller
         ]);
         
         return redirect()->back()->with('success', 'Status kehadiran relawan berhasil diperbarui!');
-    }
-    
-    /**
-     * Allow a volunteer to join an event.
-     */
-    public function gabungVolunteer(Request $request, $id)
-    {
-        // Get the volunteer event
-        $volunteer = Volunteer::findOrFail($id);
-        
-        // Check if event is active
-        if ($volunteer->status !== 'aktif') {
-            return back()->with('error', 'Acara ini tidak menerima pendaftaran baru!');
-        }
-        
-        // Get the volunteer profile of the current user
-        $relawan = Relawan::where('user_id', Auth::id())->first();
-        
-        if (!$relawan) {
-            return back()->with('error', 'Anda harus mendaftar sebagai relawan terlebih dahulu!');
-        }
-        
-        // Check if volunteer is already part of this event
-        if ($volunteer->relawan->contains($relawan->id)) {
-            return back()->with('error', 'Anda sudah terdaftar dalam acara ini!');
-        }
-        
-        // Check if event has reached its volunteer quota
-        $currentVolunteers = $volunteer->relawan->count();
-        if ($volunteer->kuota_relawan > 0 && $currentVolunteers >= $volunteer->kuota_relawan) {
-            return back()->with('error', 'Kuota relawan untuk acara ini sudah penuh!');
-        }
-        
-        // Join the event
-        $volunteer->relawan()->attach($relawan->id);
-        
-        return back()->with('success', 'Berhasil bergabung dengan acara volunteer!');
     }
 }
