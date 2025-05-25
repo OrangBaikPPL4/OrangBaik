@@ -19,6 +19,9 @@ use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\Admin\FaqController as AdminFaqController;
+use App\Http\Controllers\FaqFeedbackController;
 
 // Halaman Welcome (Guest)
 Route::get('/', function () {
@@ -135,3 +138,18 @@ Route::get('/test-email', function () {
         return "Error: " . $e->getMessage();
     }
 });
+
+// User Routes
+Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
+Route::post('/faq/feedback', [FaqController::class, 'storeFeedback'])->name('faq.feedback.store');
+Route::post('/faq-feedback', [FaqFeedbackController::class, 'store'])->name('faq.feedback.store');
+Route::post('/faq/feedback', [FaqFeedbackController::class, 'store'])->name('faq.feedback');
+
+// Admin Routes (with middleware)
+Route::prefix('admin')->middleware('auth', 'is_admin')->group(function () {
+    Route::resource('faq', AdminFaqController::class)->names('admin.faq');
+});
+
+
+
+
