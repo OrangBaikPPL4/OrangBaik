@@ -20,6 +20,8 @@ use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 use App\Http\Controllers\Admin\DisasterReportController as AdminDisasterReportController;
+use App\Http\Controllers\Admin\AnnouncementController;
+
 
 
 // Halaman Welcome (Guest)
@@ -116,6 +118,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/disaster-reports', [AdminDisasterReportController::class, 'index'])->name('admin.disaster_reports.index');
     Route::get('/admin/disaster-reports/{id}', [AdminDisasterReportController::class, 'show'])->name('admin.disaster_reports.show');
     Route::put('/admin/disaster-reports/{id}/verify', [AdminDisasterReportController::class, 'verify'])->name('admin.disaster_reports.verify');
+    Route::get('/admin/announcements', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
+    Route::get('/admin/announcements/create', [AnnouncementController::class, 'create'])->name('admin.announcements.create');
+    Route::post('/admin/announcements', [AnnouncementController::class, 'store'])->name('admin.announcements.store');
 
 });
 
