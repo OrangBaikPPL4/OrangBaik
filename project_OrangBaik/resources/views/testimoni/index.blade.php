@@ -7,9 +7,15 @@
             <a href="{{ route('testimoni.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 + Tambah Testimoni
             </a>
+            @if(auth()->user()->usertype === 'admin')
+                <a href="{{ route('testimoni.moderation') }}" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
+                    Moderasi
+                </a>
+            @endif
         </div>
     </x-slot>
 
+    @section('content')
     <div class="py-8">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-4">
             @if(session('success'))
@@ -44,4 +50,6 @@
             @endforelse
         </div>
     </div>
+    @endsection
+    
 </x-app-layout>

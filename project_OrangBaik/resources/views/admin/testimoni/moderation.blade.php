@@ -3,6 +3,7 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Moderasi Testimoni</h2>
     </x-slot>
 
+    @section('content')
     <div class="py-12">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8 space-y-6">
             @forelse($testimonis as $t)
@@ -31,4 +32,5 @@
             @endforelse
         </div>
     </div>
+    @endsection
 </x-app-layout>

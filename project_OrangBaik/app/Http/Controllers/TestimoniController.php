@@ -14,7 +14,8 @@ class TestimoniController extends Controller
      */
     public function index()
     {
-        $testimonis = Testimoni::latest()->get();
+        $testimonis = Testimoni::where('status', 'verified')->latest()->get();
+
         return view('testimoni.index', compact('testimonis'));
     }
 
