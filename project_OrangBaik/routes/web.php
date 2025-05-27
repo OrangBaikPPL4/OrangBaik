@@ -27,7 +27,8 @@ Route::get('/', function () {
 
 // Dashboard utama (menampilkan edukasi terbaru)
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $edukasi = Edukasi::latest()->take(5)->get();
+    return view('dashboard', compact('edukasi'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Authentication routes
