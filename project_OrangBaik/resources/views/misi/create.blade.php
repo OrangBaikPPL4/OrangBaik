@@ -5,6 +5,7 @@
         </h2>
     </x-slot>
 
+    @section('content')
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -31,7 +32,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('misi.store') }}">
+                    <form method="POST" action="{{ route('misi.store') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -68,6 +69,18 @@
                                     <option value="selesai" {{ old('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
                                 </select>
                             </div>
+                            
+                            <div>
+                                <label for="kuota_relawan" class="block text-sm font-medium text-gray-700 mb-1">Kuota Relawan</label>
+                                <input type="number" name="kuota_relawan" id="kuota_relawan" value="{{ old('kuota_relawan') }}" min="1" class="w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                                <p class="text-xs text-gray-500 mt-1">Jumlah maksimal relawan yang dapat bergabung</p>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Gambar Misi</label>
+                                <input type="file" name="image" id="image" class="w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2" accept="image/*">
+                                <p class="text-xs text-gray-500 mt-1">Upload gambar untuk misi (format: JPG, PNG, maksimal 2MB)</p>
+                            </div>
                         </div>
 
                         <div class="flex items-center justify-between">
@@ -83,4 +96,5 @@
             </div>
         </div>
     </div>
+    @endsection
 </x-app-layout> 

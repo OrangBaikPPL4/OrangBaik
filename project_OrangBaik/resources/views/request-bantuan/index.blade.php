@@ -48,7 +48,13 @@
                                 @endphp
                                 <span class="badge bg-{{ $badge }}">{{ ucfirst($req->status) }}</span>
                             </td>
-                            <td>{{ $req->created_at->format('d M Y H:i') }}</td>
+                            <td>
+                                @if($req->status == 'diproses' || $req->status == 'selesai')
+                                    {{ $req->updated_at->setTimezone('Asia/Jakarta')->format('d M Y H:i') }} WIB
+                                @else
+                                    {{ $req->created_at->setTimezone('Asia/Jakarta')->format('d M Y H:i') }} WIB
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

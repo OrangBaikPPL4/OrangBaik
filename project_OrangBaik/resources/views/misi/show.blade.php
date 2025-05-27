@@ -42,7 +42,7 @@
             </div>
             <div class="flex items-center gap-2 text-gray-500">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 7v4l3 3"></path><circle cx="12" cy="12" r="10"></circle></svg>
-                <span>{{ $misi->relawan->count() }} relawan bergabung</span>
+                <span>{{ $misi->relawan->count() }} / {{ $misi->kuota_relawan }} relawan bergabung</span>
             </div>
         </div>
         <!-- Description -->
@@ -110,10 +110,26 @@
     Kembali
 </a>
             @if($relawan && !$isJoined && $misi->status == 'aktif')
-                <form method="POST" action="{{ route('misi.gabung', $misi->id) }}">
-                    @csrf
-                    <button type="submit" class="inline-flex items-center px-6 py-2 bg-green-500 text-white rounded-lg font-bold shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition">Gabung Misi</button>
-                </form>
+                @if($relawan->verification_status == 'approved')
+                    <form method="POST" action="{{ route('misi.gabung', $misi->id) }}">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center px-6 py-2 bg-green-500 text-white rounded-lg font-bold shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition">Gabung Misi</button>
+                    </form>
+                @elseif($relawan->verification_status == 'pending')
+                    <div class="inline-flex items-center px-6 py-2 bg-yellow-100 text-yellow-800 rounded-lg font-semibold shadow cursor-not-allowed">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        Menunggu Verifikasi
+                    </div>
+                @elseif($relawan->verification_status == 'rejected')
+                    <div class="inline-flex items-center px-6 py-2 bg-red-100 text-red-800 rounded-lg font-semibold shadow cursor-not-allowed">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Pendaftaran Ditolak
+                    </div>
+                @endif
             @elseif($relawan && $isJoined)
                 <span class="inline-flex items-center px-6 py-2 bg-yellow-200 text-yellow-900 rounded-lg font-semibold shadow">Sudah Bergabung</span>
             @endif

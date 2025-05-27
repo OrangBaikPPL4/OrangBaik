@@ -1,5 +1,12 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto py-10 px-6 space-y-8 bg-gradient-to-r from-blue-100 to-white min-h-screen">
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Edukasi') }}
+        </h2>
+    </x-slot>
+
+    @section('content')
+    <div class="max-w-7xl mx-auto py-10 px-6 space-y-8 bg-blue-100 to-white min-h-screen">
         {{-- Header dan tombol --}}
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <h1 class="text-3xl font-bold text-blue-800">Daftar Konten Edukasi</h1>
@@ -98,4 +105,5 @@
 
         </div>
     </div>
+    @endsection
 </x-app-layout>

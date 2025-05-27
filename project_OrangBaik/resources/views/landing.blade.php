@@ -74,7 +74,7 @@
 <h2 style="font-size:2.2rem; font-weight:800; color:#222; margin-bottom:10px;">Bersama, Kita Hadir untuk Sesama</h2>
 <div style="color:#444; font-size:1.13rem; margin-bottom:26px; max-width:440px;">OrangBaik adalah platform digital yang mempertemukan kepedulian dan aksi nyata. Mari salurkan donasi atau bergabung sebagai relawan untuk membantu mereka yang membutuhkan.</div>
 <div style="margin-top:8px; display:flex; flex-direction:row; gap:16px; flex-wrap:wrap;">
-  <a href="/donasi" style="background:#1976D2; color:#fff; font-weight:700; font-size:1.08rem; border-radius:8px; padding:12px 32px; text-decoration:none; box-shadow:0 2px 8px rgba(25,118,210,0.09); border:none; transition:background 0.2s; display:inline-block;">Donasi</a>
+  <a href="/donations/create" style="background:#1976D2; color:#fff; font-weight:700; font-size:1.08rem; border-radius:8px; padding:12px 32px; text-decoration:none; box-shadow:0 2px 8px rgba(25,118,210,0.09); border:none; transition:background 0.2s; display:inline-block;">Donasi</a>
   <a href="/relawan" style="background:#fff; color:#1976D2; font-weight:700; font-size:1.08rem; border-radius:8px; padding:12px 32px; text-decoration:none; box-shadow:0 2px 8px rgba(25,118,210,0.09); border:2px solid #1976D2; transition:background 0.2s, color 0.2s; display:inline-block;">Aksi Relawan</a>
 </div>
 </a>

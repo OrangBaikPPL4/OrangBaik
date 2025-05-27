@@ -18,6 +18,6 @@ class DashboardAdminController extends Controller
             $requests = RequestBantuan::all(); // kalau tidak pilih status, tampilkan semua
         }
 
-        return view('dashboard-admin.dashboard', compact('requests', 'status'));
+        return view('admin.dashboard', compact('requests', 'status'));
     }
 }
