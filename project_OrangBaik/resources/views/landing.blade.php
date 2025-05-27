@@ -315,61 +315,25 @@
   </div>
 
   <div class="max-w-4xl mx-auto space-y-6">
-    <details class="bg-white rounded-lg shadow-md p-5 group" open>
-      <summary class="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800">
-        Apa itu platform OrangBaik?
-        <span class="transition-transform group-open:rotate-180">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </span>
-      </summary>
-      <p class="mt-3 text-gray-600 text-base">
-        OrangBaik adalah platform digital yang menghubungkan relawan dengan kegiatan sosial dan aksi kebaikan di berbagai daerah.
-      </p>
-    </details>
-
-    <details class="bg-white rounded-lg shadow-md p-5 group">
-      <summary class="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800">
-        Bagaimana cara mendaftar sebagai relawan?
-        <span class="transition-transform group-open:rotate-180">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </span>
-      </summary>
-      <p class="mt-3 text-gray-600 text-base">
-        Kamu bisa mendaftar dengan membuat akun melalui tombol "Buat Akun" di kanan atas, lalu lengkapi profil dan pilih aksi yang ingin diikuti.
-      </p>
-    </details>
-
-    <details class="bg-white rounded-lg shadow-md p-5 group">
-      <summary class="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800">
-        Apakah kegiatan di platform ini berbayar?
-        <span class="transition-transform group-open:rotate-180">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </span>
-      </summary>
-      <p class="mt-3 text-gray-600 text-base">
-        Tidak. Seluruh kegiatan yang tersedia di platform ini bersifat sukarela dan tidak dipungut biaya.
-      </p>
-    </details>
-
-    <details class="bg-white rounded-lg shadow-md p-5 group">
-      <summary class="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800">
-        Bagaimana saya bisa menghubungi tim OrangBaik?
-        <span class="transition-transform group-open:rotate-180">
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </span>
-      </summary>
-      <p class="mt-3 text-gray-600 text-base">
-        Kamu bisa menghubungi kami melalui halaman <a href="#kontak" class="text-blue-600 underline">Kontak</a> atau email resmi kami.
-      </p>
-    </details>
+    @if(isset($faqs) && $faqs->count() > 0)
+      @foreach($faqs as $index => $faq)
+        <details class="bg-white rounded-lg shadow-md p-5 group" {{ $index == 0 ? 'open' : '' }}>
+          <summary class="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800">
+            {{ $faq->question }}
+            <span class="transition-transform group-open:rotate-180">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-gray-600 text-base">
+            {{ $faq->answer }}
+          </p>
+        </details>
+      @endforeach
+    @else
+      <p class="text-center text-gray-600">Tidak ada FAQ yang tersedia saat ini.</p>
+    @endif
   </div>
 </section>
 

@@ -22,10 +22,12 @@ use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\FaqFeedbackController;
+// Tidak perlu import App\Models\Faq di sini jika menyebabkan konflik
 
 // Halaman Welcome (Guest)
 Route::get('/', function () {
-    return view('landing');
+    $faqs = \App\Models\Faq::all(); // Gunakan FQCN
+    return view('landing', compact('faqs'));
 })->name('landing');
 
 // Dashboard utama (menampilkan edukasi terbaru)
@@ -141,12 +143,10 @@ Route::get('/test-email', function () {
 
 // User Routes
 Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
-Route::post('/faq/feedback', [FaqController::class, 'storeFeedback'])->name('faq.feedback.store');
-Route::post('/faq-feedback', [FaqFeedbackController::class, 'store'])->name('faq.feedback.store');
-Route::post('/faq/feedback', [FaqFeedbackController::class, 'store'])->name('faq.feedback');
+Route::post('/faq/feedback', [FaqFeedbackController::class, 'store'])->name('faq.feedback.store');
 
 // Admin Routes (with middleware)
-Route::prefix('admin')->middleware('auth', 'is_admin')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::resource('faq', AdminFaqController::class)->names('admin.faq');
 });
 

@@ -50,7 +50,10 @@
                     
                     @if(Auth::user()->usertype === 'admin')
                         <!-- Admin Dashboard -->
-                        <x-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('admin.*')">
+                        <x-nav-link :href="route('admin.faq.index')" :active="request()->routeIs('admin.faq.*')">
+                            {{ __('Manajemen FAQ') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('dashboard.admin')">
                             {{ __('Admin') }}
                         </x-nav-link>
                     @endif
@@ -142,7 +145,10 @@
             
             @if(Auth::user()->usertype === 'admin')
                 <!-- Responsive Admin Dashboard -->
-                <x-responsive-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('admin.*')">
+                <x-responsive-nav-link :href="route('admin.faq.index')" :active="request()->routeIs('admin.faq.*')">
+                    {{ __('Manajemen FAQ') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('dashboard.admin')">
                     {{ __('Admin') }}
                 </x-responsive-nav-link>
             @endif

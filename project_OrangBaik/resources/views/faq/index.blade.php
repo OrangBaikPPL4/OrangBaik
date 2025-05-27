@@ -13,7 +13,7 @@
 <form action="{{ route('faq.feedback.store') }}" method="POST">
     @csrf
     <input type="email" name="user_email" placeholder="Email (opsional)">
-    <textarea name="message" placeholder="Tuliskan pertanyaan Anda"></textarea>
+    <textarea name="feedback" placeholder="Tuliskan pertanyaan Anda"></textarea>
     <button type="submit">Kirim Masukan</button>
 </form>
 @endsection
