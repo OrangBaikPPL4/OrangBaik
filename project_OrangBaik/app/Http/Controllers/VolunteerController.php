@@ -219,6 +219,14 @@ class VolunteerController extends Controller
             unlink(public_path($volunteer->image_url));
         }
         
+        // Notify registered volunteers about the cancellation
+        VolunteerNotificationController::notifyVolunteers(
+            $volunteer->id,
+            'Pembatalan Acara: ' . $volunteer->nama_acara,
+            "Acara volunteer '{$volunteer->nama_acara}' yang Anda ikuti telah dibatalkan. Mohon maaf atas ketidaknyamanannya.",
+            'warning'
+        );
+
         // Detach all relawan
         $volunteer->relawan()->detach();
         
@@ -311,6 +319,14 @@ class VolunteerController extends Controller
         
         // Add relawan to volunteer event
         $volunteer->relawan()->attach($relawan->id);
+        
+        // Notify registered volunteers about the update
+        VolunteerNotificationController::notifyVolunteers(
+            $volunteer->id,
+            'Update Acara: ' . $volunteer->nama_acara,
+            "Ada pembaruan pada acara volunteer '{$volunteer->nama_acara}' yang Anda ikuti. Silahkan cek detail acara untuk informasi terbaru.",
+            'info'
+        );
         
         // Send notification to the relawan
         VolunteerNotification::create([

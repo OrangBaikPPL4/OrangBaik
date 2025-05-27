@@ -109,6 +109,19 @@ Route::get('/edukasi/{edukasi}', [EdukasiController::class, 'show'])->name('eduk
 
 // Admin tambahan
 Route::middleware(['auth', 'admin'])->group(function () {
+    // Volunteer
+    Route::get('/volunteer', [VolunteerController::class, 'index'])->name('volunteer.index');
+    Route::get('/volunteer/create', [VolunteerController::class, 'create'])->name('volunteer.create');
+    Route::post('/volunteer', [VolunteerController::class, 'store'])->name('volunteer.store');
+    Route::get('/volunteer/{id}', [VolunteerController::class, 'show'])->name('volunteer.show');
+    Route::get('/volunteer/{id}/edit', [VolunteerController::class, 'edit'])->name('volunteer.edit');
+    Route::put('/volunteer/{id}', [VolunteerController::class, 'update'])->name('volunteer.update');
+    Route::delete('/volunteer/{id}', [VolunteerController::class, 'destroy'])->name('volunteer.destroy');
+    Route::post('/volunteer/{id}/update-status', [VolunteerController::class, 'updateVolunteerStatus'])->name('volunteer.updateStatus');
+    Route::post('/volunteer/{id}/tambah-relawan', [VolunteerController::class, 'tambahRelawan'])->name('volunteer.tambahRelawan');
+    Route::delete('/volunteer/{volunteer_id}/relawan/{relawan_id}', [VolunteerController::class, 'hapusRelawan'])->name('volunteer.hapusRelawan');
+    Route::post('/volunteer/{volunteer_id}/relawan/{relawan_id}/update-kehadiran', [VolunteerController::class, 'updateKehadiran'])->name('volunteer.updateKehadiran');
+
     Route::get('/admin/request-bantuan', [RequestBantuanController::class, 'adminIndex'])->name('admin.request-bantuan.index');
     Route::post('/admin/request-bantuan/{id}/update-status', [RequestBantuanController::class, 'updateStatus'])->name('admin.request-bantuan.update-status');
 
@@ -125,19 +138,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/donations', [AdminDonationController::class, 'index'])->name('admin.donations.index');
     Route::get('/admin/donations/{donation}', [AdminDonationController::class, 'show'])->name('admin.donations.show');
     Route::post('/admin/donations/{donation}/status', [AdminDonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
-    
-    // Volunteer
-    Route::get('/volunteer', [VolunteerController::class, 'index'])->name('volunteer.index');
-    Route::get('/volunteer/create', [VolunteerController::class, 'create'])->name('volunteer.create');
-    Route::post('/volunteer', [VolunteerController::class, 'store'])->name('volunteer.store');
-    Route::get('/volunteer/{id}', [VolunteerController::class, 'show'])->name('volunteer.show');
-    Route::get('/volunteer/{id}/edit', [VolunteerController::class, 'edit'])->name('volunteer.edit');
-    Route::put('/volunteer/{id}', [VolunteerController::class, 'update'])->name('volunteer.update');
-    Route::delete('/volunteer/{id}', [VolunteerController::class, 'destroy'])->name('volunteer.destroy');
-    Route::post('/volunteer/{id}/update-status', [VolunteerController::class, 'updateVolunteerStatus'])->name('volunteer.updateStatus');
-    Route::post('/volunteer/{id}/tambah-relawan', [VolunteerController::class, 'tambahRelawan'])->name('volunteer.tambahRelawan');
-    Route::delete('/volunteer/{volunteer_id}/relawan/{relawan_id}', [VolunteerController::class, 'hapusRelawan'])->name('volunteer.hapusRelawan');
-    Route::post('/volunteer/{volunteer_id}/relawan/{relawan_id}/update-kehadiran', [VolunteerController::class, 'updateKehadiran'])->name('volunteer.updateKehadiran');
 });
 
 // Donasi umum
@@ -150,6 +150,14 @@ Route::get('/disaster-report', [DisasterReportController::class, 'index'])->name
 Route::get('/disaster-report/{id}', [DisasterReportController::class, 'show'])->name('disaster_report.show');
 Route::get('/disaster-report/{id}/edit', [DisasterReportController::class, 'edit'])->name('disaster_report.edit');
 Route::put('/disaster-report/{id}', [DisasterReportController::class, 'update'])->name('disaster_report.update');
+
+// Test Volunteer Create Form Route
+Route::get('/test-volunteer-form', function () {
+    if (Illuminate\Support\Facades\Auth::check() && Illuminate\Support\Facades\Auth::user()->usertype === 'admin') {
+        return view('volunteer.create');
+    }
+    return abort(403, 'Unauthorized action.');
+})->name('test.volunteer.create');
 
 // Test Email
 Route::get('/test-email', function () {
