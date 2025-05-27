@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EdukasiController;
 use App\Http\Controllers\RelawanController;
 use App\Http\Controllers\MisiController;
-use App\Http\Controllers\AdminNeedsController;
 
 use App\Http\Controllers\DisasterReportController;
 use App\Http\Controllers\DonationController;
@@ -166,8 +165,4 @@ Route::get('/dashboard-admin', [DashboardAdminController::class, 'index'])->midd
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('/edukasi', EdukasiController::class)->except(['show']);
-});
-
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/needs-dashboard', [AdminNeedsController::class, 'index'])->name('admin.needs.dashboard');
 });
