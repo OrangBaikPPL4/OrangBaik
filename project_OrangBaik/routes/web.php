@@ -115,12 +115,21 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/donations', [AdminDonationController::class, 'index'])->name('admin.donations.index');
     Route::get('/admin/donations/{donation}', [AdminDonationController::class, 'show'])->name('admin.donations.show');
     Route::post('/admin/donations/{donation}/status', [AdminDonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
+
     Route::get('/admin/disaster-reports', [AdminDisasterReportController::class, 'index'])->name('admin.disaster_reports.index');
     Route::get('/admin/disaster-reports/{id}', [AdminDisasterReportController::class, 'show'])->name('admin.disaster_reports.show');
     Route::put('/admin/disaster-reports/{id}/verify', [AdminDisasterReportController::class, 'verify'])->name('admin.disaster_reports.verify');
+    
     Route::get('/admin/announcements', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
     Route::get('/admin/announcements/create', [AnnouncementController::class, 'create'])->name('admin.announcements.create');
     Route::post('/admin/announcements', [AnnouncementController::class, 'store'])->name('admin.announcements.store');
+    Route::get('/admin/announcements', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
+    Route::get('/admin/announcements/{id}', [AnnouncementController::class, 'show'])->name('admin.announcements.show');
+    Route::get('/admin/announcements/{id}/edit', [AnnouncementController::class, 'edit'])->name('admin.announcements.edit');
+    Route::put('/admin/announcements/{id}', [AnnouncementController::class, 'update'])->name('admin.announcements.update');
+    Route::delete('/admin/announcements/{id}', [AnnouncementController::class, 'destroy'])->name('admin.announcements.destroy');
+
+
 
 });
 
