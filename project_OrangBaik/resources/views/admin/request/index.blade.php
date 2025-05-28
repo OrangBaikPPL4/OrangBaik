@@ -15,7 +15,7 @@
                 <form method="GET" class="mb-6 flex flex-wrap items-center gap-4">
                     <!-- Filter Jenis Kebutuhan -->
                     <div>
-                        <label for="jenis_kebutuhan" class="block text-sm font-medium text-gray-700">Filter Jenis Kebutuhan:</label>
+                        <label for="jenis_kebutuhan" class="block text-sm font-medium text-gray-700">Filter by:</label>
                         <select name="jenis_kebutuhan" id="jenis_kebutuhan" onchange="this.form.submit()"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             <option value="">-- Semua --</option>
@@ -27,7 +27,7 @@
 
                     <!-- Sorting -->
                     <div>
-                        <label for="sort_by" class="block text-sm font-medium text-gray-700">Urutkan Berdasarkan:</label>
+                        <label for="sort_by" class="block text-sm font-medium text-gray-700">Sort By:</label>
                         <select name="sort_by" id="sort_by" onchange="this.form.submit()"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             <option value="">-- Default --</option>
@@ -38,11 +38,11 @@
                     </div>
 
                     <div>
-                        <label for="order" class="block text-sm font-medium text-gray-700">Arah Urutan:</label>
+                        <label for="order" class="block text-sm font-medium text-gray-700">Sort Direction:</label>
                         <select name="order" id="order" onchange="this.form.submit()"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                            <option value="asc" {{ request('order') == 'asc' ? 'selected' : '' }}>Naik</option>
-                            <option value="desc" {{ request('order') == 'desc' ? 'selected' : '' }}>Turun</option>
+                            <option value="asc" {{ request('order') == 'asc' ? 'selected' : '' }}>Asc</option>
+                            <option value="desc" {{ request('order') == 'desc' ? 'selected' : '' }}>Desc</option>
                         </select>
                     </div>
                 </form>

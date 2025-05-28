@@ -49,11 +49,28 @@ class RequestBantuanController extends Controller
     {
         $query = RequestBantuan::with('user'); // Eager load relasi user
 
+        // Filter berdasarkan jenis kebutuhan
         if ($request->filled('jenis_kebutuhan')) {
             $query->where('jenis_kebutuhan', $request->jenis_kebutuhan);
         }
 
-        $requests = $query->orderBy('created_at', 'desc')->get();
+        // Sorting
+        $sortBy = $request->get('sort_by', 'created_at'); // default: created_at
+        $order = $request->get('order', 'desc'); // default: desc
+
+        // Validasi kolom yang boleh digunakan untuk sorting
+        $allowedSorts = ['status', 'created_at', 'updated_at'];
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'created_at';
+        }
+
+        // Validasi arah urutan
+        $allowedOrders = ['asc', 'desc'];
+        if (!in_array($order, $allowedOrders)) {
+            $order = 'desc';
+        }
+
+        $requests = $query->orderBy($sortBy, $order)->get();
 
         return view('admin.request.index', compact('requests'));
     }
