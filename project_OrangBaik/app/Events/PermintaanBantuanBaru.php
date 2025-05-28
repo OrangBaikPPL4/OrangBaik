@@ -2,35 +2,43 @@
 
 namespace App\Events;
 
+use App\Models\RequestBantuan;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Broadcasting\InteractsWithSockets;
 
-class PermintaanBantuanBaru
+class PermintaanBantuanBaru implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct()
+    public $request;
+
+    public function __construct(RequestBantuan $request)
     {
-        //
+        $this->request = $request;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
+    public function broadcastOn()
+    {
+        return new Channel('admin-notifikasi');
+    }
+
+    public function broadcastWith()
     {
         return [
-            new PrivateChannel('channel-name'),
+            'id' => $this->request->id,
+            'nama_korban' => $this->request->user->name ?? 'Tidak diketahui',
+            'jenis_kebutuhan' => $this->request->jenis_kebutuhan,
+            'deskripsi' => $this->request->deskripsi,
+            'status' => $this->request->status,
+            'tanggal' => $this->request->created_at->format('d M Y H:i')
         ];
+    }
+
+    public function broadcastAs()
+    {
+        return 'permintaan.baru';
     }
 }
