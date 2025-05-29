@@ -100,6 +100,7 @@ Route::get('/edukasi/{edukasi}', [EdukasiController::class, 'show'])->name('eduk
 
 // Testimoni publik
 Route::get('/testimoni', [TestimoniController::class, 'index'])->name('testimoni.index');
+Route::get('/testimoni/{id}', [TestimoniController::class, 'show'])->name('testimoni.show');
 
 // Admin tambahan
 Route::middleware(['auth', 'admin'])->group(function () {

@@ -12,12 +12,35 @@ class TestimoniController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $testimonis = Testimoni::where('status', 'verified')->latest()->get();
+        $query = Testimoni::where('status', 'verified');
 
-        return view('testimoni.index', compact('testimonis'));
+        if ($request->filled('lokasi')) {
+            $query->where('lokasi', 'like', '%' . $request->lokasi . '%');
+        }
+
+        if ($request->filled('jenis_bencana')) {
+            $query->where('jenis_bencana', $request->jenis_bencana);
+        }
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->search . '%')
+                ->orWhere('lokasi', 'like', '%' . $request->search . '%')
+                ->orWhere('jenis_bencana', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $testimonis = $query->latest()->get();
+
+        // Kirim data untuk dropdown unik
+        $lokasiList = Testimoni::where('status', 'verified')->distinct()->pluck('lokasi');
+        $jenisList = Testimoni::where('status', 'verified')->distinct()->pluck('jenis_bencana');
+
+        return view('testimoni.index', compact('testimonis', 'lokasiList', 'jenisList'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -90,5 +113,11 @@ class TestimoniController extends Controller
         $testimoni->save();
 
         return redirect()->back()->with('success', 'Testimoni telah ditolak.');
+    }
+
+    public function show($id) 
+    {
+        $testimoni = Testimoni::findOrFail($id);
+        return view('testimoni.show', compact('testimoni'));
     }
 }

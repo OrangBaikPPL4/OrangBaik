@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('jenis_bencana');
             $table->text('isicerita');
             $table->string('foto')->nullable();
-            $table->enum('status', ['pending', 'verified', 'rejected'])->default('pending'); 
+            $table->enum('status', ['pending', 'verified', 'rejected'])->default('pending');
+            $table->string('alasan_penolakan'); 
             $table->timestamps();
         });
     }
