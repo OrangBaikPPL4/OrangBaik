@@ -123,7 +123,7 @@
                 </div>
                 <div style="font-size:1.18rem; font-weight:700; color:#222; margin-bottom:8px; text-align:center;">Donasi</div>
 <div style="color:#666; font-size:1.02rem; margin-bottom:24px; text-align:center;">Salurkan donasi kamu secara aman dan transparan untuk mereka yang membutuhkan.</div>
-<a href="/donasi" style="background:#1976D2; color:#fff; border:none; border-radius:8px; padding:12px 0; width:100%; font-weight:700; font-size:1.08rem; text-align:center; box-shadow:0 2px 8px rgba(25,118,210,0.08); transition:background 0.2s; text-decoration:none;">Donasi Sekarang</a>
+<a href="/donations/create" style="background:#1976D2; color:#fff; border:none; border-radius:8px; padding:12px 0; width:100%; font-weight:700; font-size:1.08rem; text-align:center; box-shadow:0 2px 8px rgba(25,118,210,0.08); transition:background 0.2s; text-decoration:none;">Donasi Sekarang</a>
             </div>
             <!-- Card 4 -->
 <div style="background:#fff; border-radius:16px; box-shadow:0 4px 20px rgba(30,40,60,0.11); padding:32px 22px 28px 22px; width:260px; display:flex; flex-direction:column; align-items:center; transition:box-shadow 0.2s;">
@@ -136,108 +136,6 @@
 </div>
         </div>
     </div>
-</section>
-
-<!-- Laporkan Bencana & Ajukan Bantuan Side-by-Side Section -->
-<style>
-.landing-cards-section {
-  background: #e3f0fa;
-  padding: 56px 0 44px 0;
-}
-.landing-cards-container {
-  max-width: 980px;
-  margin: 0 auto;
-}
-.landing-cards-flex {
-  display: flex;
-  gap: 38px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.landing-card {
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 4px 20px rgba(30,40,60,0.11);
-  padding: 36px 32px;
-  flex: 1 1 340px;
-  min-width: 260px;
-  max-width: 430px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  text-align: center;
-}
-.landing-card h2 {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #1976D2;
-  margin-bottom: 6px;
-}
-.landing-card-desc {
-  color: #333;
-  font-size: 1.13rem;
-  max-width: 430px;
-}
-.landing-card-btn {
-  background: #1976D2;
-  color: #fff;
-  font-weight: 700;
-  border-radius: 8px;
-  padding: 13px 38px;
-  font-size: 1.08rem;
-  text-decoration: none;
-  box-shadow: 0 2px 8px rgba(25,118,210,0.08);
-  margin-top: 8px;
-  border: none;
-  display: inline-block;
-  transition: background 0.2s;
-}
-.landing-card-btn:hover {
-  background: #155a9c;
-}
-.landing-card-icon {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-top: 8px;
-}
-@media (max-width: 900px) {
-  .landing-cards-flex {
-    flex-direction: column !important;
-    gap: 22px !important;
-    align-items: center;
-  }
-}
-</style>
-<section class="landing-cards-section">
-  <div class="landing-cards-container">
-    <div class="landing-cards-flex">
-      <!-- Card Laporkan Bencana -->
-      <div class="landing-card">
-        <h2>Laporkan Bencana</h2>
-        <div class="landing-card-desc">
-          Melihat atau mengalami bencana? Laporkan segera agar relawan dan pihak berwenang dapat bergerak cepat. Sertakan lokasi, jenis bencana, deskripsi, dan bukti foto/video. Pantau juga status laporanmu!
-        </div>
-        <a href="/lapor" class="landing-card-btn">Laporkan Sekarang</a>
-        <div class="landing-card-icon">
-          <svg width="90" height="90" fill="none" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1976D2" fill-opacity="0.14"/><path d="M32 13v18m0 0l-6-6m6 6l6-6" stroke="#1976D2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="32" r="19" stroke="#1976D2" stroke-width="2.2"/></svg>
-        </div>
-      </div>
-      <!-- Card Ajukan Bantuan -->
-      <div class="landing-card">
-        <h2>Ajukan Bantuan</h2>
-        <div class="landing-card-desc">
-          Korban bencana dapat mengajukan permintaan bantuan seperti makanan, obat, dan pakaian secara langsung. Pantau status permintaanmu secara real-time!
-        </div>
-        <a href="/bantuan" class="landing-card-btn">Ajukan Bantuan</a>
-        <div class="landing-card-icon">
-          <svg width="90" height="90" fill="none" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1976D2" fill-opacity="0.14"/><path d="M22 32h20M32 22v20" stroke="#1976D2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
 
 

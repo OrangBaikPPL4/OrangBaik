@@ -47,4 +47,9 @@ class Donation extends Model
     {
         return $this->belongsTo(DisasterReport::class);
     }
+
+    public function distribution()
+    {
+        return $this->hasOne(Distribution::class);
+    }
 }

@@ -59,7 +59,7 @@
                                             } }}">{{ ucfirst($req->status) }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <form action="{{ route('admin.request-bantuan.update-status', $req->id) }}" method="POST">
+                                            <form action="{{ route('admin.request-bantuan.updateStatus', $req->id) }}" method="POST">
                                                 @csrf
                                                 <select name="status" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm" onchange="this.form.submit()">
                                                     <option value="pending" {{ $req->status == 'pending' ? 'selected' : '' }}>Pending</option>

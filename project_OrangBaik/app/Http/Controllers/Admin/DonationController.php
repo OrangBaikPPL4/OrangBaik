@@ -102,7 +102,28 @@ class DonationController extends Controller
     {
         $validated = $request->validate([
             'disaster_report_id' => 'required|exists:disaster_reports,id',
+            'amount' => 'required|numeric|min:0|max:' . $donation->amount,
+            'description' => 'required|string|max:1000',
+            'proof_image' => 'required|image|max:2048',
         ]);
+
+        // Store the proof image
+        $proofPath = $request->file('proof_image')->store('distribution-proofs', 'public');
+
+        // Fetch the selected disaster report
+        $disasterReport = \App\Models\DisasterReport::find($validated['disaster_report_id']);
+
+        // Create distribution record
+        $distribution = \App\Models\Distribution::create([
+            'donation_id' => $donation->id,
+            'amount' => $validated['amount'],
+            'disaster' => $disasterReport ? $disasterReport->jenis_bencana : null,
+            'description' => $validated['description'],
+            'proof_image' => $proofPath,
+            'distributed_at' => now(),
+        ]);
+
+        // Update donation status
         $donation->disaster_report_id = $validated['disaster_report_id'];
         $donation->status = 'distributed';
         $donation->save();
@@ -112,14 +133,19 @@ class DonationController extends Controller
             'donation_id' => $donation->id,
             'status' => 'distributed',
             'changed_by' => auth()->id(),
-            'comment' => 'Donasi didistribusikan ke bencana.'
+            'comment' => 'Donasi didistribusikan ke bencana: ' . ($disasterReport ? $disasterReport->jenis_bencana : '-')
         ]);
 
         // Notify user
         if ($donation->user) {
-            $donation->user->notify(new \App\Notifications\DonationStatusUpdated($donation, 'Donasi Anda telah didistribusikan ke bencana.'));
+            try {
+                $donation->user->notify(new \App\Notifications\DonationDistributed($donation));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send distribution notification: ' . $e->getMessage());
+            }
         }
 
-        return redirect('/donations')->with('success', 'Donasi berhasil didistribusikan.');
+        return redirect()->route('admin.donations.index')
+            ->with('success', 'Donasi berhasil didistribusikan.');
     }
 } 

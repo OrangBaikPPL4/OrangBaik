@@ -57,26 +57,27 @@ class DonationController extends Controller
         $distributionStats = \App\Models\Donation::where('status', 'distributed')
             ->whereNotNull('disaster_report_id')
             ->with('disasterReport')
-            ->get()
-            ->groupBy(function($donation) {
-                return $donation->disasterReport ? $donation->disasterReport->jenis_bencana : 'Lainnya';
-            })
-            ->map(function($group) {
-                return [
-                    'count' => $group->count(),
-                    'amount' => $group->sum('amount'),
-                    'locations' => $group->groupBy(function($donation) {
-                        return $donation->disasterReport ? $donation->disasterReport->lokasi : 'Lainnya';
-                    })->map(function($locGroup) {
-                        return [
-                            'count' => $locGroup->count(),
-                            'amount' => $locGroup->sum('amount'),
-                        ];
-                    })
-                ];
-            });
+            ->get();
 
-        return view('donations.index', compact('donations', 'totalAmount', 'totalDistributed', 'disasters', 'statusTotals', 'distributionStats'));
+        $byType = $distributionStats->groupBy(function($donation) {
+            return $donation->disasterReport ? $donation->disasterReport->jenis_bencana : 'Lainnya';
+        })->map(function($group) {
+            return $group->sum('amount');
+        });
+        $byLocation = $distributionStats->groupBy(function($donation) {
+            return $donation->disasterReport ? $donation->disasterReport->lokasi : 'Lainnya';
+        })->map(function($group) {
+            return $group->sum('amount');
+        });
+
+        $chartData = [
+            'totalAmount' => $totalAmount,
+            'totalDistributed' => $totalDistributed,
+            'byType' => $byType,
+            'byLocation' => $byLocation,
+        ];
+
+        return view('donations.index', compact('donations', 'totalAmount', 'totalDistributed', 'disasters', 'statusTotals', 'distributionStats', 'chartData'));
     }
 
     /**

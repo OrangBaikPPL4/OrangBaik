@@ -204,6 +204,35 @@
                         </div>
                     </template>
                 </div>
+
+                <!-- Distribution Details -->
+                @if($donation->status === 'distributed' && $donation->distribution)
+                <div class="bg-white shadow rounded-lg p-6 mt-6">
+                    <h3 class="text-lg font-semibold mb-4">Detail Distribusi</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600">Bencana</p>
+                            <p class="font-medium">{{ $donation->distribution->disaster }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Jumlah Didistribusikan</p>
+                            <p class="font-medium">Rp {{ number_format($donation->distribution->amount, 0, ',', '.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Tanggal Distribusi</p>
+                            <p class="font-medium">{{ $donation->distribution->distributed_at->format('d/m/Y H:i') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Deskripsi</p>
+                            <p class="font-medium">{{ $donation->distribution->description }}</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <p class="text-sm text-gray-600">Bukti Distribusi</p>
+                            <img src="{{ Storage::url($donation->distribution->proof_image) }}" alt="Bukti Distribusi" class="mt-2 max-w-md rounded-lg shadow">
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>
