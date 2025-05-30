@@ -44,7 +44,14 @@ Route::get('/', function () {
     // Fetch disaster reports for the landing page
     $disasterReports = \App\Models\DisasterReport::latest()->take(5)->get();
     
-    return view('landing', compact('faqs', 'relawanCount', 'misiBantuanCount', 'volunteerCount', 'announcements', 'disasterReports'));
+    // Fetch latest volunteer events
+    $volunteerEvents = \App\Models\Volunteer::latest()->take(3)->get();
+    
+    // Fetch latest missions
+    $missions = \App\Models\Misi::latest()->take(3)->get();
+    
+    return view('landing', compact('faqs', 'relawanCount', 'misiBantuanCount', 'volunteerCount', 
+        'announcements', 'disasterReports', 'volunteerEvents', 'missions'));
 })->name('landing');
 
 // Dashboard utama (menampilkan edukasi terbaru)
