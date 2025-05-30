@@ -49,15 +49,7 @@
                         <label for="lokasi" class="block text-sm font-semibold text-blue-700 mb-1">Lokasi</label>
                         <input type="text" name="lokasi" id="lokasi" value="{{ old('lokasi', $relawan->lokasi) }}" class="w-full rounded-lg border border-blue-200 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 px-4 py-2">
                     </div>
-                    <div class="md:col-span-2">
-                        <label for="peran" class="block text-sm font-semibold text-blue-700 mb-1">Peran</label>
-                        <select name="peran" id="peran" class="w-full rounded-lg border border-blue-200 focus:border-blue-400 focus:ring focus:ring-blue-100 focus:ring-opacity-50 px-4 py-2" required>
-                            <option value="">Pilih Peran</option>
-                            <option value="medis" {{ old('peran', $relawan->peran) == 'medis' ? 'selected' : '' }}>Medis</option>
-                            <option value="SAR" {{ old('peran', $relawan->peran) == 'SAR' ? 'selected' : '' }}>SAR</option>
-                            <option value="logistik" {{ old('peran', $relawan->peran) == 'logistik' ? 'selected' : '' }}>Logistik</option>
-                        </select>
-                    </div>
+
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center">
                     <button type="submit" class="w-full sm:w-auto px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-md transition-all duration-150">Simpan Perubahan</button>

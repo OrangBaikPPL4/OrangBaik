@@ -25,6 +25,13 @@
                     <x-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
                         {{ __('Misi Bantuan') }}
                     </x-nav-link>
+                    
+                    @if(Auth::user()->usertype === 'admin')
+                    <!-- Volunteer Link -->
+                    <x-nav-link :href="route('volunteer.index')" :active="request()->routeIs('volunteer.*')">
+                        {{ __('Volunteer') }}
+                    </x-nav-link>
+                    @endif
 
 
                     <!-- Donations Link -->
@@ -50,7 +57,10 @@
                     
                     @if(Auth::user()->usertype === 'admin')
                         <!-- Admin Dashboard -->
-                        <x-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('admin.*')">
+                        <x-nav-link :href="route('admin.faq.index')" :active="request()->routeIs('admin.faq.*')">
+                            {{ __('Manajemen FAQ') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('dashboard.admin')">
                             {{ __('Admin') }}
                         </x-nav-link>
                     @endif
@@ -119,6 +129,13 @@
             <x-responsive-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
                 {{ __('Misi Bantuan') }}
             </x-responsive-nav-link>
+            
+            @if(Auth::user()->usertype === 'admin')
+            <!-- Responsive Volunteer Link -->
+            <x-responsive-nav-link :href="route('volunteer.index')" :active="request()->routeIs('volunteer.*')">
+                {{ __('Volunteer') }}
+            </x-responsive-nav-link>
+            @endif
 
             <!-- Responsive Donations Link -->
             <x-responsive-nav-link :href="route('donations.index')" :active="request()->routeIs('donations.*')">
@@ -142,7 +159,10 @@
             
             @if(Auth::user()->usertype === 'admin')
                 <!-- Responsive Admin Dashboard -->
-                <x-responsive-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('admin.*')">
+                <x-responsive-nav-link :href="route('admin.faq.index')" :active="request()->routeIs('admin.faq.*')">
+                    {{ __('Manajemen FAQ') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('dashboard.admin')">
                     {{ __('Admin') }}
                 </x-responsive-nav-link>
             @endif
