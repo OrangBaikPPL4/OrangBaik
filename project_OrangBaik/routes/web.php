@@ -21,7 +21,6 @@ use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\TestimoniController;
 use App\Http\Controllers\Auth\AdminLoginController;
-use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 use App\Http\Controllers\Admin\DisasterReportController as AdminDisasterReportController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\FaqController;
@@ -288,7 +287,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/notifications/mark-all-read', [AdminNotificationController::class, 'markAllAsRead'])->name('admin.notifications.mark-all-read');
     Route::delete('/admin/notifications/{id}', [AdminNotificationController::class, 'destroy'])->name('admin.notifications.destroy');
 
-});
 
 
 // Donasi umum

@@ -21,8 +21,8 @@
             <h1 style="color:#fff; font-size:2.4rem; font-weight:700; margin-bottom:12px; text-align:center;">Bersama, Kita Bisa Membantu</h1>
 <p style="color:#fff; font-size:1.2rem; margin-bottom:24px; text-align:center; max-width:600px;">Jadilah bagian dari perubahan. Wujudkan aksi nyata untuk sesama, mulai hari ini bersama OrangBaik.</p>
             <div style="display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-bottom:32px;">
-  <a href="#lapor-bencana" class="hero-cta" style="background:#1976D2; color:#fff; padding:12px 32px; border-radius:8px; font-weight:600; font-size:1.08rem; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:background 0.2s; text-decoration:none;">Laporkan Bencana</a>
-  <a href="#bantuan" class="hero-cta" style="background:#fff; color:#1976D2; padding:12px 32px; border-radius:8px; font-weight:600; font-size:1.08rem; box-shadow:0 2px 8px rgba(25,118,210,0.09); border:2px solid #1976D2; transition:background 0.2s, color 0.2s; text-decoration:none;">Ajukan Bantuan</a>
+  <a href="{{ route('disaster_report.create') }}" class="hero-cta" style="background:#1976D2; color:#fff; padding:12px 32px; border-radius:8px; font-weight:600; font-size:1.08rem; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:background 0.2s; text-decoration:none;">Laporkan Bencana</a>
+  <a href="{{ route('request-bantuan.index') }}" class="hero-cta" style="background:#fff; color:#1976D2; padding:12px 32px; border-radius:8px; font-weight:600; font-size:1.08rem; box-shadow:0 2px 8px rgba(25,118,210,0.09); border:2px solid #1976D2; transition:background 0.2s, color 0.2s; text-decoration:none;">Ajukan Bantuan</a>
 </div>
         </div>
     </section>
@@ -222,10 +222,6 @@
                         </div>
                     @endforelse
                 </div>
-                <div style="font-size:1.18rem; font-weight:700; color:#222; margin-bottom:8px; text-align:center;">Donasi</div>
-<div style="color:#666; font-size:1.02rem; margin-bottom:24px; text-align:center;">Salurkan donasi kamu secara aman dan transparan untuk mereka yang membutuhkan.</div>
-<a href="/donations/create" style="background:#1976D2; color:#fff; border:none; border-radius:8px; padding:12px 0; width:100%; font-weight:700; font-size:1.08rem; text-align:center; box-shadow:0 2px 8px rgba(25,118,210,0.08); transition:background 0.2s; text-decoration:none;">Donasi Sekarang</a>
-
                 
                 @if(count($volunteerEvents) > 0)
                     <div style="text-align:center; margin-top:32px;">
@@ -308,6 +304,68 @@
         </div>
     </div>
 </section>
+
+<!-- Donation Section -->
+<section id="donasi" class="py-16 px-4 sm:px-8 lg:px-16 bg-white">
+    <div class="container" style="max-width:1140px; margin:auto;">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-blue-700 mb-4">Donasi untuk Korban Bencana</h2>
+            <p class="text-gray-600 text-lg max-w-3xl mx-auto">Salurkan donasi kamu secara aman dan transparan untuk mereka yang membutuhkan</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div class="bg-blue-50 rounded-lg shadow-md p-6 text-center">
+                <div class="text-gray-600 text-sm mb-2">Total Donasi Terkumpul</div>
+                <div class="text-2xl font-bold text-blue-700">
+                    @php
+                        $totalDonations = App\Models\Donation::where('status', 'confirmed')->orWhere('status', 'distributed')->sum('amount');
+                    @endphp
+                    Rp {{ number_format($totalDonations, 0, ',', '.') }}
+                </div>
+            </div>
+            <div class="bg-blue-50 rounded-lg shadow-md p-6 text-center">
+                <div class="text-gray-600 text-sm mb-2">Jumlah Donatur</div>
+                <div class="text-2xl font-bold text-blue-700">
+                    @php
+                        $donorCount = App\Models\Donation::where('status', 'confirmed')->orWhere('status', 'distributed')->count();
+                    @endphp
+                    {{ $donorCount }} Orang
+                </div>
+            </div>
+            <div class="bg-blue-50 rounded-lg shadow-md p-6 text-center">
+                <div class="text-gray-600 text-sm mb-2">Target Donasi</div>
+                <div class="text-2xl font-bold text-blue-700">Rp 100.000.000</div>
+            </div>
+        </div>
+
+        <!-- Donation Progress -->
+        <div class="max-w-3xl mx-auto mb-12">
+            <div class="flex justify-between text-sm text-gray-600 mb-2">
+                <span>Progress</span>
+                <span>{{ min(round(($totalDonations / 100000000) * 100), 100) }}%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-4">
+                <div class="bg-blue-600 h-4 rounded-full" style="width: {{ min(round(($totalDonations / 100000000) * 100), 100) }}%"></div>
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-4">
+            <a href="{{ route('donations.create') }}" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Donasi Sekarang
+            </a>
+            <a href="{{ route('donations.index') }}" class="inline-flex items-center px-6 py-3 bg-white border-2 border-blue-600 text-blue-600 font-medium rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Lihat Transparansi Donasi
+            </a>
+        </div>
+    </div>
+</section>
+
 
 <!-- Request Bantuan Section -->
 <section id="bantuan" class="py-16 px-4 sm:px-8 lg:px-16 bg-blue-50">

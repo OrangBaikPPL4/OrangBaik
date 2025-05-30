@@ -11,69 +11,105 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                <div class="hidden sm:flex sm:items-stretch sm:ms-10">
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="flex items-center px-3 py-2 h-full">
                         {{ __('Beranda') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('relawan.index')" :active="request()->routeIs('relawan.*')">
-                        {{ __('Relawan') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
-                        {{ __('Misi Bantuan') }}
-                    </x-nav-link>
-
                     
-                    @if(Auth::user()->usertype === 'admin')
-                    <!-- Volunteer Link -->
-                    <x-nav-link :href="route('volunteer.index')" :active="request()->routeIs('volunteer.*')">
-                        {{ __('Volunteer') }}
-                    </x-nav-link>
-                    @endif
-
-
-                    <!-- Donations Link -->
-                    <x-nav-link :href="route('donations.index')" :active="request()->routeIs('donations.*')">
-                        {{ __('Donasi') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('admin.request-bantuan.index')" :active="request()->routeIs('admin.request-bantuan.*')">
-                        {{ __('Request Bantuan') }}
-                    </x-nav-link>
-
-                    <!-- Edukasi Link -->
-                    <x-nav-link :href="route('edukasi.menu')" :active="request()->routeIs('edukasi.*')">
-                        {{ __('Edukasi') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">
-                        {{ __('Laporan Bencana') }}
-                    </x-nav-link>
-                    @if(Auth::user()->usertype === 'admin')
-                        <x-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('admin.*')">
-
-                     <!-- Disaster Report -->
-                    <x-nav-link :href="route('admin.disaster_reports.index')" :active="request()->routeIs('admin.disaster_report.*')">
-                        {{ __('Laporan Bencana') }}
-                    </x-nav-link>
-
-                    <!-- Testimoni Link -->
-                    <x-nav-link :href="route('testimoni.index')" :active="request()->routeIs('testimoni.*')">
-                        {{ __('Testimoni dan Cerita Korban') }}
-                    </x-nav-link>
-
+                    <!-- Grup 1: Relawan & Volunteer -->
+                    <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
+                        <div @click="open = ! open" class="inline-flex items-center px-3 py-2 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out cursor-pointer h-full {{ request()->routeIs('relawan.*') || request()->routeIs('volunteer.*') ? 'border-indigo-400 text-gray-900' : '' }}">
+                            <div>{{ __('Relawan') }}</div>
+                            <div class="ml-1">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute z-50 mt-2 w-48 rounded-md shadow-lg origin-top-right right-0" style="display: none;">
+                            <div class="rounded-md ring-1 ring-black ring-opacity-5 py-1 bg-white">
+                                <a href="{{ route('relawan.index') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('relawan.*') ? 'bg-gray-100' : '' }}">{{ __('Relawan') }}</a>
+                                <a href="{{ route('volunteer.index') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('volunteer.*') ? 'bg-gray-100' : '' }}">{{ __('Volunteer') }}</a>
+                            </div>
+                        </div>
+                    </div>
                     
-                    @if(Auth::user()->usertype === 'admin')
-                        <!-- Admin Dashboard -->
-                        <x-nav-link :href="route('admin.faq.index')" :active="request()->routeIs('admin.faq.*')">
-                            {{ __('Manajemen FAQ') }}
-                        </x-nav-link>
-                        
-                        <!-- Announcements -->
-                        <x-nav-link :href="route('admin.announcements.index')" :active="request()->routeIs('admin.announcements.*')">
-                            {{ __('Pengumuman') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('dashboard.admin')">
-                            {{ __('Admin') }}
-                        </x-nav-link>
-                    @endif
+                    <!-- Grup 2: Misi Bantuan & FAQ -->
+                    <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
+                        <div @click="open = ! open" class="inline-flex items-center px-3 py-2 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out cursor-pointer h-full {{ request()->routeIs('misi.*') || request()->routeIs('admin.faq.*') ? 'border-indigo-400 text-gray-900' : '' }}">
+                            <div>{{ __('Bantuan') }}</div>
+                            <div class="ml-1">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute z-50 mt-2 w-48 rounded-md shadow-lg origin-top-right right-0" style="display: none;">
+                            <div class="rounded-md ring-1 ring-black ring-opacity-5 py-1 bg-white">
+                                <a href="{{ route('misi.index') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('misi.*') ? 'bg-gray-100' : '' }}">{{ __('Misi Bantuan') }}</a>
+                                <a href="{{ route('admin.faq.index') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('admin.faq.*') ? 'bg-gray-100' : '' }}">{{ __('FAQ') }}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grup 3: Daftar Donasi & Kelola Donasi -->
+                    <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
+                        <div @click="open = ! open" class="inline-flex items-center px-3 py-2 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out cursor-pointer h-full {{ request()->routeIs('donations.*') || request()->routeIs('admin.donations.*') ? 'border-indigo-400 text-gray-900' : '' }}">
+                            <div>{{ __('Donasi') }}</div>
+                            <div class="ml-1">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute z-50 mt-2 w-48 rounded-md shadow-lg origin-top-right right-0" style="display: none;">
+                            <div class="rounded-md ring-1 ring-black ring-opacity-5 py-1 bg-white">
+                                <a href="{{ route('donations.index') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('donations.index') ? 'bg-gray-100' : '' }}">{{ __('Daftar Donasi') }}</a>
+                                <a href="{{ route('admin.donations.index') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('admin.donations.*') ? 'bg-gray-100' : '' }}">{{ __('Kelola Donasi') }}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grup 4: Edukasi & Testimoni -->
+                    <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
+                        <div @click="open = ! open" class="inline-flex items-center px-3 py-2 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out cursor-pointer h-full {{ request()->routeIs('edukasi.*') || request()->routeIs('testimoni.*') ? 'border-indigo-400 text-gray-900' : '' }}">
+                            <div>{{ __('Edukasi') }}</div>
+                            <div class="ml-1">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute z-50 mt-2 w-48 rounded-md shadow-lg origin-top-right right-0" style="display: none;">
+                            <div class="rounded-md ring-1 ring-black ring-opacity-5 py-1 bg-white">
+                                <a href="{{ route('edukasi.menu') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('edukasi.*') ? 'bg-gray-100' : '' }}">{{ __('Edukasi') }}</a>
+                                <a href="{{ route('testimoni.index') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('testimoni.*') ? 'bg-gray-100' : '' }}">{{ __('Testimoni') }}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grup 5: Laporan Bencana & Pengumuman -->
+                    <div class="relative" x-data="{ open: false }" @click.away="open = false" @close.stop="open = false">
+                        <div @click="open = ! open" class="inline-flex items-center px-3 py-2 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out cursor-pointer h-full {{ request()->routeIs('disaster_report.*') || request()->routeIs('admin.announcements.*') ? 'border-indigo-400 text-gray-900' : '' }}">
+                            <div>{{ __('Laporan') }}</div>
+                            <div class="ml-1">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute z-50 mt-2 w-48 rounded-md shadow-lg origin-top-right right-0" style="display: none;">
+                            <div class="rounded-md ring-1 ring-black ring-opacity-5 py-1 bg-white">
+                                <a href="{{ route('admin.disaster_reports.index') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('admin.disaster_reports.*') ? 'bg-gray-100' : '' }}">{{ __('Laporan Bencana') }}</a>
+                                <a href="{{ route('admin.announcements.index') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('admin.announcements.*') ? 'bg-gray-100' : '' }}">{{ __('Pengumuman') }}</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grup 6: Request (standalone) -->
+                    <x-nav-link :href="route('admin.request-bantuan.index')" :active="request()->routeIs('admin.request-bantuan.*')" class="flex items-center px-3 py-2 h-full">
+                        {{ __('Request') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -83,7 +119,7 @@
                 <x-notification-dropdown />
 
                 <!-- User Menu -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+                <div class="hidden sm:flex sm:items-center sm:ms-6">
                 @if(Auth::user()->usertype === 'admin')
                 <!-- Admin Notifications -->
                 <div class="mr-4">

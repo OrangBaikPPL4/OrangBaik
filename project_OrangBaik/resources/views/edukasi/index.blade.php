@@ -7,6 +7,15 @@
 
     @section('content')
     <div class="max-w-7xl mx-auto py-10 px-6 space-y-8 bg-blue-100 to-white min-h-screen">
+        <!-- Back button with enhanced design -->
+        <div class="mb-6">
+            <a href="{{ url()->previous() }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary-700 hover:text-primary-900 bg-white/80 backdrop-blur-sm hover:bg-white/90 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-primary-100">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Kembali
+            </a>
+        </div>
         {{-- Header dan tombol --}}
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <h1 class="text-3xl font-bold text-blue-800">Daftar Konten Edukasi</h1>

@@ -20,15 +20,10 @@ class DonationController extends Controller
      */
     public function index()
     {
-        if (auth()->check()) {
-            // Both admin and user: show all donations (no user_id filter)
-            $donations = Donation::with(['user', 'paymentProof', 'statusHistories.admin', 'disasterReport'])
-                ->latest()
-                ->paginate(10);
-        } else {
-            // Guest: show nothing
-            $donations = collect([]);
-        }
+        // Show donations to all users, including guests
+        $donations = Donation::with(['user', 'paymentProof', 'statusHistories.admin', 'disasterReport'])
+            ->latest()
+            ->paginate(10);
         $totalAmount = \App\Models\Donation::whereIn('status', ['confirmed', 'distributed'])->sum('amount');
         $totalDistributed = \App\Models\Donation::where('status', 'distributed')->sum('amount');
         $disasters = \App\Models\DisasterReport::all();

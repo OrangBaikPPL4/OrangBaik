@@ -2,6 +2,13 @@
 @section('content')
 @include('partials.navbar')
 <div class="max-w-3xl mx-auto py-10 px-2 md:px-0">
+    <!-- Back button with enhanced design -->
+    <a href="{{ url()->previous() }}" class="inline-flex items-center mb-8 px-4 py-2 text-sm font-medium text-primary-700 hover:text-primary-900 bg-white/80 backdrop-blur-sm hover:bg-white/90 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-primary-100">
+        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        Kembali
+    </a>
     <!-- Mission Image Header -->
     <div class="relative h-56 md:h-72 rounded-2xl overflow-hidden shadow-lg mb-6 flex items-end">
         <img src="{{ $misi->image_url ?? '/images/mission-placeholder.png' }}" class="absolute inset-0 w-full h-full object-cover" alt="Mission image">
