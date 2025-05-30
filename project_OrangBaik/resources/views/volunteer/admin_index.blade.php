@@ -55,8 +55,10 @@
                                             @csrf
                                             <select name="status" onchange="this.form.submit()" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
                                                 <option value="aktif" {{ $volunteer->status == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                                                <option value="dalam proses" {{ $volunteer->status == 'dalam proses' ? 'selected' : '' }}>Dalam Proses</option>
+                                                <option value="dalam_proses" {{ $volunteer->status == 'dalam_proses' || $volunteer->status == 'dalam proses' ? 'selected' : '' }}>Dalam Proses</option>
                                                 <option value="selesai" {{ $volunteer->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                                <option value="ditunda" {{ $volunteer->status == 'ditunda' ? 'selected' : '' }}>Ditunda</option>
+                                                <option value="dibatalkan" {{ $volunteer->status == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
                                             </select>
                                         </form>
                                     </td>

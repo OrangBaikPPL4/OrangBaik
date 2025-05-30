@@ -381,7 +381,8 @@ class VolunteerController extends Controller
             // }
         }
         
-        return redirect()->route('volunteer.show', $volunteer->id)->with('success', 'Status acara volunteer berhasil diperbarui.');
+        // Redirect back to the previous page (either index or show)
+    return redirect()->back()->with('success', 'Status acara volunteer berhasil diperbarui.');
     }
     
     /**
@@ -535,6 +536,11 @@ Silahkan cek halaman detail acara untuk informasi lebih lanjut.",
         }
 
         $relawan = $user->relawan;
+        
+        // Check if relawan has been approved by admin
+        if ($relawan->verification_status !== 'approved') {
+            return redirect()->route('volunteer.show', $id)->with('error', 'Pendaftaran relawan Anda belum disetujui oleh admin. Mohon tunggu persetujuan sebelum bergabung dengan acara volunteer.');
+        }
 
         // Cek apakah relawan sudah terdaftar
         if ($volunteer->relawan()->where('relawan_id', $relawan->id)->exists()) {

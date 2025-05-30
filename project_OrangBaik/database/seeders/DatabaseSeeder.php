@@ -20,12 +20,24 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
+            // Users and core data
             UserSeeder::class,
             RelawanSeeder::class,
+            
+            // Volunteer events
             VolunteerSeeder::class,
-            EdukasiSeeder::class,
+            VolunteerNotificationSeeder::class,
+            
+            // Disaster response
+            MisiSeeder::class,
             DisasterReportSeeder::class,
-            // Add other seeders here if you create more
+            RequestBantuanSeeder::class,
+            
+            // Educational content
+            EdukasiSeeder::class,
+            
+            // Donations
+            DonationSeeder::class,
         ]);
     }
 }

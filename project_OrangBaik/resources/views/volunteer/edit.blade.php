@@ -66,8 +66,10 @@
                                 <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                                 <select name="status" id="status" class="w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
                                     <option value="aktif" {{ old('status', $volunteer->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                                    <option value="dalam proses" {{ old('status', $volunteer->status) == 'dalam proses' ? 'selected' : '' }}>Dalam Proses</option>
+                                    <option value="dalam_proses" {{ old('status', $volunteer->status) == 'dalam_proses' || old('status', $volunteer->status) == 'dalam proses' ? 'selected' : '' }}>Dalam Proses</option>
                                     <option value="selesai" {{ old('status', $volunteer->status) == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                    <option value="ditunda" {{ old('status', $volunteer->status) == 'ditunda' ? 'selected' : '' }}>Ditunda</option>
+                                    <option value="dibatalkan" {{ old('status', $volunteer->status) == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
                                 </select>
                             </div>
                             

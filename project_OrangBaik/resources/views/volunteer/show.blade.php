@@ -124,6 +124,16 @@
                                         </p>
                                         @endif
                                     </div>
+                                @elseif($loggedInRelawanProfile && $loggedInRelawanProfile->verification_status !== 'approved')
+                                    <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
+                                        <p>Pendaftaran relawan Anda belum disetujui oleh admin.</p>
+                                    </div>
+                                    <button type="button" disabled class="w-full inline-flex justify-center items-center px-4 py-2 bg-yellow-100 border border-yellow-400 rounded-md font-semibold text-xs text-yellow-800 uppercase tracking-widest cursor-not-allowed">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                        </svg>
+                                        Menunggu Verifikasi
+                                    </button>
                                 @elseif($volunteer->status !== 'aktif')
                                     <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
                                         <p>Acara ini {{ $volunteer->status == 'dalam proses' ? 'sedang berlangsung' : 'telah selesai' }} dan tidak menerima pendaftaran baru.</p>

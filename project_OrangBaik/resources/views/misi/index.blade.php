@@ -60,20 +60,10 @@
         <!-- Action Buttons -->
         <div class="flex gap-3 mt-auto">
             <a href="{{ route('misi.show', $misi->id) }}" class="inline-flex items-center px-4 py-2 bg-blue-600 rounded-lg font-bold text-white shadow hover:bg-blue-700 transition">Detail Misi</a>
-            @if($relawan)
-                @php
-                    $isJoined = $relawan->misi->contains($misi->id);
-                @endphp
-                @if(!$isJoined && $misi->status == 'aktif')
-                    <form method="POST" action="{{ route('misi.gabung', $misi->id) }}">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-500 rounded-lg font-bold text-white shadow hover:bg-green-600 transition">Gabung</button>
-                    </form>
-                @elseif($isJoined)
-                    <span class="inline-flex items-center px-3 py-1 bg-yellow-100 border border-transparent rounded-md font-semibold text-xs text-yellow-800 uppercase tracking-widest">
-                        Tergabung
-                    </span>
-                @endif
+            @if($relawan && $relawan->misi->contains($misi->id))
+                <span class="inline-flex items-center px-3 py-1 bg-yellow-100 border border-transparent rounded-md font-semibold text-xs text-yellow-800 uppercase tracking-widest">
+                    Tergabung
+                </span>
             @endif
         </div>
     </div>

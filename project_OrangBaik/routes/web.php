@@ -55,7 +55,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/volunteer/{id}/edit', [VolunteerController::class, 'edit'])->name('volunteer.edit');
     Route::put('/volunteer/{id}', [VolunteerController::class, 'update'])->name('volunteer.update');
     Route::delete('/volunteer/{id}', [VolunteerController::class, 'destroy'])->name('volunteer.destroy');
-    Route::patch('/volunteer/{id}/update-status', [VolunteerController::class, 'updateVolunteerStatus'])->name('volunteer.updateStatus');
+    Route::match(['post', 'patch'], '/volunteer/{id}/update-status', [VolunteerController::class, 'updateVolunteerStatus'])->name('volunteer.updateStatus');
     Route::post('/volunteer/{id}/tambah-relawan', [VolunteerController::class, 'tambahRelawan'])->name('volunteer.tambahRelawan');
     Route::delete('/volunteer/{volunteer_id}/relawan/{relawan_id}', [VolunteerController::class, 'hapusRelawan'])->name('volunteer.hapusRelawan');
     Route::post('/volunteer/{volunteer_id}/relawan/{relawan_id}/update-kehadiran', [VolunteerController::class, 'updateKehadiran'])->name('volunteer.updateKehadiran');
