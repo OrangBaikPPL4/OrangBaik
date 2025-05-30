@@ -1,14 +1,22 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Buat Testimoni
-            </h2>
-        </div>
-    </x-slot>
-
-    @section('content')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Buat Testimoni - OrangBaik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    @include('partials.navbar')
     
+    <!-- Header Section -->
+    <section class="bg-gradient-to-b from-blue-50 to-white py-10 mb-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-700 mb-2">Buat Testimoni</h1>
+            <p class="text-lg text-blue-900 mb-6">Bagikan pengalaman Anda setelah menerima bantuan melalui platform OrangBaik</p>
+        </div>
+    </section>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -81,5 +89,8 @@
             lainnyaField.classList.toggle('hidden', select.value !== 'lainnya');
         }
     </script>
-    @endsection
-</x-app-layout>
+    
+    <!-- Footer -->
+    @include('partials.footer')
+</body>
+</html>

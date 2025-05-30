@@ -53,6 +53,29 @@ class EdukasiController extends Controller
     }
     
     /**
+     * Display a listing of the resource for public view.
+     */
+    public function publicIndex(Request $request)
+    {
+        $query = Edukasi::query();
+
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
+        
+        if ($request->has('search') && $request->search != '') {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('content', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $edukasi = $query->orderBy('created_at', 'desc')->paginate(9);
+        
+        return view('edukasi.index-public', compact('edukasi'));
+    }
+    
+    /**
      * Display the menu for edukasi management.
      */
     public function menu()

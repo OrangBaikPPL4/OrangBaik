@@ -51,8 +51,14 @@ Route::get('/', function () {
     // Fetch latest missions
     $missions = \App\Models\Misi::latest()->take(3)->get();
     
+    // Fetch latest testimonials
+    $testimonials = \App\Models\Testimoni::where('status', 'verified')->latest()->take(3)->get();
+    
+    // Fetch latest education content
+    $edukasi = \App\Models\Edukasi::latest()->take(3)->get();
+    
     return view('landing', compact('faqs', 'relawanCount', 'misiBantuanCount', 'volunteerCount', 
-        'announcements', 'disasterReports', 'volunteerEvents', 'missions'));
+        'announcements', 'disasterReports', 'volunteerEvents', 'missions', 'testimonials', 'edukasi'));
 })->name('landing');
 
 // Dashboard utama (menampilkan edukasi terbaru)
@@ -175,7 +181,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 // Edukasi publik
-Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
+Route::get('/edukasi', [EdukasiController::class, 'publicIndex'])->name('edukasi.index');
 Route::get('/edukasi/{edukasi}', [EdukasiController::class, 'show'])->name('edukasi.show')->where('edukasi', '[0-9]+');
 
 // Testimoni publik

@@ -116,7 +116,7 @@
                             <p style="color:#555; font-size:0.95rem; margin-bottom:16px; line-height:1.5; flex-grow:1;">
                                 {{ Str::limit($announcement->isi, 150) }}
                             </p>
-                            <a href="#" style="align-self:flex-start; color:#1976D2; font-weight:600; font-size:0.95rem; text-decoration:none; display:flex; align-items:center;">
+                            <a href="{{ route('announcements.show', $announcement->id) }}" style="align-self:flex-start; color:#1976D2; font-weight:600; font-size:0.95rem; text-decoration:none; display:flex; align-items:center;">
                                 Baca selengkapnya
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="margin-left:4px;">
                                     <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -368,6 +368,106 @@
     </div>
 </section>
 
+<!-- Testimonial Section -->
+<section id="testimonials" class="py-16 px-4 sm:px-8 lg:px-16 bg-blue-50">
+    <div class="container" style="max-width:1140px; margin:auto;">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-blue-700 mb-4">Cerita Mereka yang Terbantu</h2>
+            <p class="text-gray-600 text-lg max-w-3xl mx-auto">Kisah nyata dari mereka yang telah menerima bantuan melalui OrangBaik</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            @forelse($testimonials as $testimonial)
+                <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full transform transition duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="{{ asset($testimonial->foto) }}" alt="{{ $testimonial->nama }}" class="w-full h-full object-cover" onerror="this.src='{{ asset('images/testimoni/default.jpg') }}'">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent py-2 px-4">
+                            <div class="flex items-center">
+                                <span class="text-white text-sm">{{ $testimonial->lokasi }}</span>
+                                <span class="mx-2 text-white">•</span>
+                                <span class="text-white text-sm">{{ $testimonial->jenis_bencana }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $testimonial->nama }}</h3>
+                        <p class="text-gray-600 mb-4 flex-grow">{{ Str::limit($testimonial->isicerita, 150) }}</p>
+                        <a href="{{ route('testimoni.show', $testimonial->id) }}" class="text-blue-600 font-medium flex items-center hover:text-blue-800 transition-colors">
+                            Baca Selengkapnya
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-3 text-center py-8">
+                    <p class="text-gray-500 text-lg">Belum ada testimoni yang tersedia.</p>
+                </div>
+            @endforelse
+        </div>
+
+        <div class="flex justify-center gap-4">
+            <a href="{{ route('testimoni.index') }}" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors duration-300 flex items-center">
+                Lihat Semua Testimoni
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+            </a>
+            <a href="{{ route('testimoni.create') }}" class="px-6 py-3 bg-white border-2 border-blue-600 text-blue-600 font-medium rounded-md hover:bg-blue-50 transition-colors duration-300 flex items-center">
+                Bagikan Cerita Anda
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Edukasi Section -->
+<section id="edukasi" class="py-16 px-4 sm:px-8 lg:px-16 bg-white">
+    <div class="container" style="max-width:1140px; margin:auto;">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-blue-700 mb-4">Konten Edukasi</h2>
+            <p class="text-gray-600 text-lg max-w-3xl mx-auto">Tingkatkan pengetahuan dan keterampilan Anda dalam menghadapi bencana</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            @forelse($edukasi as $item)
+                <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden flex flex-col h-full transform transition duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <div class="p-6 flex-grow flex flex-col">
+                        <div class="mb-3">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">{{ ucfirst($item->category) }}</span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $item->title }}</h3>
+                        <p class="text-sm text-gray-500 mb-3">{{ $item->created_at->translatedFormat('d F Y') }}</p>
+                        <p class="text-gray-600 mb-4 flex-grow">{{ Str::limit($item->content, 120) }}</p>
+                        <a href="{{ route('edukasi.show', $item->id) }}" class="text-blue-600 font-medium flex items-center hover:text-blue-800 transition-colors">
+                            Lihat Selengkapnya
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-3 text-center py-8">
+                    <p class="text-gray-500 text-lg">Belum ada konten edukasi yang tersedia.</p>
+                </div>
+            @endforelse
+        </div>
+
+        <div class="flex justify-center">
+            <a href="{{ route('edukasi.index') }}" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors duration-300 flex items-center">
+                Lihat Semua Konten Edukasi
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
 <!-- FAQ Section -->
 <section id="faq" class="bg-gradient-to-b from-blue-50 to-white py-16 px-4 sm:px-8 lg:px-16">
   <div class="max-w-5xl mx-auto text-center mb-12">
@@ -435,7 +535,6 @@
     </div>
   </div>
 </section>
-
 
     <!-- Footer -->
     @include('partials.footer')
