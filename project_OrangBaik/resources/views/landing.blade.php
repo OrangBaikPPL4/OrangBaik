@@ -308,6 +308,35 @@
     </div>
 </section>
 
+<section id="faq" class="bg-gray-50 py-16 px-4 sm:px-8 lg:px-16">
+  <div class="max-w-5xl mx-auto text-center mb-12">
+    <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">Pertanyaan yang Sering Diajukan</h2>
+    <p class="text-gray-600 text-lg">Temukan jawaban dari pertanyaan umum seputar platform OrangBaik.</p>
+  </div>
+
+  <div class="max-w-4xl mx-auto space-y-6">
+    @if(isset($faqs) && $faqs->count() > 0)
+      @foreach($faqs as $index => $faq)
+        <details class="bg-white rounded-lg shadow-md p-5 group" {{ $index == 0 ? 'open' : '' }}>
+          <summary class="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800">
+            {{ $faq->question }}
+            <span class="transition-transform group-open:rotate-180">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-gray-600 text-base">
+            {{ $faq->answer }}
+          </p>
+        </details>
+      @endforeach
+    @else
+      <p class="text-center text-gray-600">Tidak ada FAQ yang tersedia saat ini.</p>
+    @endif
+  </div>
+</section>
+
 
     <!-- Footer -->
     @include('partials.footer')
