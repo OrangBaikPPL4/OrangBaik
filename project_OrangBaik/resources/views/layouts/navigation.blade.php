@@ -15,16 +15,13 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Beranda') }}
                     </x-nav-link>
-                    
-                    <!-- Relawan Link -->
                     <x-nav-link :href="route('relawan.index')" :active="request()->routeIs('relawan.*')">
                         {{ __('Relawan') }}
                     </x-nav-link>
-                    
-                    <!-- Misi Link -->
                     <x-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
                         {{ __('Misi Bantuan') }}
                     </x-nav-link>
+
                     
                     @if(Auth::user()->usertype === 'admin')
                     <!-- Volunteer Link -->
@@ -38,8 +35,6 @@
                     <x-nav-link :href="route('donations.index')" :active="request()->routeIs('donations.*')">
                         {{ __('Donasi') }}
                     </x-nav-link>
-
-                    <!-- Request Bantuan Link -->
                     <x-nav-link :href="route('admin.request-bantuan.index')" :active="request()->routeIs('admin.request-bantuan.*')">
                         {{ __('Request Bantuan') }}
                     </x-nav-link>
@@ -48,6 +43,11 @@
                     <x-nav-link :href="route('edukasi.menu')" :active="request()->routeIs('edukasi.*')">
                         {{ __('Edukasi') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">
+                        {{ __('Laporan Bencana') }}
+                    </x-nav-link>
+                    @if(Auth::user()->usertype === 'admin')
+                        <x-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('admin.*')">
 
                      <!-- Disaster Report -->
                     <x-nav-link :href="route('admin.disaster_reports.index')" :active="request()->routeIs('admin.disaster_report.*')">
@@ -78,6 +78,11 @@
             </div>
 
             <!-- Settings Dropdown -->
+            <div class="hidden sm:flex sm:items-center sm:ml-6 space-x-4">
+                <!-- Notifications -->
+                <x-notification-dropdown />
+
+                <!-- User Menu -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 @if(Auth::user()->usertype === 'admin')
                 <!-- Admin Notifications -->
@@ -99,7 +104,6 @@
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
-
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -109,14 +113,25 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <div class="px-4 py-2 border-b border-gray-100">
+                            <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                            <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                            <div class="mt-2">
+                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold
+                                    {{ Auth::user()->usertype === 'admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-green-100 text-green-700' }}">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    {{ Auth::user()->usertype === 'admin' ? 'Admin' : 'User' }}
+                                </span>
+                            </div>
+                        </div>
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profil') }}
                         </x-dropdown-link>
-
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">

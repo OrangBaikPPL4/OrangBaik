@@ -104,7 +104,7 @@
                                         @endif
                                     </td>
                                     <td class="py-2 px-4 border-b border-gray-200">
-                                        <form method="POST" action="{{ route('relawan.updateStatus', $relawan->id) }}" class="inline-block">
+                                        <form method="POST" action="{{ route('admin.relawan.updateStatus', $relawan->id) }}" class="inline-block">
                                             @csrf
                                             <select name="status" onchange="this.form.submit()" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-sm">
                                                 <option value="aktif" {{ $relawan->status == 'aktif' ? 'selected' : '' }}>Aktif</option>

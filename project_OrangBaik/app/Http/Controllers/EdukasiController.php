@@ -115,7 +115,7 @@ class EdukasiController extends Controller
 
         Edukasi::create($validated);
 
-        return redirect()->route('edukasi.index')->with('success', 'Konten edukasi berhasil ditambahkan.');    }
+        return redirect()->route('admin.edukasi.index')->with('success', 'Konten edukasi berhasil ditambahkan.');    }
 
     /**
      * Display the specified resource.
@@ -169,7 +169,7 @@ class EdukasiController extends Controller
 
         $edukasi->update($validated);
 
-        return redirect()->route('edukasi.index')->with('success', 'Konten edukasi berhasil diperbarui.');    }
+        return redirect()->route('admin.edukasi.index')->with('success', 'Konten edukasi berhasil diperbarui.');    }
 
     /**
      * Remove the specified resource from storage.
@@ -186,7 +186,7 @@ class EdukasiController extends Controller
 
     $edukasi->delete();
 
-    return redirect()->route('edukasi.index')->with('success', 'Konten edukasi berhasil dihapus.');
+    return redirect()->route('admin.edukasi.index')->with('success', 'Konten edukasi berhasil dihapus.');
 }
 
 }

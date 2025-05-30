@@ -46,18 +46,23 @@ class User extends Authenticatable
         ];
     }
 
-
     public function requestBantuans()
     {
         return $this->hasMany(RequestBantuan::class);
     }
-    
-
     
     public function relawan()
     {
         return $this->hasOne(Relawan::class);
     }
 
+    public function isAdmin()
+    {
+        return $this->usertype === 'admin';
+    }
 
+    public function donations()
+    {
+        return $this->hasMany(Donation::class);
+    }
 }

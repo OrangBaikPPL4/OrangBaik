@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('deskripsi');
             $table->json('bukti_media')->nullable(); 
             $table->enum('status', ['pending', 'verified', 'rejected'])->default('pending'); 
+            $table->foreignId('disaster_report_id')->nullable()->constrained('disaster_reports')->nullOnDelete();
             $table->timestamps();
         });
     }

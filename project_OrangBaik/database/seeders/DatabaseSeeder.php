@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // \App\Models\User::factory(10)->create();
-
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
@@ -47,6 +46,10 @@ class DatabaseSeeder extends Seeder
             
             // Testimonials
             TestimoniSeeder::class,
+        ]);
+
+        $this->call([
+            AdminSeeder::class,
         ]);
     }
 }

@@ -222,6 +222,10 @@
                         </div>
                     @endforelse
                 </div>
+                <div style="font-size:1.18rem; font-weight:700; color:#222; margin-bottom:8px; text-align:center;">Donasi</div>
+<div style="color:#666; font-size:1.02rem; margin-bottom:24px; text-align:center;">Salurkan donasi kamu secara aman dan transparan untuk mereka yang membutuhkan.</div>
+<a href="/donations/create" style="background:#1976D2; color:#fff; border:none; border-radius:8px; padding:12px 0; width:100%; font-weight:700; font-size:1.08rem; text-align:center; box-shadow:0 2px 8px rgba(25,118,210,0.08); transition:background 0.2s; text-decoration:none;">Donasi Sekarang</a>
+
                 
                 @if(count($volunteerEvents) > 0)
                     <div style="text-align:center; margin-top:32px;">

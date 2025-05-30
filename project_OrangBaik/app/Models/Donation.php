@@ -37,4 +37,19 @@ class Donation extends Model
     {
         return $this->hasOne(PaymentProof::class);
     }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(DonationStatusHistory::class);
+    }
+
+    public function disasterReport()
+    {
+        return $this->belongsTo(DisasterReport::class);
+    }
+
+    public function distribution()
+    {
+        return $this->hasOne(Distribution::class);
+    }
 }

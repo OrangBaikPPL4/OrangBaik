@@ -122,6 +122,8 @@
                                                 {{ ucfirst($req->status) }}
                                             </span>
                                         </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <form action="{{ route('admin.request-bantuan.updateStatus', $req->id) }}" method="POST">
                                         <td class="px-4 py-3 whitespace-nowrap">
                                             <form action="{{ route('admin.request-bantuan.update-status', $req->id) }}" method="POST">
                                                 @csrf
