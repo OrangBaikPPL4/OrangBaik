@@ -133,6 +133,33 @@
     <a href="{{ route('landing') }}#berita">Berita</a>
     <a href="{{ route('landing') }}#testimoni">Testimoni</a>
     <a href="{{ route('landing') }}#kontak">Kontak</a>
+    
+    @auth
+      @if(Auth::user()->usertype !== 'admin')
+        
+        @php
+          $relawan = App\Models\Relawan::where('user_id', Auth::id())->first();
+          $unreadNotificationsCount = 0;
+          if ($relawan) {
+              $unreadNotificationsCount = App\Models\VolunteerNotification::where('relawan_id', $relawan->id)
+                  ->where('is_read', false)
+                  ->count();
+          }
+        @endphp
+        
+        <a href="{{ route('volunteer.notifications.index') }}" style="display:flex; align-items:center; position:relative;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:3px;">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          @if($unreadNotificationsCount > 0)
+            <span style="position:absolute; top:-5px; right:-5px; background:#e53e3e; color:white; border-radius:9999px; min-width:18px; height:18px; font-size:0.75rem; font-weight:bold; display:inline-flex; align-items:center; justify-content:center; padding:0 4px;">
+              {{ $unreadNotificationsCount }}
+            </span>
+          @endif
+        </a>
+      @endif
+    @endauth
   </div>
   <div class="navbar-actions" style="position:relative;">
   @auth
@@ -141,7 +168,7 @@
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" stroke="#1976D2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
     <div id="accountDropdownMenu" style="display:none; position:absolute; top:48px; right:0; min-width:160px; background:#fff; border-radius:10px; box-shadow:0 6px 32px rgba(30,40,60,0.14); padding:12px 0; z-index:200;">
-      <a href="{{ route('dashboard') }}" style="display:block; padding:12px 20px; color:#222; font-weight:500; text-decoration:none; transition:background 0.13s;">Dashboard</a>
+      <a href="{{ route('relawan.show') }}" style="display:block; padding:12px 20px; color:#222; font-weight:500; text-decoration:none; transition:background 0.13s;">Profile</a>
       <form method="POST" action="{{ route('logout') }}">
         @csrf
         <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" style="display:block; padding:12px 20px; color:#222; font-weight:500; text-decoration:none; transition:background 0.13s;">Keluar</a>

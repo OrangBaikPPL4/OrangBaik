@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\RequestBantuan;
 use Illuminate\Support\Facades\Auth;
+use App\Events\PermintaanBantuanBaru;
+use App\Http\Controllers\AdminNotificationController;
 
 class RequestBantuanController extends Controller
 {
-    // Menyimpan permintaan bantuan (PBI29)
+    /**
+     * Menyimpan permintaan bantuan dari korban (PBI29)
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -16,19 +20,30 @@ class RequestBantuanController extends Controller
             'deskripsi' => 'nullable|string|max:1000',
         ]);
 
-        RequestBantuan::create([
+        $requestBantuan = RequestBantuan::create([
             'user_id' => Auth::id(),
             'jenis_kebutuhan' => $validated['jenis_kebutuhan'],
             'deskripsi' => $validated['deskripsi'] ?? null,
             'status' => 'pending',
         ]);
 
+        // Broadcast event untuk real-time notification
+        event(new PermintaanBantuanBaru($requestBantuan));
+        
+        // Create database notifications for all admins
+        $userName = Auth::user()->name;
+        $title = 'Permintaan Bantuan Baru';
+        $message = "Permintaan bantuan baru dari {$userName} untuk kebutuhan {$requestBantuan->jenis_kebutuhan}.";
+        AdminNotificationController::notifyAdmins($requestBantuan->id, $title, $message, 'info');
+
         return redirect()
             ->route('request-bantuan.create')
             ->with('success', 'Permintaan bantuan berhasil dikirim.');
     }
 
-    // Menampilkan riwayat permintaan bantuan user (PBI32)
+    /**
+     * Menampilkan riwayat permintaan bantuan milik user (PBI32)
+     */
     public function index()
     {
         $requests = RequestBantuan::where('user_id', Auth::id())
@@ -38,31 +53,54 @@ class RequestBantuanController extends Controller
         return view('request-bantuan.index', compact('requests'));
     }
 
-    // Menampilkan semua permintaan untuk admin dengan filter jenis kebutuhan (PBI30+31)
+    /**
+     * Menampilkan semua permintaan untuk admin + filter jenis kebutuhan (PBI30 + PBI31)
+     */
     public function adminIndex(Request $request)
     {
-        $query = RequestBantuan::query();
+        $query = RequestBantuan::with('user'); // Eager load relasi user
 
+        // Filter berdasarkan jenis kebutuhan
         if ($request->filled('jenis_kebutuhan')) {
             $query->where('jenis_kebutuhan', $request->jenis_kebutuhan);
         }
 
-        $requests = $query->orderBy('created_at', 'desc')->get();
+        // Sorting
+        $sortBy = $request->get('sort_by', 'created_at'); // default: created_at
+        $order = $request->get('order', 'desc'); // default: desc
+
+        // Validasi kolom yang boleh digunakan untuk sorting
+        $allowedSorts = ['status', 'created_at', 'updated_at'];
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'created_at';
+        }
+
+        // Validasi arah urutan
+        $allowedOrders = ['asc', 'desc'];
+        if (!in_array($order, $allowedOrders)) {
+            $order = 'desc';
+        }
+
+        $requests = $query->orderBy($sortBy, $order)->get();
 
         return view('admin.request.index', compact('requests'));
     }
 
-    // Update status permintaan bantuan oleh admin (PBI31)
+    /**
+     * Admin mengubah status permintaan bantuan (PBI31)
+     */
     public function updateStatus(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'status' => 'required|in:pending,diproses,selesai,ditolak',
         ]);
 
         $req = RequestBantuan::findOrFail($id);
-        $req->status = $request->status;
+        $req->status = $validated['status'];
         $req->save();
 
-        return redirect()->route('admin.request-bantuan.index')->with('success', 'Status berhasil diperbarui.');
+        return redirect()
+            ->route('admin.request-bantuan.index')
+            ->with('success', 'Status permintaan berhasil diperbarui.');
     }
 }

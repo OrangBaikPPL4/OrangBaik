@@ -67,7 +67,7 @@
                                 <tr>
                                     <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nama</th>
                                     <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
-                                    <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Peran</th>
+                                    <!-- Peran column removed -->
                                     <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Lokasi</th>
                                     <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
                                     <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status Verifikasi</th>
@@ -83,7 +83,6 @@
                                         </a>
                                     </td>
                                     <td class="py-2 px-4 border-b border-gray-200">{{ $relawan->email }}</td>
-                                    <td class="py-2 px-4 border-b border-gray-200">{{ $relawan->peran }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200">{{ $relawan->lokasi ?: '-' }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 

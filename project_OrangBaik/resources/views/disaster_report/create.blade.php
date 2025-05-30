@@ -1,14 +1,21 @@
-@extends('layouts.app')
+@extends('layouts.user')
 
 @section('content')
-<div class="container mx-auto px-4 py-10 max-w-3xl">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">📝 Formulir Laporan Bencana</h1>
-
-    @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            {{ session('success') }}
+    @include('partials.navbar')
+    
+    <section class="bg-gradient-to-b from-blue-50 to-white py-10 mb-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-700 mb-2">Formulir Laporan Bencana</h1>
+            <p class="text-lg text-blue-900 mb-6">Laporkan bencana yang terjadi di sekitar Anda untuk membantu kami memberikan bantuan yang tepat dan cepat.</p>
         </div>
-    @endif
+    </section>
+    
+    <div class="max-w-3xl mx-auto px-4 pb-12">
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
 
     <form action="{{ route('disaster_report.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6 bg-white p-6 rounded-lg shadow">
         @csrf
@@ -68,5 +75,6 @@
             </button>
         </div>
     </form>
-</div>
+    </div>
+    @include('partials.footer')
 @endsection
