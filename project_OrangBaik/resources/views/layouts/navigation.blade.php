@@ -54,6 +54,11 @@
                         {{ __('Laporan Bencana') }}
                     </x-nav-link>
 
+                    <!-- Testimoni Link -->
+                    <x-nav-link :href="route('testimoni.index')" :active="request()->routeIs('testimoni.*')">
+                        {{ __('Testimoni dan Cerita Korban') }}
+                    </x-nav-link>
+
                     
                     @if(Auth::user()->usertype === 'admin')
                         <!-- Admin Dashboard -->
