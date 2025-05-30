@@ -15,10 +15,21 @@ class MisiController extends Controller
         if (Auth::user()->usertype === 'admin') {
             // Admin sees all missions with complete details
             $misis = Misi::with('relawan')->get();
+            
+            // Add participant count to each mission
+            foreach ($misis as $misi) {
+                $misi->approved_participants_count = $misi->relawan()->count();
+            }
+            
             return view('misi.admin_index', compact('misis'));
         } else {
             // Volunteers see available missions
             $misis = Misi::where('status', 'aktif')->get();
+            
+            // Add participant count to each mission
+            foreach ($misis as $misi) {
+                $misi->approved_participants_count = $misi->relawan()->count();
+            }
             
             // Get user's volunteer profile if exists
             $relawan = Relawan::where('user_id', Auth::id())->first();

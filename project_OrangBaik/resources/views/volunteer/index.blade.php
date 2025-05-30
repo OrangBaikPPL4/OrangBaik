@@ -1,14 +1,14 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Acara Volunteer') }}
-        </h2>
-    </x-slot>
+@extends('layouts.user')
 
-    @section('content')
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+@section('content')
+    @include('partials.navbar')
+    <section class="bg-gradient-to-b from-blue-50 to-white py-10 mb-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-700 mb-2">Acara Volunteer</h1>
+            <p class="text-lg text-blue-900 mb-6">Bergabunglah dalam kegiatan volunteer dan bantu sesama. Pilih acara yang sesuai dan mulai aksi nyata hari ini!</p>
+        </div>
+    </section>
+    <div class="max-w-7xl mx-auto px-4 pb-12">
                 <div class="p-6 text-gray-900">
                     @if (session('success'))
                         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -23,8 +23,6 @@
                     @endif
 
                     <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-4">Acara Volunteer Tersedia</h3>
-                        
                         @if(!$relawan && Auth::user()->usertype !== 'admin')
                             <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
                                 <p>Anda belum terdaftar sebagai relawan. <a href="{{ route('relawan.create') }}" class="underline font-semibold">Daftar sebagai relawan</a> untuk dapat bergabung dengan acara volunteer.</p>
@@ -97,8 +95,6 @@
                         </div>
                     @endif
                 </div>
-            </div>
-        </div>
     </div>
-    @endsection
-</x-app-layout>
+    @include('partials.footer')
+@endsection

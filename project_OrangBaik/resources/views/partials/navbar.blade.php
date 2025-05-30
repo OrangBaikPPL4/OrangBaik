@@ -136,7 +136,6 @@
     
     @auth
       @if(Auth::user()->usertype !== 'admin')
-        <a href="{{ route('volunteer.index') }}">Volunteer</a>
         
         @php
           $relawan = App\Models\Relawan::where('user_id', Auth::id())->first();
