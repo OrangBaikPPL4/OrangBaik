@@ -90,6 +90,53 @@
                             </div>
                         </div>
 
+                        {{-- Bagian untuk Roles --}}
+                        <div class="mt-6 mb-6 border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Peran/Tugas Volunteer</h3>
+                            <div id="roles-container" class="space-y-4">
+                                {{-- Roles yang sudah ada --}}
+                                @if(old('roles') || (isset($event) && $event->roles))
+                                    @php 
+                                        $roles_data = old('roles', $event->roles->map(function($role) {
+                                            return [
+                                                'name' => $role->name,
+                                                'slots_needed' => $role->slots_needed,
+                                                'description' => $role->description,
+                                                'estimated_work_hours' => $role->estimated_work_hours
+                                            ];
+                                        })->toArray());
+                                    @endphp
+                                    @foreach($roles_data as $index => $role)
+                                    <div class="p-4 border rounded-md role-item bg-gray-50">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <h4 class="font-semibold text-gray-700">Peran {{ $loop->iteration }}</h4>
+                                            <button type="button" class="text-sm text-red-600 hover:text-red-800 remove-role-button">Hapus Peran Ini</button>
+                                        </div>
+                                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                            <div>
+                                                <label for="roles_{{ $index }}_name" class="block text-sm font-medium text-gray-700">Nama Peran*</label>
+                                                <input type="text" name="roles[{{ $index }}][name]" id="roles_{{ $index }}_name" value="{{ $role['name'] ?? '' }}" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                                            </div>
+                                            <div>
+                                                <label for="roles_{{ $index }}_slots_needed" class="block text-sm font-medium text-gray-700">Jumlah Slot Dibutuhkan*</label>
+                                                <input type="number" name="roles[{{ $index }}][slots_needed]" id="roles_{{ $index }}_slots_needed" value="{{ $role['slots_needed'] ?? '' }}" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" min="1" required>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <label for="roles_{{ $index }}_description" class="block text-sm font-medium text-gray-700">Deskripsi Peran</label>
+                                            <textarea name="roles[{{ $index }}][description]" id="roles_{{ $index }}_description" rows="2" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">{{ $role['description'] ?? '' }}</textarea>
+                                        </div>
+                                        <div class="mt-4">
+                                            <label for="roles_{{ $index }}_estimated_work_hours" class="block text-sm font-medium text-gray-700">Estimasi Jam Kerja</label>
+                                            <input type="number" name="roles[{{ $index }}][estimated_work_hours]" id="roles_{{ $index }}_estimated_work_hours" value="{{ $role['estimated_work_hours'] ?? '' }}" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" min="0">
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                @endif
+                            </div>
+                            <button type="button" id="add-role-button" class="mt-4 inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Tambah Peran Baru</button>
+                        </div>
+
                         <div class="flex items-center justify-between">
                             <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                 Simpan Perubahan
@@ -104,4 +151,97 @@
         </div>
     </div>
     @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const rolesContainer = document.getElementById('roles-container');
+    const addRoleButton = document.getElementById('add-role-button');
+    let roleIndex = {{ (old('roles') ? count(old('roles')) : (isset($event) && $event->roles ? $event->roles->count() : 0)) }};
+
+    addRoleButton.addEventListener('click', function () {
+        // Determine the next index. If roles were deleted, new roles should not reuse old indices to avoid conflicts on the backend
+        // A simple way is to use a potentially large number or a timestamp-based index if we don't re-index on delete.
+        // For simplicity here, we'll just increment from the current highest known index or a new counter if all are deleted.
+        // A better approach for dynamic forms is to ensure unique indices, e.g., by using a counter that only ever increments.
+        // Let's find the maximum existing index from input names to ensure new roles don't clash.
+        let maxIndex = -1;
+        document.querySelectorAll('#roles-container .role-item input[name^="roles["]').forEach(input => {
+            const match = input.name.match(/roles\[(\d+)\]/);
+            if (match && parseInt(match[1]) > maxIndex) {
+                maxIndex = parseInt(match[1]);
+            }
+        });
+        roleIndex = maxIndex + 1;
+
+        const newRoleHtml = `
+            <div class="p-4 border rounded-md role-item bg-gray-50">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-semibold text-gray-700">Peran Baru</h4>
+                    <button type="button" class="text-sm text-red-600 hover:text-red-800 remove-role-button">Hapus Peran Ini</button>
+                </div>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                        <label for="roles_${roleIndex}_name" class="block text-sm font-medium text-gray-700">Nama Peran*</label>
+                        <input type="text" name="roles[${roleIndex}][name]" id="roles_${roleIndex}_name" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                    </div>
+                    <div>
+                        <label for="roles_${roleIndex}_slots_needed" class="block text-sm font-medium text-gray-700">Jumlah Slot Dibutuhkan*</label>
+                        <input type="number" name="roles[${roleIndex}][slots_needed]" id="roles_${roleIndex}_slots_needed" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" min="1" required>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label for="roles_${roleIndex}_description" class="block text-sm font-medium text-gray-700">Deskripsi Peran</label>
+                    <textarea name="roles[${roleIndex}][description]" id="roles_${roleIndex}_description" rows="2" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"></textarea>
+                </div>
+                <div class="mt-4">
+                    <label for="roles_${roleIndex}_estimated_work_hours" class="block text-sm font-medium text-gray-700">Estimasi Jam Kerja</label>
+                    <input type="number" name="roles[${roleIndex}][estimated_work_hours]" id="roles_${roleIndex}_estimated_work_hours" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" min="0">
+                </div>
+            </div>
+        `;
+        rolesContainer.insertAdjacentHTML('beforeend', newRoleHtml);
+        // roleIndex++; // Index is now managed by finding max existing index
+        updateRoleItemTitles();
+        updateRemoveRoleButtons();
+    });
+
+    function updateRemoveRoleButtons() {
+        document.querySelectorAll('.remove-role-button').forEach(button => {
+            button.removeEventListener('click', handleRemoveRole);
+            button.addEventListener('click', handleRemoveRole);
+        });
+    }
+
+    function handleRemoveRole(event) {
+        event.target.closest('.role-item').remove();
+        updateRoleItemTitles();
+    }
+
+    function updateRoleItemTitles(){
+        const allRoleItems = rolesContainer.querySelectorAll('.role-item');
+        allRoleItems.forEach((item, idx) => {
+            const titleElement = item.querySelector('h4');
+            if (titleElement) {
+                // Check if it's a 'Peran Baru' or an existing one
+                if (!titleElement.textContent.startsWith('Peran Baru')) {
+                     titleElement.textContent = `Peran ${idx + 1}`;
+                } else if (allRoleItems.length > 0 && titleElement.textContent.startsWith('Peran Baru') && allRoleItems.length === (idx +1) ) {
+                    // If it is the last 'Peran Baru' item, update its title based on its new position
+                    // This is a bit simplistic, might need refinement if multiple 'Peran Baru' items can exist before save
+                }
+            }
+        });
+        // If all roles are removed, roleIndex might need to be reset if you want to start from 0 again
+        // but for submission, it's fine. If you add a new role after deleting all, it will continue from the last roleIndex.
+        if (allRoleItems.length === 0) {
+             // roleIndex = 0; // Resetting index might be complex if server expects specific keys for update/delete
+        }
+    }
+    
+    updateRemoveRoleButtons(); // Initial call for existing roles
+    updateRoleItemTitles(); // Initial call to set titles for existing roles
+});
+</script>
+@endpush
 </x-app-layout>

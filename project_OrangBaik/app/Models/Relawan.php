@@ -32,6 +32,8 @@ class Relawan extends Model
     
     public function volunteer()
     {
-        return $this->belongsToMany(Volunteer::class, 'relawan_volunteer')->withPivot('status_kehadiran')->withTimestamps();
+        return $this->belongsToMany(Volunteer::class, 'relawan_volunteer')
+                    ->withPivot('volunteer_event_role_id', 'status_partisipasi', 'status_kehadiran')
+                    ->withTimestamps();
     }
 }

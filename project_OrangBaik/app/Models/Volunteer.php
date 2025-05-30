@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Volunteer extends Model
 {
     use HasFactory;
+
+    // Define the relationship with VolunteerEventRole
+    public function roles()
+    {
+        return $this->hasMany(VolunteerEventRole::class);
+    }
+
+    // Existing relationship with Relawan
     
     protected $fillable = [
         'nama_acara',
@@ -22,6 +30,8 @@ class Volunteer extends Model
     
     public function relawan()
     {
-        return $this->belongsToMany(Relawan::class, 'relawan_volunteer')->withPivot('status_kehadiran')->withTimestamps();
+        return $this->belongsToMany(Relawan::class, 'relawan_volunteer')
+                    ->withPivot('volunteer_event_role_id', 'status_partisipasi', 'status_kehadiran')
+                    ->withTimestamps();
     }
 }

@@ -61,8 +61,8 @@
                                         </form>
                                     </td>
                                     <td class="py-2 px-4 border-b border-gray-200">
-                                        <span class="{{ $volunteer->kuota_relawan > 0 && $volunteer->relawan->count() >= $volunteer->kuota_relawan ? 'text-red-600 font-semibold' : '' }}">
-                                            {{ $volunteer->relawan->count() }} / {{ $volunteer->kuota_relawan > 0 ? $volunteer->kuota_relawan : '∞' }}
+                                        <span class="{{ $volunteer->kuota_relawan > 0 && $volunteer->approved_participants_count >= $volunteer->kuota_relawan ? 'text-red-600 font-semibold' : '' }}">
+                                            {{ $volunteer->approved_participants_count }} / {{ $volunteer->kuota_relawan > 0 ? $volunteer->kuota_relawan : '∞' }}
                                         </span>
                                     </td>
                                     <td class="py-2 px-4 border-b border-gray-200">

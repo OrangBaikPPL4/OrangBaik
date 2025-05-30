@@ -61,7 +61,7 @@
                                     </div>
                                     <div>
                                         <p class="text-sm text-gray-500">Kuota Relawan</p>
-                                        <p class="font-medium">{{ $volunteer->kuota_relawan > 0 ? $volunteer->kuota_relawan : 'Tidak terbatas' }} ({{ $volunteer->relawan->count() }} terdaftar)</p>
+                                        <p class="font-medium">{{ $volunteer->kuota_relawan > 0 ? $volunteer->kuota_relawan : 'Tidak terbatas' }} ({{ $approvedParticipantsCount }} terdaftar)</p>
                                     </div>
                                 </div>
                                 
@@ -80,10 +80,11 @@
                         </div>
                         
                         <div>
+                            @if(Auth::user()->usertype !== 'admin')
                             <div class="bg-gray-50 rounded-lg p-6 mb-6">
                                 <h4 class="text-lg font-semibold mb-4">Bergabung dengan Acara</h4>
                                 
-                                @if(!$relawan)
+                                @if(!$loggedInRelawanProfile)
                                     <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
                                         <p>Anda harus terdaftar sebagai relawan terlebih dahulu untuk bergabung dengan acara ini.</p>
                                     </div>
@@ -98,14 +99,30 @@
                                     <div class="mt-4">
                                         <p class="text-sm text-gray-500 mb-2">Status Kehadiran:</p>
                                         @php
-                                            $statusKehadiran = $volunteer->relawan->find($relawan->id)->pivot->status_kehadiran;
+                                            $participation = $loggedInRelawanProfile ? $volunteer->relawan()->where('relawan_id', $loggedInRelawanProfile->id)->first() : null;
+                                            $statusKehadiran = ($participation && $participation->pivot) ? $participation->pivot->status_kehadiran : 'N/A';
+                                            $statusPartisipasi = ($participation && $participation->pivot) ? $participation->pivot->status_partisipasi : 'N/A';
+                                            $selectedRole = ($participation && $participation->pivot && $participation->pivot->volunteer_event_role_id) ? \App\Models\VolunteerEventRole::find($participation->pivot->volunteer_event_role_id) : null;
                                         @endphp
+                                        <p class="font-medium {{ 
+                                            $statusPartisipasi == 'disetujui' ? 'text-green-600' : 
+                                            ($statusPartisipasi == 'ditolak' ? 'text-red-600' : 'text-yellow-600') 
+                                        }}">
+                                            {{ ucfirst($statusPartisipasi) }}
+                                        </p>
+                                        @if($selectedRole)
+                                        <p class="text-sm text-gray-500 mt-1">Peran yang dipilih: <span class="font-medium">{{ $selectedRole->name }}</span></p>
+                                        @endif
+
+                                        @if($statusPartisipasi == 'disetujui')
+                                        <p class="text-sm text-gray-500 mt-2">Status Kehadiran:</p>
                                         <p class="font-medium {{ 
                                             $statusKehadiran == 'hadir' ? 'text-green-600' : 
                                             ($statusKehadiran == 'tidak hadir' ? 'text-red-600' : 'text-yellow-600') 
                                         }}">
                                             {{ ucfirst($statusKehadiran) }}
                                         </p>
+                                        @endif
                                     </div>
                                 @elseif($volunteer->status !== 'aktif')
                                     <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -116,14 +133,35 @@
                                         <p>Kuota relawan untuk acara ini sudah penuh.</p>
                                     </div>
                                 @else
-                                    <form method="POST" action="{{ route('volunteer.gabung', $volunteer->id) }}">
+                                    <form method="POST" action="{{ route('volunteer.joinEvent', $volunteer->id) }}">
                                         @csrf
+                                        @if($volunteer->roles->isNotEmpty())
+                                            <div class="mb-4">
+                                                <label for="volunteer_event_role_id" class="block text-sm font-medium text-gray-700 mb-1">Pilih Peran Anda:</label>
+                                                <select name="volunteer_event_role_id" id="volunteer_event_role_id" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                                                    <option value="" disabled selected>-- Pilih Peran --</option>
+                                                    @foreach($volunteer->roles as $role)
+                                                        @php
+                                                            $approvedParticipantsForRole = $role->participants()->wherePivot('status_partisipasi', 'disetujui')->count();
+                                                            $isRoleFull = $approvedParticipantsForRole >= $role->slots_needed;
+                                                        @endphp
+                                                        <option value="{{ $role->id }}" {{ $isRoleFull ? 'disabled' : '' }}>
+                                                            {{ $role->name }} (Slot: {{ $approvedParticipantsForRole }}/{{ $role->slots_needed }}) {{ $isRoleFull ? '- Penuh' : '' }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('volunteer_event_role_id')
+                                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        @endif
                                         <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                             Gabung Acara Ini
                                         </button>
                                     </form>
                                 @endif
                             </div>
+                            @endif {{-- End check for non-admin --}}
                             
                             <div class="bg-gray-50 rounded-lg p-6">
                                 <h4 class="text-lg font-semibold mb-4">Informasi Penting</h4>
@@ -138,6 +176,71 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Bagian Manajemen Pendaftar (Hanya untuk Admin) --}}
+            @if (Auth::check() && Auth::user()->usertype === 'admin' && $participantsData->isNotEmpty())
+            <div class="mt-8 bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <h4 class="text-xl font-semibold mb-4">Manajemen Pendaftar Acara</h4>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Relawan</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peran Dipilih</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Daftar</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status Partisipasi</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach ($participantsData as $participant)
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $participant->user->name ?? 'Nama Tidak Tersedia' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $participant->user->email ?? 'Email Tidak Tersedia' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $participant->selected_role_detail ? $participant->selected_role_detail->name : 'Tidak ada peran' }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ \Carbon\Carbon::parse($participant->pivot->created_at)->format('d M Y, H:i') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                @if($participant->pivot->status_partisipasi == 'disetujui') bg-green-100 text-green-800 
+                                                @elseif($participant->pivot->status_partisipasi == 'ditolak') bg-red-100 text-red-800 
+                                                @else bg-yellow-100 text-yellow-800 @endif">
+                                                {{ ucfirst($participant->pivot->status_partisipasi) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            @if ($participant->pivot->status_partisipasi == 'pending')
+                                                <form method="POST" action="{{ route('volunteer.manageParticipant', ['eventId' => $volunteer->id, 'relawanVolunteerId' => $participant->relawan_volunteer_id, 'status' => 'disetujui']) }}" class="inline-block">
+                                                    @csrf
+                                                    <button type="submit" class="text-indigo-600 hover:text-indigo-900">Setujui</button>
+                                                </form>
+                                                <form method="POST" action="{{ route('volunteer.manageParticipant', ['eventId' => $volunteer->id, 'relawanVolunteerId' => $participant->relawan_volunteer_id, 'status' => 'ditolak']) }}" class="inline-block ml-2">
+                                                    @csrf
+                                                    <button type="submit" class="text-red-600 hover:text-red-900">Tolak</button>
+                                                </form>
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @elseif (Auth::check() && Auth::user()->usertype === 'admin')
+            <div class="mt-8 bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <h4 class="text-xl font-semibold mb-4">Manajemen Pendaftar Acara</h4>
+                    <p>Belum ada relawan yang mendaftar untuk acara ini.</p>
+                </div>
+            </div>
+            @endif
+
         </div>
     </div>
     @endsection

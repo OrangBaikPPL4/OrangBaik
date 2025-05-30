@@ -83,6 +83,15 @@
                             </div>
                         </div>
 
+                        {{-- Bagian untuk Roles --}}
+                        <div class="mt-6 mb-6 border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Peran/Tugas Volunteer (Opsional)</h3>
+                            <div id="roles-container" class="space-y-4">
+                                {{-- Roles akan ditambahkan di sini oleh JavaScript --}}
+                            </div>
+                            <button type="button" id="add-role-button" class="mt-4 inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Tambah Peran</button>
+                        </div>
+
                         <div class="flex items-center justify-between">
                             <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                 Tambah Acara
@@ -97,4 +106,75 @@
         </div>
     </div>
     @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const rolesContainer = document.getElementById('roles-container');
+    const addRoleButton = document.getElementById('add-role-button');
+    let roleIndex = 0;
+
+    addRoleButton.addEventListener('click', function () {
+        const newRoleHtml = `
+            <div class="p-4 border rounded-md role-item bg-gray-50">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-semibold text-gray-700">Peran ${roleIndex + 1}</h4>
+                    <button type="button" class="text-sm text-red-600 hover:text-red-800 remove-role-button">Hapus Peran Ini</button>
+                </div>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                        <label for="roles_${roleIndex}_name" class="block text-sm font-medium text-gray-700">Nama Peran*</label>
+                        <input type="text" name="roles[${roleIndex}][name]" id="roles_${roleIndex}_name" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                    </div>
+                    <div>
+                        <label for="roles_${roleIndex}_slots_needed" class="block text-sm font-medium text-gray-700">Jumlah Slot Dibutuhkan*</label>
+                        <input type="number" name="roles[${roleIndex}][slots_needed]" id="roles_${roleIndex}_slots_needed" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" min="1" required>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label for="roles_${roleIndex}_description" class="block text-sm font-medium text-gray-700">Deskripsi Peran</label>
+                    <textarea name="roles[${roleIndex}][description]" id="roles_${roleIndex}_description" rows="2" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"></textarea>
+                </div>
+                <div class="mt-4">
+                    <label for="roles_${roleIndex}_estimated_work_hours" class="block text-sm font-medium text-gray-700">Estimasi Jam Kerja</label>
+                    <input type="number" name="roles[${roleIndex}][estimated_work_hours]" id="roles_${roleIndex}_estimated_work_hours" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" min="0">
+                </div>
+            </div>
+        `;
+        rolesContainer.insertAdjacentHTML('beforeend', newRoleHtml);
+        roleIndex++;
+        updateRemoveRoleButtons();
+    });
+
+    function updateRemoveRoleButtons() {
+        document.querySelectorAll('.remove-role-button').forEach(button => {
+            button.removeEventListener('click', handleRemoveRole);
+            button.addEventListener('click', handleRemoveRole);
+        });
+    }
+
+    function handleRemoveRole(event) {
+        event.target.closest('.role-item').remove();
+        // Re-index or re-label if necessary, though backend handles non-sequential keys.
+        // For now, just removing is fine.
+        // Update h4 titles if needed
+        const allRoleItems = rolesContainer.querySelectorAll('.role-item');
+        allRoleItems.forEach((item, idx) => {
+            const titleElement = item.querySelector('h4');
+            if (titleElement) {
+                titleElement.textContent = `Peran ${idx + 1}`;
+            }
+        });
+        // If all roles are removed, roleIndex might need to be reset if you want to start from 0 again
+        // but for submission, it's fine. If you add a new role after deleting all, it will continue from the last roleIndex.
+        // If you want to reset roleIndex when rolesContainer is empty:
+        if (allRoleItems.length === 0) {
+             roleIndex = 0;
+        }
+    }
+    
+    updateRemoveRoleButtons(); // Initial call for any pre-existing roles (not applicable for create, but good for edit)
+});
+</script>
+@endpush
 </x-app-layout>

@@ -84,7 +84,9 @@ class MisiController extends Controller
         // Get available volunteers for admin
         $relawanTersedia = null;
         if (Auth::user()->usertype === 'admin') {
-            $relawanTersedia = Relawan::whereNotIn('id', $misi->relawan->pluck('id'))->get();
+            $relawanTersedia = Relawan::where('verification_status', 'approved')
+                                   ->whereNotIn('id', $misi->relawan->pluck('id'))
+                                   ->get();
             return view('misi.admin-show', compact('misi', 'relawan', 'isJoined', 'relawanTersedia'));
         }
         

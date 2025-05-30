@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('lokasi');
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
-            $table->enum('status', ['aktif', 'dalam proses', 'selesai'])->default('aktif');
+            $table->enum('status', ['aktif', 'dalam_proses', 'selesai', 'ditunda', 'dibatalkan'])->default('aktif');
             $table->integer('kuota_relawan')->default(0);
             $table->string('image_url')->nullable();
             $table->timestamps();

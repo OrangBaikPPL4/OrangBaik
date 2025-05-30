@@ -75,8 +75,8 @@
                                         </div>
                                         
                                         <div class="flex items-center justify-between">
-                                            <span class="text-sm {{ $volunteer->kuota_relawan > 0 && $volunteer->relawan->count() >= $volunteer->kuota_relawan ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
-                                                {{ $volunteer->relawan->count() }}/{{ $volunteer->kuota_relawan > 0 ? $volunteer->kuota_relawan : '∞' }} Relawan
+                                            <span class="text-sm {{ $volunteer->kuota_relawan > 0 && $volunteer->approved_participants_count >= $volunteer->kuota_relawan ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
+                                                {{ $volunteer->approved_participants_count }}/{{ $volunteer->kuota_relawan > 0 ? $volunteer->kuota_relawan : '∞' }} Relawan
                                             </span>
                                             
                                             <a href="{{ route('volunteer.show', $volunteer->id) }}" class="inline-flex items-center px-3 py-1.5 bg-blue-500 border border-transparent rounded-md font-medium text-xs text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150">

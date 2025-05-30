@@ -44,6 +44,40 @@ Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin
 Route::get('/dashboard-user', [DashboardUserController::class, 'index'])->middleware(['auth'])->name('dashboard.user');
 Route::get('/dashboard-admin', [HomeController::class, 'index'])->name('dashboard.admin');
 
+// Admin tambahan
+Route::middleware(['auth', 'admin'])->group(function () {
+    // Volunteer
+    Route::get('/volunteer', [VolunteerController::class, 'index'])->name('volunteer.index');
+    Route::get('/volunteer/create', [VolunteerController::class, 'create'])->name('volunteer.create');
+    Route::resource('volunteer', VolunteerController::class)->except(['show']);
+    Route::get('/volunteer/{id}', [VolunteerController::class, 'show'])->name('volunteer.show');
+    Route::post('/volunteer/manage-participant/{eventId}/{relawanVolunteerId}/{status}', [VolunteerController::class, 'manageParticipantStatus'])->name('volunteer.manageParticipant')->middleware('admin');
+    Route::get('/volunteer/{id}/edit', [VolunteerController::class, 'edit'])->name('volunteer.edit');
+    Route::put('/volunteer/{id}', [VolunteerController::class, 'update'])->name('volunteer.update');
+    Route::delete('/volunteer/{id}', [VolunteerController::class, 'destroy'])->name('volunteer.destroy');
+    Route::patch('/volunteer/{id}/update-status', [VolunteerController::class, 'updateVolunteerStatus'])->name('volunteer.updateStatus');
+    Route::post('/volunteer/{id}/tambah-relawan', [VolunteerController::class, 'tambahRelawan'])->name('volunteer.tambahRelawan');
+    Route::delete('/volunteer/{volunteer_id}/relawan/{relawan_id}', [VolunteerController::class, 'hapusRelawan'])->name('volunteer.hapusRelawan');
+    Route::post('/volunteer/{volunteer_id}/relawan/{relawan_id}/update-kehadiran', [VolunteerController::class, 'updateKehadiran'])->name('volunteer.updateKehadiran');
+
+    Route::get('/admin/request-bantuan', [RequestBantuanController::class, 'adminIndex'])->name('admin.request-bantuan.index');
+    Route::post('/admin/request-bantuan/{id}/update-status', [RequestBantuanController::class, 'updateStatus'])->name('admin.request-bantuan.update-status');
+
+    Route::post('/relawan/{id}/update-status', [RelawanController::class, 'updateStatus'])->name('relawan.updateStatus');
+
+    Route::get('/admin/misi/create', [MisiController::class, 'create'])->name('misi.create');
+    Route::post('/misi', [MisiController::class, 'store'])->name('misi.store');
+    Route::get('/misi/{id}/edit', [MisiController::class, 'edit'])->name('misi.edit');
+    Route::put('/misi/{id}', [MisiController::class, 'update'])->name('misi.update');
+    Route::delete('/misi/{id}', [MisiController::class, 'destroy'])->name('misi.destroy');
+    Route::post('/misi/{id}/update-status', [MisiController::class, 'updateMisiStatus'])->name('misi.updateStatus');
+    Route::get('/misi/{id}/admin-show', [MisiController::class, 'show'])->name('misi.admin.show');
+
+    Route::get('/admin/donations', [AdminDonationController::class, 'index'])->name('admin.donations.index');
+    Route::get('/admin/donations/{donation}', [AdminDonationController::class, 'show'])->name('admin.donations.show');
+    Route::post('/admin/donations/{donation}/status', [AdminDonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
+});
+
 // Profile User
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -76,6 +110,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/volunteer-notifications/{id}', [VolunteerNotificationController::class, 'destroy'])->name('volunteer.notifications.destroy');
     
     Route::get('/volunteer/{id}', [VolunteerController::class, 'show'])->name('volunteer.show');
+    Route::post('/volunteer/{id}/join', [VolunteerController::class, 'joinEvent'])->name('volunteer.joinEvent'); // Moved here
     Route::post('/volunteer/{id}/gabung', [VolunteerController::class, 'gabungVolunteer'])->name('volunteer.gabung');
 
     // Misi
@@ -107,38 +142,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
 Route::get('/edukasi/{edukasi}', [EdukasiController::class, 'show'])->name('edukasi.show')->where('edukasi', '[0-9]+');
 
-// Admin tambahan
-Route::middleware(['auth', 'admin'])->group(function () {
-    // Volunteer
-    Route::get('/volunteer', [VolunteerController::class, 'index'])->name('volunteer.index');
-    Route::get('/volunteer/create', [VolunteerController::class, 'create'])->name('volunteer.create');
-    Route::post('/volunteer', [VolunteerController::class, 'store'])->name('volunteer.store');
-    Route::get('/volunteer/{id}', [VolunteerController::class, 'show'])->name('volunteer.show');
-    Route::get('/volunteer/{id}/edit', [VolunteerController::class, 'edit'])->name('volunteer.edit');
-    Route::put('/volunteer/{id}', [VolunteerController::class, 'update'])->name('volunteer.update');
-    Route::delete('/volunteer/{id}', [VolunteerController::class, 'destroy'])->name('volunteer.destroy');
-    Route::post('/volunteer/{id}/update-status', [VolunteerController::class, 'updateVolunteerStatus'])->name('volunteer.updateStatus');
-    Route::post('/volunteer/{id}/tambah-relawan', [VolunteerController::class, 'tambahRelawan'])->name('volunteer.tambahRelawan');
-    Route::delete('/volunteer/{volunteer_id}/relawan/{relawan_id}', [VolunteerController::class, 'hapusRelawan'])->name('volunteer.hapusRelawan');
-    Route::post('/volunteer/{volunteer_id}/relawan/{relawan_id}/update-kehadiran', [VolunteerController::class, 'updateKehadiran'])->name('volunteer.updateKehadiran');
-
-    Route::get('/admin/request-bantuan', [RequestBantuanController::class, 'adminIndex'])->name('admin.request-bantuan.index');
-    Route::post('/admin/request-bantuan/{id}/update-status', [RequestBantuanController::class, 'updateStatus'])->name('admin.request-bantuan.update-status');
-
-    Route::post('/relawan/{id}/update-status', [RelawanController::class, 'updateStatus'])->name('relawan.updateStatus');
-
-    Route::get('/admin/misi/create', [MisiController::class, 'create'])->name('misi.create');
-    Route::post('/misi', [MisiController::class, 'store'])->name('misi.store');
-    Route::get('/misi/{id}/edit', [MisiController::class, 'edit'])->name('misi.edit');
-    Route::put('/misi/{id}', [MisiController::class, 'update'])->name('misi.update');
-    Route::delete('/misi/{id}', [MisiController::class, 'destroy'])->name('misi.destroy');
-    Route::post('/misi/{id}/update-status', [MisiController::class, 'updateMisiStatus'])->name('misi.updateStatus');
-    Route::get('/misi/{id}/admin-show', [MisiController::class, 'show'])->name('misi.admin.show');
-
-    Route::get('/admin/donations', [AdminDonationController::class, 'index'])->name('admin.donations.index');
-    Route::get('/admin/donations/{donation}', [AdminDonationController::class, 'show'])->name('admin.donations.show');
-    Route::post('/admin/donations/{donation}/status', [AdminDonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
-});
 
 // Donasi umum
 Route::resource('donations', DonationController::class);
@@ -157,7 +160,7 @@ Route::get('/test-volunteer-form', function () {
         return view('volunteer.create');
     }
     return abort(403, 'Unauthorized action.');
-})->name('test.volunteer.create');
+})->name('test.volunteer.create.form');
 
 // Test Email
 Route::get('/test-email', function () {
