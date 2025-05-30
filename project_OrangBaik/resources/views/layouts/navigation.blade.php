@@ -25,6 +25,13 @@
                     <x-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
                         {{ __('Misi Bantuan') }}
                     </x-nav-link>
+                    
+                    @if(Auth::user()->usertype === 'admin')
+                    <!-- Volunteer Link -->
+                    <x-nav-link :href="route('volunteer.index')" :active="request()->routeIs('volunteer.*')">
+                        {{ __('Volunteer') }}
+                    </x-nav-link>
+                    @endif
 
 
                     <!-- Donations Link -->
@@ -119,6 +126,13 @@
             <x-responsive-nav-link :href="route('misi.index')" :active="request()->routeIs('misi.*')">
                 {{ __('Misi Bantuan') }}
             </x-responsive-nav-link>
+            
+            @if(Auth::user()->usertype === 'admin')
+            <!-- Responsive Volunteer Link -->
+            <x-responsive-nav-link :href="route('volunteer.index')" :active="request()->routeIs('volunteer.*')">
+                {{ __('Volunteer') }}
+            </x-responsive-nav-link>
+            @endif
 
             <!-- Responsive Donations Link -->
             <x-responsive-nav-link :href="route('donations.index')" :active="request()->routeIs('donations.*')">

@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
 
         if ($user->usertype === 'admin') {
-            return redirect('/admin/request-bantuan'); // Halaman dashboard admin
+            return redirect('/dashboard'); // Halaman dashboard admin
         } else {
             return redirect('/'); // Redirect ke halaman utama
         }

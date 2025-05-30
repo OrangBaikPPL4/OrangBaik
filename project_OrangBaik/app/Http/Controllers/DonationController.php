@@ -94,15 +94,20 @@ class DonationController extends Controller
      */
     public function show(Donation $donation)
     {
-        // Add authorization check
-        if (!auth()->user() && $donation->user_id !== null) {
-            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
-        }
+        $user = auth()->user();
 
-        // If the donation belongs to a user, check if current user owns it
-        if ($donation->user_id && $donation->user_id !== auth()->id()) {
-            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        // If the donation is associated with a specific user (i.e., not an anonymous donation)
+        if ($donation->user_id !== null) {
+            // Check if the current user is authorized:
+            // - They must be authenticated.
+            // - AND (EITHER they are an admin OR they are the owner of the donation).
+            // If not authorized, abort with 403.
+            if (!$user || ($user->usertype !== 'admin' && $donation->user_id !== $user->id)) {
+                abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+            }
         }
+        // If $donation->user_id is null (anonymous donation), or if the user is authorized,
+        // proceed to show the donation.
 
         return view('donations.show', compact('donation'));
     }
