@@ -34,24 +34,24 @@
                     <!-- Ikon Relawan -->
                     <svg width="44" height="44" fill="none" viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5Z" fill="#1976D2"/></svg>
                 </div>
-                <div style="font-size:2rem; font-weight:700; color:#222;">290,922</div>
+                <div style="font-size:2rem; font-weight:700; color:#222;">{{ number_format($relawanCount) }}</div>
                 <div style="font-size:1.1rem; color:#666;">Relawan</div>
             </div>
             <div style="background:#fff; border-radius:18px; box-shadow:0 3px 16px rgba(30,40,60,0.11); padding:22px 38px; min-width:220px; display:flex; align-items:center; flex-direction:column;">
                 <div style="font-size:2.8rem; color:#e53935; margin-bottom:6px;">
-                    <!-- Ikon Organisasi -->
+                    <!-- Ikon Misi Bantuan -->
                     <svg width="44" height="44" fill="none" viewBox="0 0 24 24"><path d="M4 21v-7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v7m4 0v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4M6 10V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5" stroke="#1976D2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
-                <div style="font-size:2rem; font-weight:700; color:#222;">6,330</div>
-                <div style="font-size:1.1rem; color:#666;">Organisasi</div>
+                <div style="font-size:2rem; font-weight:700; color:#222;">{{ number_format($misiBantuanCount) }}</div>
+                <div style="font-size:1.1rem; color:#666;">Misi Bantuan</div>
             </div>
             <div style="background:#fff; border-radius:18px; box-shadow:0 3px 16px rgba(30,40,60,0.11); padding:22px 38px; min-width:220px; display:flex; align-items:center; flex-direction:column;">
                 <div style="font-size:2.8rem; color:#e53935; margin-bottom:6px;">
-                    <!-- Ikon Aktivitas -->
+                    <!-- Ikon Volunteer -->
                     <svg width="44" height="44" fill="none" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10Zm0-10v-6m0 6l3 3m-3-3l-3 3" stroke="#1976D2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
-                <div style="font-size:2rem; font-weight:700; color:#222;">11,893</div>
-                <div style="font-size:1.1rem; color:#666;">Aktivitas</div>
+                <div style="font-size:2rem; font-weight:700; color:#222;">{{ number_format($volunteerCount) }}</div>
+                <div style="font-size:1.1rem; color:#666;">Acara Volunteer</div>
             </div>
         </div>
     </div>

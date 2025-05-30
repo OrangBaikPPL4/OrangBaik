@@ -27,8 +27,15 @@ use App\Http\Controllers\VolunteerNotificationController;
 
 // Halaman Welcome (Guest)
 Route::get('/', function () {
+    // Fetch FAQs
     $faqs = \App\Models\Faq::all(); // Gunakan FQCN
-    return view('landing', compact('faqs'));
+    
+    // Fetch statistics for the landing page
+    $relawanCount = \App\Models\Relawan::count();
+    $misiBantuanCount = \App\Models\Misi::count();
+    $volunteerCount = \App\Models\Volunteer::count();
+    
+    return view('landing', compact('faqs', 'relawanCount', 'misiBantuanCount', 'volunteerCount'));
 })->name('landing');
 
 // Dashboard utama (menampilkan edukasi terbaru)
