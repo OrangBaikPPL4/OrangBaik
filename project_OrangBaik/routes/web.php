@@ -19,6 +19,8 @@ use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
+use App\Http\Controllers\Admin\DisasterReportController as AdminDisasterReportController;
+use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\FaqFeedbackController;
@@ -152,6 +154,43 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // Edukasi publik
 Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
 Route::get('/edukasi/{edukasi}', [EdukasiController::class, 'show'])->name('edukasi.show')->where('edukasi', '[0-9]+');
+
+
+// Admin tambahan
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/request-bantuan', [RequestBantuanController::class, 'adminIndex'])->name('admin.request-bantuan.index');
+    Route::post('/admin/request-bantuan/{id}/update-status', [RequestBantuanController::class, 'updateStatus'])->name('admin.request-bantuan.update-status');
+
+    Route::post('/relawan/{id}/update-status', [RelawanController::class, 'updateStatus'])->name('relawan.updateStatus');
+
+    Route::get('/admin/misi/create', [MisiController::class, 'create'])->name('misi.create');
+    Route::post('/misi', [MisiController::class, 'store'])->name('misi.store');
+    Route::get('/misi/{id}/edit', [MisiController::class, 'edit'])->name('misi.edit');
+    Route::put('/misi/{id}', [MisiController::class, 'update'])->name('misi.update');
+    Route::delete('/misi/{id}', [MisiController::class, 'destroy'])->name('misi.destroy');
+    Route::post('/misi/{id}/update-status', [MisiController::class, 'updateMisiStatus'])->name('misi.updateStatus');
+    Route::get('/misi/{id}/admin-show', [MisiController::class, 'show'])->name('misi.admin.show');
+
+    Route::get('/admin/donations', [AdminDonationController::class, 'index'])->name('admin.donations.index');
+    Route::get('/admin/donations/{donation}', [AdminDonationController::class, 'show'])->name('admin.donations.show');
+    Route::post('/admin/donations/{donation}/status', [AdminDonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
+
+    Route::get('/admin/disaster-reports', [AdminDisasterReportController::class, 'index'])->name('admin.disaster_reports.index');
+    Route::get('/admin/disaster-reports/{id}', [AdminDisasterReportController::class, 'show'])->name('admin.disaster_reports.show');
+    Route::put('/admin/disaster-reports/{id}/verify', [AdminDisasterReportController::class, 'verify'])->name('admin.disaster_reports.verify');
+    
+    Route::get('/admin/announcements', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
+    Route::get('/admin/announcements/create', [AnnouncementController::class, 'create'])->name('admin.announcements.create');
+    Route::post('/admin/announcements', [AnnouncementController::class, 'store'])->name('admin.announcements.store');
+    Route::get('/admin/announcements', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
+    Route::get('/admin/announcements/{id}', [AnnouncementController::class, 'show'])->name('admin.announcements.show');
+    Route::get('/admin/announcements/{id}/edit', [AnnouncementController::class, 'edit'])->name('admin.announcements.edit');
+    Route::put('/admin/announcements/{id}', [AnnouncementController::class, 'update'])->name('admin.announcements.update');
+    Route::delete('/admin/announcements/{id}', [AnnouncementController::class, 'destroy'])->name('admin.announcements.destroy');
+
+
+
+});
 
 
 // Donasi umum
