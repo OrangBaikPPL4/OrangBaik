@@ -15,10 +15,21 @@ class MisiController extends Controller
         if (Auth::user()->usertype === 'admin') {
             // Admin sees all missions with complete details
             $misis = Misi::with('relawan')->get();
+            
+            // Add participant count to each mission
+            foreach ($misis as $misi) {
+                $misi->approved_participants_count = $misi->relawan()->count();
+            }
+            
             return view('misi.admin_index', compact('misis'));
         } else {
             // Volunteers see available missions
             $misis = Misi::where('status', 'aktif')->get();
+            
+            // Add participant count to each mission
+            foreach ($misis as $misi) {
+                $misi->approved_participants_count = $misi->relawan()->count();
+            }
             
             // Get user's volunteer profile if exists
             $relawan = Relawan::where('user_id', Auth::id())->first();
@@ -84,7 +95,9 @@ class MisiController extends Controller
         // Get available volunteers for admin
         $relawanTersedia = null;
         if (Auth::user()->usertype === 'admin') {
-            $relawanTersedia = Relawan::whereNotIn('id', $misi->relawan->pluck('id'))->get();
+            $relawanTersedia = Relawan::where('verification_status', 'approved')
+                                   ->whereNotIn('id', $misi->relawan->pluck('id'))
+                                   ->get();
             return view('misi.admin-show', compact('misi', 'relawan', 'isJoined', 'relawanTersedia'));
         }
         
