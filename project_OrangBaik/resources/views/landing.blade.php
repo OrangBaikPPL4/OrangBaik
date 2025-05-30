@@ -308,25 +308,25 @@
     </div>
 </section>
 
-<section id="faq" class="bg-gray-50 py-16 px-4 sm:px-8 lg:px-16">
+<section id="faq" class="bg-gradient-to-b from-blue-50 to-white py-16 px-4 sm:px-8 lg:px-16">
   <div class="max-w-5xl mx-auto text-center mb-12">
-    <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">Pertanyaan yang Sering Diajukan</h2>
+    <h2 class="text-3xl sm:text-4xl font-bold text-blue-700 mb-4">Pertanyaan yang Sering Diajukan</h2>
     <p class="text-gray-600 text-lg">Temukan jawaban dari pertanyaan umum seputar platform OrangBaik.</p>
   </div>
 
   <div class="max-w-4xl mx-auto space-y-6">
     @if(isset($faqs) && $faqs->count() > 0)
       @foreach($faqs as $index => $faq)
-        <details class="bg-white rounded-lg shadow-md p-5 group" {{ $index == 0 ? 'open' : '' }}>
-          <summary class="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800">
+        <details class="bg-white rounded-lg shadow-md p-5 group hover:shadow-lg transition-shadow duration-300" {{ $index == 0 ? 'open' : '' }}>
+          <summary class="flex justify-between items-center cursor-pointer text-lg font-semibold text-blue-700">
             {{ $faq->question }}
             <span class="transition-transform group-open:rotate-180">
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-blue-500">
                 <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </span>
           </summary>
-          <p class="mt-3 text-gray-600 text-base">
+          <p class="mt-3 text-gray-600 text-base leading-relaxed">
             {{ $faq->answer }}
           </p>
         </details>
@@ -334,6 +334,44 @@
     @else
       <p class="text-center text-gray-600">Tidak ada FAQ yang tersedia saat ini.</p>
     @endif
+    
+    <!-- FAQ Feedback Form -->
+    <div id="faq-feedback-form" class="mt-12 bg-white rounded-lg shadow-md p-6 border border-blue-100 scroll-mt-24">
+      <h3 class="text-xl font-semibold text-blue-700 mb-4">Tidak menemukan jawaban yang Anda cari?</h3>
+      <p class="text-gray-600 mb-6">Kirimkan pertanyaan Anda dan kami akan menambahkannya ke FAQ.</p>
+      
+      @if(session('success'))
+        <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-md flex items-center">
+          <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          {{ session('success') }}
+        </div>
+      @endif
+      
+      <form action="{{ route('faq.feedback.store') }}" method="POST" class="space-y-4">
+        @csrf
+        <div>
+          <label for="user_email" class="block text-sm font-medium text-gray-700 mb-1">Email (opsional)</label>
+          <input type="email" name="user_email" id="user_email" placeholder="email@anda.com" 
+                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        
+        <div>
+          <label for="feedback" class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan Anda</label>
+          <textarea name="feedback" id="feedback" rows="4" required
+                    placeholder="Tuliskan pertanyaan atau masukan Anda di sini..."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
+        </div>
+        
+        <div class="flex justify-end">
+          <button type="submit" 
+                  class="px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300">
+            Kirim Pertanyaan
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </section>
 

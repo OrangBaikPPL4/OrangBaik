@@ -38,6 +38,9 @@ class DatabaseSeeder extends Seeder
             
             // Donations
             DonationSeeder::class,
+            
+            // FAQ
+            FaqSeeder::class,
         ]);
     }
 }

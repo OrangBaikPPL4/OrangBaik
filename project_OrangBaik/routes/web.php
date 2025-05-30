@@ -184,7 +184,13 @@ Route::post('/faq/feedback', [FaqFeedbackController::class, 'store'])->name('faq
 
 // Admin Routes (with middleware)
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    // FAQ Management
     Route::resource('faq', AdminFaqController::class)->names('admin.faq');
+    
+    // FAQ Feedback Management
+    Route::get('faq-feedback', [\App\Http\Controllers\Admin\FaqFeedbackController::class, 'index'])->name('admin.faq.feedback.index');
+    Route::patch('faq-feedback/{id}/mark-addressed', [\App\Http\Controllers\Admin\FaqFeedbackController::class, 'markAsAddressed'])->name('admin.faq.feedback.mark-addressed');
+    Route::delete('faq-feedback/{id}', [\App\Http\Controllers\Admin\FaqFeedbackController::class, 'destroy'])->name('admin.faq.feedback.destroy');
 });
 
 
