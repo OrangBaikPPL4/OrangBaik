@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\FaqFeedbackController;
 use App\Http\Controllers\VolunteerController;
 use App\Http\Controllers\VolunteerNotificationController;
+use App\Http\Controllers\AdminNotificationController;
 
 // Halaman Welcome (Guest)
 Route::get('/', function () {
@@ -198,6 +199,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/announcements/{id}', [AnnouncementController::class, 'update'])->name('admin.announcements.update');
     Route::delete('/admin/announcements/{id}', [AnnouncementController::class, 'destroy'])->name('admin.announcements.destroy');
 
+    // Admin Notifications
+    Route::get('/admin/notifications', [AdminNotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::post('/admin/notifications/{id}/mark-read', [AdminNotificationController::class, 'markAsRead'])->name('admin.notifications.mark-read');
+    Route::post('/admin/notifications/mark-all-read', [AdminNotificationController::class, 'markAllAsRead'])->name('admin.notifications.mark-all-read');
+    Route::delete('/admin/notifications/{id}', [AdminNotificationController::class, 'destroy'])->name('admin.notifications.destroy');
 
 
 });

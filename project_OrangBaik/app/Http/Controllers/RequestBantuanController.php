@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\RequestBantuan;
 use Illuminate\Support\Facades\Auth;
+use App\Events\PermintaanBantuanBaru;
+use App\Http\Controllers\AdminNotificationController;
 
 class RequestBantuanController extends Controller
 {
@@ -18,12 +20,21 @@ class RequestBantuanController extends Controller
             'deskripsi' => 'nullable|string|max:1000',
         ]);
 
-        RequestBantuan::create([
+        $requestBantuan = RequestBantuan::create([
             'user_id' => Auth::id(),
             'jenis_kebutuhan' => $validated['jenis_kebutuhan'],
             'deskripsi' => $validated['deskripsi'] ?? null,
             'status' => 'pending',
         ]);
+
+        // Broadcast event untuk real-time notification
+        event(new PermintaanBantuanBaru($requestBantuan));
+        
+        // Create database notifications for all admins
+        $userName = Auth::user()->name;
+        $title = 'Permintaan Bantuan Baru';
+        $message = "Permintaan bantuan baru dari {$userName} untuk kebutuhan {$requestBantuan->jenis_kebutuhan}.";
+        AdminNotificationController::notifyAdmins($requestBantuan->id, $title, $message, 'info');
 
         return redirect()
             ->route('request-bantuan.create')

@@ -371,14 +371,14 @@
             <h3 class="text-xl font-bold text-gray-800 mb-4">Laporan Terbaru</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-300">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-gradient-to-r from-blue-600 to-blue-500">
                         <tr>
-                            <th class="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lokasi</th>
-                            <th class="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis</th>
-                            <th class="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi</th>
-                            <th class="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                            <th class="py-3 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            <th class="py-3 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">Lokasi</th>
+                            <th class="py-3 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">Jenis</th>
+                            <th class="py-3 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">Deskripsi</th>
+                            <th class="py-3 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status</th>
+                            <th class="py-3 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tanggal</th>
+                            <th class="py-3 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -426,6 +426,70 @@
     </div>
 </section>
 
+<!-- Request Bantuan Section -->
+<section id="bantuan" class="py-16 px-4 sm:px-8 lg:px-16 bg-blue-50">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-blue-700 mb-4">Ajukan Bantuan</h2>
+            <p class="text-gray-600 text-lg max-w-3xl mx-auto">Sampaikan kebutuhan bantuan Anda kepada kami. Kami akan berusaha membantu dengan sebaik mungkin.</p>
+        </div>
+
+        <div class="flex flex-col md:flex-row-reverse gap-8 items-stretch mb-12">
+            <div class="md:w-2/5">
+                <img src="/images/request-bantuan.jpg" alt="Ajukan Bantuan" class="rounded-lg shadow-lg w-full h-auto object-cover max-h-[350px]" onerror="this.src='/images/donasi-relawan.png'">
+            </div>
+            
+            <div class="md:w-3/5 flex flex-col">
+                <div class="bg-white p-6 rounded-lg shadow-md flex-grow">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-4">Jenis Bantuan yang Tersedia</h3>
+                    <ul class="space-y-5 text-gray-700">
+                        <li class="flex items-start">
+                            <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <div>
+                                <span class="font-medium">Makanan:</span> Bantuan makanan pokok seperti beras, minyak, dan gula. Juga tersedia makanan siap saji untuk keadaan darurat, termasuk makanan kaleng, makanan bayi, dan susu formula untuk anak-anak.
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <div>
+                                <span class="font-medium">Obat:</span> Kebutuhan medis dasar seperti obat demam, flu, diare, dan P3K. Kami juga menyediakan bantuan untuk obat-obatan khusus dengan resep dokter bagi penderita penyakit kronis seperti diabetes, hipertensi, dan asma.
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <div>
+                                <span class="font-medium">Pakaian:</span> Pakaian layak pakai untuk segala usia, termasuk pakaian anak-anak, dewasa, dan lansia. Juga tersedia perlengkapan pribadi seperti selimut, handuk, perlengkapan mandi, dan kebutuhan kebersihan lainnya untuk korban bencana.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="flex justify-center gap-4 mt-6">
+                    <a href="{{ route('request-bantuan.create') }}" class="inline-flex items-center px-5 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Ajukan Permintaan Bantuan
+                    </a>
+                    <a href="{{ route('request-bantuan.index') }}" class="inline-flex items-center px-5 py-3 bg-white border-2 border-blue-600 text-blue-600 font-medium rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        Riwayat Permintaan Bantuan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
 <section id="faq" class="bg-gradient-to-b from-blue-50 to-white py-16 px-4 sm:px-8 lg:px-16">
   <div class="max-w-5xl mx-auto text-center mb-12">
     <h2 class="text-3xl sm:text-4xl font-bold text-blue-700 mb-4">Pertanyaan yang Sering Diajukan</h2>
