@@ -33,7 +33,6 @@
                                 </div>
                                 <div>
                                     <p><strong>Lokasi:</strong> {{ $relawan->lokasi ?: 'Belum diisi' }}</p>
-                                    <p><strong>Peran:</strong> {{ $relawan->peran }}</p>
                                     <p><strong>Status:</strong> {{ $relawan->status }}</p>
                                     <p><strong>Status Verifikasi:</strong> 
                                         @if($relawan->verification_status == 'pending')
@@ -90,42 +89,7 @@
                             </div>
                         </div>
 
-                        @if(isset($misiRelawan) && $misiRelawan->count() > 0)
-                            <div class="mt-8">
-                                <h3 class="text-lg font-semibold mb-4">Misi Yang Diikuti</h3>
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full bg-white">
-                                        <thead>
-                                            <tr>
-                                                <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nama Misi</th>
-                                                <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                                                <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Lokasi</th>
-                                                <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Laporan</th>
-                                                <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($misiRelawan as $misi)
-                                                <tr>
-                                                    <td class="py-2 px-4 border-b border-gray-200">{{ $misi->nama_misi }}</td>
-                                                    <td class="py-2 px-4 border-b border-gray-200">{{ $misi->status }}</td>
-                                                    <td class="py-2 px-4 border-b border-gray-200">{{ $misi->lokasi }}</td>
-                                                    <td class="py-2 px-4 border-b border-gray-200">{{ $misi->pivot->laporan ?: 'Belum ada laporan' }}</td>
-                                                    <td class="py-2 px-4 border-b border-gray-200">
-                                                        <a href="{{ route('misi.show', $misi->id) }}" class="text-blue-500 hover:text-blue-700">Detail</a>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        @else
-                            <div class="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded">
-                                <p>Relawan ini belum bergabung dengan misi bantuan manapun.</p>
-                                <a href="{{ route('misi.index') }}" class="mt-2 inline-block text-blue-500 hover:text-blue-700">Lihat daftar misi bantuan</a>
-                            </div>
-                        @endif
+
                     @else
                         <div class="p-4 bg-yellow-50 border border-yellow-200 rounded">
                             <p>Data relawan tidak ditemukan.</p>

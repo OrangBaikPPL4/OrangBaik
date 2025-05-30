@@ -21,7 +21,6 @@ class RelawanController extends Controller
                     $search = $request->search;
                     $query->where(function($q) use ($search) {
                         $q->where('nama', 'like', '%' . $search . '%')
-                          ->orWhere('peran', 'like', '%' . $search . '%')
                           ->orWhere('lokasi', 'like', '%' . $search . '%');
                     });
                 }
@@ -67,7 +66,6 @@ class RelawanController extends Controller
             'email' => 'required|email|unique:relawans',
             'telepon' => 'nullable',
             'lokasi' => 'nullable',
-            'peran' => 'required',
         ]);
 
         // Create new profile
@@ -128,7 +126,6 @@ class RelawanController extends Controller
             'email' => 'required|email|unique:relawans,email,' . $id,
             'telepon' => 'nullable',
             'lokasi' => 'nullable',
-            'peran' => 'required',
         ]);
         
         $relawan->update($request->all());
