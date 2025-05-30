@@ -41,6 +41,9 @@ class DatabaseSeeder extends Seeder
             
             // FAQ
             FaqSeeder::class,
+            
+            // Announcements
+            AnnouncementSeeder::class,
         ]);
     }
 }

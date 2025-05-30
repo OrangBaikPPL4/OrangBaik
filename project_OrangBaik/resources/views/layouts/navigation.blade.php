@@ -50,7 +50,7 @@
                     </x-nav-link>
 
                      <!-- Disaster Report -->
-                    <x-nav-link :href="route('disaster_report.index')" :active="request()->routeIs('disaster_report.*')">
+                    <x-nav-link :href="route('admin.disaster_reports.index')" :active="request()->routeIs('admin.disaster_report.*')">
                         {{ __('Laporan Bencana') }}
                     </x-nav-link>
 
@@ -59,6 +59,11 @@
                         <!-- Admin Dashboard -->
                         <x-nav-link :href="route('admin.faq.index')" :active="request()->routeIs('admin.faq.*')">
                             {{ __('Manajemen FAQ') }}
+                        </x-nav-link>
+                        
+                        <!-- Announcements -->
+                        <x-nav-link :href="route('admin.announcements.index')" :active="request()->routeIs('admin.announcements.*')">
+                            {{ __('Pengumuman') }}
                         </x-nav-link>
                         <x-nav-link :href="route('dashboard.admin')" :active="request()->routeIs('dashboard.admin')">
                             {{ __('Admin') }}

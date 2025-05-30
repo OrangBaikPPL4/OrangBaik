@@ -37,7 +37,13 @@ Route::get('/', function () {
     $misiBantuanCount = \App\Models\Misi::count();
     $volunteerCount = \App\Models\Volunteer::count();
     
-    return view('landing', compact('faqs', 'relawanCount', 'misiBantuanCount', 'volunteerCount'));
+    // Fetch latest announcements
+    $announcements = \App\Models\Announcement::latest()->take(3)->get();
+    
+    // Fetch disaster reports for the landing page
+    $disasterReports = \App\Models\DisasterReport::latest()->take(5)->get();
+    
+    return view('landing', compact('faqs', 'relawanCount', 'misiBantuanCount', 'volunteerCount', 'announcements', 'disasterReports'));
 })->name('landing');
 
 // Dashboard utama (menampilkan edukasi terbaru)
@@ -45,6 +51,10 @@ Route::get('/dashboard', function () {
     $edukasi = Edukasi::latest()->take(5)->get();
     return view('dashboard', compact('edukasi'));
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Announcements routes (public)
+Route::get('/announcements', [\App\Http\Controllers\AnnouncementController::class, 'index'])->name('announcements.index');
+Route::get('/announcements/{id}', [\App\Http\Controllers\AnnouncementController::class, 'show'])->name('announcements.show');
 
 // Authentication routes
 require __DIR__.'/auth.php';
