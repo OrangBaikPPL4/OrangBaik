@@ -192,7 +192,7 @@ Route::middleware('auth')->group(function () {
 // Manajemen konten edukasi (diluar dashboard)
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/manajemen-edukasi', [EdukasiController::class, 'menu'])->name('edukasi.menu');
-    Route::get('/konten-edukasi', [EdukasiController::class, 'adminIndex'])->name('edukasi.admin');
+    Route::get('/konten-edukasi', [EdukasiController::class, 'adminIndex'])->name('admin.edukasi.index');
     Route::get('/edukasi/create', [EdukasiController::class, 'create'])->name('edukasi.create');
     Route::post('/edukasi', [EdukasiController::class, 'store'])->name('edukasi.store');
     Route::get('/edukasi/{edukasi}/edit', [EdukasiController::class, 'edit'])->name('edukasi.edit');

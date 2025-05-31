@@ -71,6 +71,12 @@ class EdukasiController extends Controller
         }
 
         $edukasi = $query->orderBy('created_at', 'desc')->paginate(9);
+        $selectedCategory = $request->category ?? '';
+        
+        // Check if user is admin and show admin view if they are
+        if (auth()->check() && auth()->user()->usertype === 'admin') {
+            return view('edukasi.index', compact('edukasi', 'selectedCategory'));
+        }
         
         return view('edukasi.index-public', compact('edukasi'));
     }

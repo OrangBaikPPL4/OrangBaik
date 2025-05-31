@@ -21,7 +21,7 @@
             <h1 class="text-3xl font-bold text-blue-800">Daftar Konten Edukasi</h1>
             @auth
                 @if(auth()->user()->usertype === 'admin')
-                    <a href="{{ route('admin.edukasi.create') }}" class="bg-blue-600 text-white px-5 py-2 rounded-full shadow hover:bg-blue-700 transition">
+                    <a href="{{ route('edukasi.create') }}" class="bg-blue-600 text-white px-5 py-2 rounded-full shadow hover:bg-blue-700 transition">
                         + Buat Konten
                     </a>
                 @endif
