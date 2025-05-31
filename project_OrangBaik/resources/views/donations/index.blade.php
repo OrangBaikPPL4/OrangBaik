@@ -261,7 +261,7 @@
                                         <div class="w-full bg-blue-100 rounded-full h-4 mb-4 shadow-inner">
                                             <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-4 rounded-full shadow-sm transition-all duration-1000 ease-out" style="width: {{ $maxAmount > 0 ? round($stat['amount']/$maxAmount*100) : 0 }}%"></div>
                                         </div>
-                                        @if($stat['locations']->count() > 1)
+                                        @if(isset($stat['locations']) && $stat['locations'] !== null && $stat['locations']->count() > 1)
                                             <div class="mt-4">
                                                 <div class="text-sm font-medium text-slate-600 mb-3">Distribusi per Lokasi:</div>
                                                 <div class="grid gap-2">
