@@ -306,7 +306,7 @@
 </section>
 
 <!-- Donation Section -->
-<section id="donasi" class="py-16 px-4 sm:px-8 lg:px-16 bg-white">
+<section id="donasi" class="py-16 px-4 sm:px-8 lg:px-16 bg-blue-50">
     <div class="container" style="max-width:1140px; margin:auto;">
         <div class="text-center mb-12">
             <h2 class="text-3xl sm:text-4xl font-bold text-blue-700 mb-4">Donasi untuk Korban Bencana</h2>
@@ -368,7 +368,7 @@
 
 
 <!-- Request Bantuan Section -->
-<section id="bantuan" class="py-16 px-4 sm:px-8 lg:px-16 bg-blue-50">
+<section id="bantuan" class="py-16 px-4 sm:px-8 lg:px-16 bg-white">
     <div class="container" style="max-width:1140px; margin:auto;">
         <div class="text-center mb-12">
             <h2 class="text-3xl sm:text-4xl font-bold text-blue-700 mb-4">Ajukan Bantuan</h2>
