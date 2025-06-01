@@ -21,6 +21,14 @@ abstract class DuskTestCase extends BaseTestCase
             static::startChromeDriver(['--port=9515']);
         }
     }
+    
+    /**
+     * Determine whether the Dusk command has disabled headless mode.
+     */
+    protected function hasHeadlessDisabled(): bool
+    {
+        return true; // Always disable headless mode for better visibility
+    }
 
     /**
      * Create the RemoteWebDriver instance.
