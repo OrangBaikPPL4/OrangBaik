@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 
 class TC_PBI15_02Test extends DuskTestCase
 {
+    use DatabaseMigrations;
     /**
      * Admin mencoba membuat acara volunteer dengan tanggal selesai sebelum tanggal mulai
      */

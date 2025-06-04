@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 
 class TC_PBI17_02Test extends DuskTestCase
 {
+    use DatabaseMigrations;
     /**
      * Relawan menandai notifikasi sebagai telah dibaca
      */

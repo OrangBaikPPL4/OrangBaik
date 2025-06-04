@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 
 class TC_PBI16_02Test extends DuskTestCase
 {
+    use DatabaseMigrations;
     /**
      * Relawan belum terverifikasi mencoba bergabung acara volunteer
      */

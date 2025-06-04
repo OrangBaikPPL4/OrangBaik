@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class TC_PBI17_01Test extends DuskTestCase
 {
+    use DatabaseMigrations;
     /**
      * Relawan menerima notifikasi perubahan acara
      */

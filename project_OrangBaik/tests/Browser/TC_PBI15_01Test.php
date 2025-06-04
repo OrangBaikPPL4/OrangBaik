@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 
 class TC_PBI15_01Test extends DuskTestCase
 {
+    use DatabaseMigrations;
     /**
      * Admin berhasil membuat acara volunteer baru dengan semua data yang valid
      */
@@ -26,8 +27,8 @@ class TC_PBI15_01Test extends DuskTestCase
             ]);
             
             // Tanggal untuk acara (pastikan tanggal mulai < tanggal selesai)
-            $startDate = now()->addDays(5)->format('Y-m-d');
-            $endDate = now()->addDays(7)->format('Y-m-d');
+            $startDate = '2025-07-20';
+            $endDate = '2025-07-15';
             
             $browser->loginAs($user)
                    ->visit('/volunteer/create')
