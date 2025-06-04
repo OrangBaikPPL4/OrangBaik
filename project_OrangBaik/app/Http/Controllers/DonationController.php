@@ -20,11 +20,59 @@ class DonationController extends Controller
      */
     public function index()
     {
-        $donations = Donation::with('user', 'paymentProof')
+        // Show donations to all users, including guests
+        $donations = Donation::with(['user', 'paymentProof', 'statusHistories.admin', 'disasterReport'])
             ->latest()
             ->paginate(10);
-            
-        return view('donations.index', compact('donations'));
+        $totalAmount = \App\Models\Donation::whereIn('status', ['confirmed', 'distributed'])->sum('amount');
+        $totalDistributed = \App\Models\Donation::where('status', 'distributed')->sum('amount');
+        $disasters = \App\Models\DisasterReport::all();
+
+        // Totals by status
+        $statusTotals = [
+            'pending' => [
+                'count' => Donation::where('status', 'pending')->count(),
+                'amount' => Donation::where('status', 'pending')->sum('amount'),
+            ],
+            'confirmed' => [
+                'count' => Donation::where('status', 'confirmed')->count(),
+                'amount' => Donation::where('status', 'confirmed')->sum('amount'),
+            ],
+            'failed' => [
+                'count' => Donation::where('status', 'failed')->count(),
+                'amount' => Donation::where('status', 'failed')->sum('amount'),
+            ],
+            'distributed' => [
+                'count' => Donation::where('status', 'distributed')->count(),
+                'amount' => Donation::where('status', 'distributed')->sum('amount'),
+            ],
+        ];
+
+        // Distribution statistics: total distributed per disaster type
+        $distributionStats = \App\Models\Donation::where('status', 'distributed')
+            ->whereNotNull('disaster_report_id')
+            ->with('disasterReport')
+            ->get();
+
+        $byType = $distributionStats->groupBy(function($donation) {
+            return $donation->disasterReport ? $donation->disasterReport->jenis_bencana : 'Lainnya';
+        })->map(function($group) {
+            return $group->sum('amount');
+        });
+        $byLocation = $distributionStats->groupBy(function($donation) {
+            return $donation->disasterReport ? $donation->disasterReport->lokasi : 'Lainnya';
+        })->map(function($group) {
+            return $group->sum('amount');
+        });
+
+        $chartData = [
+            'totalAmount' => $totalAmount,
+            'totalDistributed' => $totalDistributed,
+            'byType' => $byType,
+            'byLocation' => $byLocation,
+        ];
+
+        return view('donations.index', compact('donations', 'totalAmount', 'totalDistributed', 'disasters', 'statusTotals', 'distributionStats', 'chartData'));
     }
 
     /**
@@ -94,6 +142,19 @@ class DonationController extends Controller
      */
     public function show(Donation $donation)
     {
+        // If admin, redirect to admin donation detail page
+        if (auth()->check() && auth()->user()->isAdmin()) {
+            return redirect()->route('admin.donations.show', ['donation' => $donation->id])
+                ->with('error', 'Admin harus mengakses detail donasi melalui halaman admin.');
+        }
+        // Add authorization check
+        if (!auth()->user() && $donation->user_id !== null) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
+        // If the donation belongs to a user, check if current user owns it
+        if ($donation->user_id && $donation->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
         $user = auth()->user();
 
         // If the donation is associated with a specific user (i.e., not an anonymous donation)
@@ -216,5 +277,46 @@ class DonationController extends Controller
         }
 
         return back()->with('error', 'Gagal mengunggah bukti pembayaran.');
+    }
+
+    /**
+     * Show the public donation dashboard.
+     */
+    public function publicDashboard()
+    {
+        $totalAmount = Donation::where('status', 'confirmed')
+            ->orWhere('status', 'distributed')
+            ->sum('amount');
+        $totalDonations = Donation::where('status', 'confirmed')
+            ->orWhere('status', 'distributed')
+            ->count();
+        $recentDonations = Donation::where('status', 'confirmed')
+            ->orWhere('status', 'distributed')
+            ->latest()->take(10)->get();
+        return view('donations.dashboard', compact('totalAmount', 'totalDonations', 'recentDonations'));
+    }
+
+    public function updateStatus(Request $request, Donation $donation)
+    {
+        if (!auth()->user() || !auth()->user()->isAdmin()) {
+            abort(403);
+        }
+        $validated = $request->validate([
+            'status' => 'required|in:pending,confirmed,failed,distributed',
+            'comment' => 'nullable|string|max:1000',
+        ]);
+        $donation->update(['status' => $validated['status']]);
+        // Log status change
+        \App\Models\DonationStatusHistory::create([
+            'donation_id' => $donation->id,
+            'status' => $validated['status'],
+            'changed_by' => auth()->id(),
+            'comment' => $validated['comment'] ?? null,
+        ]);
+        // Send notification to user
+        if ($donation->user) {
+            $donation->user->notify(new \App\Notifications\DonationStatusUpdated($donation, $validated['comment'] ?? null));
+        }
+        return redirect()->back()->with('success', 'Status donasi berhasil diperbarui.');
     }
 }

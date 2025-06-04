@@ -1,14 +1,31 @@
-@extends('layouts.app')
+@extends('layouts.user')
 
 @section('content')
-<div class="container mx-auto px-4 py-10 max-w-3xl">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">📝 Formulir Laporan Bencana</h1>
-
-    @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            {{ session('success') }}
+    @include('partials.navbar')
+    
+    <section class="bg-gradient-to-b from-blue-50 to-white py-10 mb-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-700 mb-2">Formulir Laporan Bencana</h1>
+            <p class="text-lg text-blue-900 mb-6">Laporkan bencana yang terjadi di sekitar Anda untuk membantu kami memberikan bantuan yang tepat dan cepat.</p>
         </div>
-    @endif
+    </section>
+    
+    <!-- Back button with enhanced design -->
+    <div class="max-w-3xl mx-auto px-4 mb-6">
+        <a href="{{ url()->previous() }}" class="inline-flex items-center mb-8 px-4 py-2 text-sm font-medium text-primary-700 hover:text-primary-900 bg-white/80 backdrop-blur-sm hover:bg-white/90 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-primary-100">
+            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Kembali
+        </a>
+    </div>
+
+    <div class="max-w-3xl mx-auto px-4 pb-12">
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
 
     <form action="{{ route('disaster_report.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6 bg-white p-6 rounded-lg shadow">
         @csrf
@@ -68,5 +85,6 @@
             </button>
         </div>
     </form>
-</div>
+    </div>
+    @include('partials.footer')
 @endsection

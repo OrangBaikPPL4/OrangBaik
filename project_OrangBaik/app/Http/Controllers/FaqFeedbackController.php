@@ -25,6 +25,6 @@ class FaqFeedbackController extends Controller
             // 'is_addressed' akan default ke false (atau nilai default DB)
         ]);
 
-        return redirect()->back()->with('success', 'Terima kasih atas masukannya!');
+        return redirect()->back()->with('success', 'Terima kasih atas masukannya!')->withFragment('faq-feedback-form');
     }
 }

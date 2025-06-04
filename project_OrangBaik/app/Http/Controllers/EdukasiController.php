@@ -53,6 +53,35 @@ class EdukasiController extends Controller
     }
     
     /**
+     * Display a listing of the resource for public view.
+     */
+    public function publicIndex(Request $request)
+    {
+        $query = Edukasi::query();
+
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
+        
+        if ($request->has('search') && $request->search != '') {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('content', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $edukasi = $query->orderBy('created_at', 'desc')->paginate(9);
+        $selectedCategory = $request->category ?? '';
+        
+        // Check if user is admin and show admin view if they are
+        if (auth()->check() && auth()->user()->usertype === 'admin') {
+            return view('edukasi.index', compact('edukasi', 'selectedCategory'));
+        }
+        
+        return view('edukasi.index-public', compact('edukasi'));
+    }
+    
+    /**
      * Display the menu for edukasi management.
      */
     public function menu()
@@ -92,7 +121,7 @@ class EdukasiController extends Controller
 
         Edukasi::create($validated);
 
-        return redirect()->route('edukasi.index')->with('success', 'Konten edukasi berhasil ditambahkan.');    }
+        return redirect()->route('admin.edukasi.index')->with('success', 'Konten edukasi berhasil ditambahkan.');    }
 
     /**
      * Display the specified resource.
@@ -146,7 +175,7 @@ class EdukasiController extends Controller
 
         $edukasi->update($validated);
 
-        return redirect()->route('edukasi.index')->with('success', 'Konten edukasi berhasil diperbarui.');    }
+        return redirect()->route('admin.edukasi.index')->with('success', 'Konten edukasi berhasil diperbarui.');    }
 
     /**
      * Remove the specified resource from storage.
@@ -163,7 +192,7 @@ class EdukasiController extends Controller
 
     $edukasi->delete();
 
-    return redirect()->route('edukasi.index')->with('success', 'Konten edukasi berhasil dihapus.');
+    return redirect()->route('admin.edukasi.index')->with('success', 'Konten edukasi berhasil dihapus.');
 }
 
 }
