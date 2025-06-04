@@ -70,7 +70,6 @@
                                                 <span class="text-xs text-red-600 ml-1">(Penuh)</span>
                                             @endif
                                         </li>
-                                        <li><strong>Penyelenggara:</strong> {{ $volunteer->organizer ?? 'N/A' }}</li>
                                     </ul>
                                 </div>
                             </div>
