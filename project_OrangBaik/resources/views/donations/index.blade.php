@@ -598,10 +598,14 @@
                                         </div>
 
                                         <div class="flex flex-col sm:flex-row lg:flex-col gap-3">
-                                            <a href="{{ route('admin.donations.show', $donation->id) }}" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">Detail</a>
-                                            <button onclick="toggleStatusForm('{{ $donation->id }}')" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">Update Status</button>
-                                            @if($donation->status === 'confirmed')
-                                                <button onclick="openDistributeModal({{ $donation->id }})" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">Distribusikan</button>
+                                            @if(auth()->user() && auth()->user()->isAdmin())
+                                                <a href="{{ route('admin.donations.show', $donation->id) }}" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">Detail</a>
+                                                <button onclick="toggleStatusForm('{{ $donation->id }}')" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">Update Status</button>
+                                                @if($donation->status === 'confirmed')
+                                                    <button onclick="openDistributeModal({{ $donation->id }})" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">Distribusikan</button>
+                                                @endif
+                                            @else
+                                                <a href="{{ route('donations.show', $donation->id) }}" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">Detail</a>
                                             @endif
                                         </div>
                                     </div>
