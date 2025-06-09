@@ -83,21 +83,6 @@ class DonationController extends Controller
         return redirect()->back()->with('success', 'Donasi terpilih berhasil dihapus.');
     }
 
-    public function export(Request $request)
-    {
-        $donations = Donation::with(['user', 'paymentProof', 'statusHistories.admin', 'disasterReport'])
-            ->latest()
-            ->get();
-
-        return $this->exportToPdf($donations);
-    }
-
-    private function exportToPdf($donations)
-    {
-        $pdf = \PDF::loadView('admin.donations.export-pdf', ['donations' => $donations]);
-        return $pdf->download('donations_' . date('Y-m-d_His') . '.pdf');
-    }
-
     public function distribute(Request $request, Donation $donation)
     {
         $validated = $request->validate([
