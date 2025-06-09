@@ -65,7 +65,6 @@
                         <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute z-50 mt-2 w-48 rounded-md shadow-lg origin-top-right right-0" style="display: none;">
                             <div class="rounded-md ring-1 ring-black ring-opacity-5 py-1 bg-white">
                                 <a href="{{ route('donations.index') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('donations.index') ? 'bg-gray-100' : '' }}">{{ __('Daftar Donasi') }}</a>
-                                <a href="{{ route('admin.donations.index') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out {{ request()->routeIs('admin.donations.*') ? 'bg-gray-100' : '' }}">{{ __('Kelola Donasi') }}</a>
                             </div>
                         </div>
                     </div>
