@@ -19,7 +19,6 @@ return new class extends Migration
             $table->text('isicerita');
             $table->string('foto')->nullable();
             $table->enum('status', ['pending', 'verified', 'rejected'])->default('pending');
-            $table->string('alasan_penolakan')->nullable(); 
             $table->timestamps();
         });
     }
