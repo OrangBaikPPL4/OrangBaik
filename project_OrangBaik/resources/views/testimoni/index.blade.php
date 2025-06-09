@@ -86,51 +86,59 @@
                 </div>
             </div>
 
-            <!-- Tabel Daftar Testimoni -->
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <p class="text-sm text-gray-600 mb-3">Jumlah data: {{ $testimonis->count() }}</p>
-                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                    <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Lokasi</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Jenis Bencana</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
-                                </tr>
-                            </thead>                        
-                        <tbody class="divide-y divide-gray-200 text-sm">
-                            @forelse ($testimonis as $t)
-                                <tr>
-                                    <td class="px-4 py-2">{{ $t->nama }}</td>
-                                    <td class="px-4 py-2">{{ $t->isicerita}}</td>
-                                    <td class="px-4 py-2">{{ $t->jenis_bencana }}</td>
-                                    <td class="px-4 py-2">
-                                        <span class="px-2 py-1 rounded text-xs
-                                            @if($t->status == 'verified') bg-green-100 text-green-700
-                                            @elseif($t->status == 'pending') bg-yellow-100 text-yellow-700
-                                            @else bg-red-100 text-red-700 @endif">
-                                            {{ ucfirst($t->status) }}
-                                        </span>
-                                    </td>
-                                    <td><a href="{{ route('testimoni.show', $t->id) }}" class="px-2 py-1 rounded text-xs bg-blue-100 text-green-700">Detail</a></td>
-
-                                </tr>
-                        
-                                
-                                
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="px-4 py-4 text-center text-gray-500">Tidak ada testimoni yang tersedia.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+<!-- Bagian Tabel Daftar Testimoni -->
+<div class="bg-white shadow-sm sm:rounded-lg p-6">
+    <p class="text-sm text-gray-600 mb-3">Jumlah data: {{ $testimonis->count() }}</p>
+    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Lokasi</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Isi Testimoni</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Jenis Bencana</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Alasan Penolakan</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 text-sm">
+                @forelse ($testimonis as $t)
+                    @if(in_array($t->status, ['verified', 'rejected']))
+                        <tr>
+                            <td class="px-4 py-2">{{ $t->nama }}</td>
+                            <td class="px-4 py-2">{{ $t->lokasi }}</td>
+                            <td class="px-4 py-2">{{ $t->isicerita }}</td>
+                            <td class="px-4 py-2">{{ $t->jenis_bencana }}</td>
+                            <td class="px-4 py-2">
+                                <span class="px-2 py-1 rounded text-xs
+                                    @if($t->status == 'verified') bg-green-100 text-green-700
+                                    @else bg-red-100 text-red-700 @endif">
+                                    {{ ucfirst($t->status) }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-2">
+                                @if($t->status == 'rejected')
+                                    <span class="text-red-600 italic center">{{ $t->alasan_penolakan ?? '-' }}</span>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td class="px-4 py-2">
+                                <a href="{{ route('testimoni.show', $t->id) }}" class="px-2 py-1 rounded text-xs bg-blue-100 text-green-700">Detail</a>
+                            </td>
+                        </tr>
+                    @endif
+                @empty
+                    <tr>
+                        <td colspan="7" class="px-4 py-4 text-center text-gray-500">Tidak ada testimoni yang tersedia.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
+</div>
+
     
     <!-- Footer -->
     @include('partials.footer')
