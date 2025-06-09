@@ -14,7 +14,7 @@ class TestimoniController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Testimoni::where('status', 'verified');
+        $query = Testimoni::whereIn('status', ['verified', 'rejected']);
 
         if ($request->filled('lokasi')) {
             $query->where('lokasi', 'like', '%' . $request->lokasi . '%');
@@ -35,8 +35,8 @@ class TestimoniController extends Controller
         $testimonis = $query->latest()->get();
 
         // Kirim data untuk dropdown unik
-        $lokasiList = Testimoni::where('status', 'verified')->distinct()->pluck('lokasi');
-        $jenisList = Testimoni::where('status', 'verified')->distinct()->pluck('jenis_bencana');
+        $lokasiList = Testimoni::whereIn('status', ['verified', 'rejected'])->distinct()->pluck('lokasi');
+        $jenisList = Testimoni::whereIn('status', ['verified', 'rejected'])->distinct()->pluck('jenis_bencana');
 
         return view('testimoni.index', compact('testimonis', 'lokasiList', 'jenisList'));
     }
@@ -106,13 +106,18 @@ class TestimoniController extends Controller
     /**
      * Reject a testimoni.
      */
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
+        $request->validate([
+            'alasan_penolakan' => 'required|string|max:255',
+        ]);
+
         $testimoni = Testimoni::findOrFail($id);
         $testimoni->status = 'rejected';
+        $testimoni->alasan_penolakan = $request->alasan_penolakan;
         $testimoni->save();
 
-        return redirect()->back()->with('success', 'Testimoni telah ditolak.');
+        return redirect()->back()->with('success', 'Testimoni ditolak dengan alasan.');
     }
 
     public function show($id) 

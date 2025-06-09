@@ -61,6 +61,15 @@
                     </span>
                 </div>
 
+                @if($testimoni->status === 'rejected' && $testimoni->alasan_penolakan)
+    <div>
+        <h3 class="text-sm font-medium text-red-600 mt-2">Alasan Penolakan</h3>
+        <div class="bg-red-50 border border-red-200 text-red-800 p-3 rounded-md">
+            {{ $testimoni->alasan_penolakan }}
+        </div>
+    </div>
+@endif
+
                 <!-- Tanggal Dibuat (jika tersedia) -->
                 @if($testimoni->created_at)
                     <div>
