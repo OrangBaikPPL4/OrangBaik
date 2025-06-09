@@ -1,3 +1,4 @@
+@auth
 <div x-data="{ open: false }" class="relative">
     <button @click="open = !open" class="relative">
         <svg class="h-6 w-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,4 +51,5 @@
             @endif
         </div>
     </div>
-</div> 
+</div>
+@endauth

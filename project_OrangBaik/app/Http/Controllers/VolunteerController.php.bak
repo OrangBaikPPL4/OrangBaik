@@ -183,34 +183,30 @@ class VolunteerController extends Controller
         if (Auth::user()->usertype !== 'admin') {
             return redirect()->route('volunteer.index')->with('error', 'Anda tidak memiliki izin!');
         }
-
+        
         $volunteer = Volunteer::with('roles')->findOrFail($id);
-
+        
         // Store original data for comparison later
-        $originalData = $volunteer->toArray(); // Basic event data
-        // Store original roles with specific fields for detailed comparison
-        $originalRoles = $volunteer->roles->keyBy('id')->map(function ($role) {
-            return $role->only(['name', 'description', 'slots_needed', 'estimated_work_hours']);
-        })->toArray();
-
-        $validatedData = $request->validate([
+        $originalData = $volunteer->toArray();
+        
+        $request->validate([
             'nama_acara' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'lokasi' => 'required|string|max:255',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-            'status' => 'required|in:aktif,dalam proses,selesai',
+            'status' => 'required|in:aktif,dalam proses,selesai', // Adjust as needed
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // Validation for roles (if any)
             'roles' => 'nullable|array',
-            'roles.*.id' => 'nullable|integer|exists:volunteer_event_roles,id,volunteer_id,' . $volunteer->id, // For existing roles, ensure they belong to this event
             'roles.*.name' => 'required_with:roles|string|max:255',
             'roles.*.description' => 'nullable|string',
             'roles.*.slots_needed' => 'required_with:roles|integer|min:1',
             'roles.*.estimated_work_hours' => 'nullable|integer|min:0',
         ]);
-
-        $updateData = collect($validatedData)->except(['roles', 'image'])->all();
-
+        
+        $data = $request->except(['image', 'roles', '_token', '_method']);
+        
         // Handle image upload
         if ($request->hasFile('image')) {
             // Delete old image if exists
@@ -220,148 +216,62 @@ class VolunteerController extends Controller
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
             $image->move(public_path('images/volunteer'), $imageName);
-            $updateData['image_url'] = '/images/volunteer/' . $imageName;
-        }
-
-        $volunteer->update($updateData); // Update main event details
-
-        // --- BEGIN ROLE HANDLING ---
-        $submittedRolesData = $validatedData['roles'] ?? [];
-        $submittedRoleIds = [];
-        
-        // First, identify which roles have IDs (existing roles)
-        foreach ($submittedRolesData as $roleData) {
-            if (!empty($roleData['id'])) {
-                $submittedRoleIds[] = (int)$roleData['id']; // Cast to int for reliable comparison
-            }
+            $data['image_url'] = '/images/volunteer/' . $imageName;
         }
         
-        // Only delete roles that were explicitly removed via the UI
-        // This approach preserves existing roles when new ones are added
-        $currentRoleIds = $volunteer->roles()->pluck('id')->all();
+        $volunteer->update($data);
         
-        // If the form was submitted with roles data, only then check for deletions
-        // This prevents accidental deletion of all roles when only adding new ones
-        if (isset($validatedData['roles']) && !empty($submittedRoleIds)) {
-            $rolesToDelete = array_diff($currentRoleIds, $submittedRoleIds);
-            if (!empty($rolesToDelete)) {
-                VolunteerEventRole::whereIn('id', $rolesToDelete)->where('volunteer_id', $volunteer->id)->delete();
-            }
-        }
-        
-        // Update existing roles or create new ones
-        foreach ($submittedRolesData as $roleData) {
-            if (empty($roleData['name']) || !isset($roleData['slots_needed'])) {
-                continue; // Skip if essential data for a role is missing
-            }
-
-            $roleAttributes = [
-                'name' => $roleData['name'],
-                'description' => $roleData['description'] ?? null,
-                'slots_needed' => $roleData['slots_needed'],
-                'estimated_work_hours' => $roleData['estimated_work_hours'] ?? null,
-                'volunteer_id' => $volunteer->id, // Ensure volunteer_id is always set
-            ];
-
-            if (!empty($roleData['id'])) {
-                // Update existing role
-                $role = VolunteerEventRole::find($roleData['id']);
-                // Ensure the role exists and belongs to the current volunteer event before updating
-                if ($role && $role->volunteer_id == $volunteer->id) { 
-                    $role->update($roleAttributes);
+        // Handle roles update
+        if ($request->has('roles') && is_array($request->roles)) {
+            // Delete existing roles to avoid duplicates
+            $volunteer->roles()->delete();
+            
+            // Create new roles
+            foreach ($request->roles as $roleData) {
+                if (!empty($roleData['name']) && isset($roleData['slots_needed'])) {
+                    $volunteer->roles()->create([
+                        'name' => $roleData['name'],
+                        'description' => $roleData['description'] ?? null,
+                        'slots_needed' => $roleData['slots_needed'],
+                        'estimated_work_hours' => $roleData['estimated_work_hours'] ?? null,
+                    ]);
                 }
-            } else {
-                // Create new role
-                VolunteerEventRole::create($roleAttributes);
             }
         }
-        // --- END ROLE HANDLING ---
-
-        // Refresh volunteer data to get updated roles for notification comparison
-        $volunteer->refresh()->load('roles'); 
-        $updatedData = $volunteer->toArray(); 
-        $updatedRoles = $volunteer->roles->keyBy('id')->map(function ($role) {
-            return $role->only(['name', 'description', 'slots_needed', 'estimated_work_hours']);
-        })->toArray();
-
+        
         // Check what changed and send notifications to relawan
         $changesMessage = [];
-        $notificationController = new VolunteerNotificationController(); // Instantiate the controller
-
-        if ($originalData['nama_acara'] !== $updatedData['nama_acara']) {
-            $changesMessage[] = "Nama acara diubah dari '{$originalData['nama_acara']}' menjadi '{$updatedData['nama_acara']}'";
+        
+        if ($originalData['nama_acara'] !== $data['nama_acara']) {
+            $changesMessage[] = "Nama acara diubah dari '{$originalData['nama_acara']}' menjadi '{$data['nama_acara']}'";
         }
-        if ($originalData['deskripsi'] !== $updatedData['deskripsi']) {
-            $changesMessage[] = "Deskripsi acara telah diperbarui.";
+        
+        if ($originalData['lokasi'] !== $data['lokasi']) {
+            $changesMessage[] = "Lokasi diubah dari '{$originalData['lokasi']}' menjadi '{$data['lokasi']}'";
         }
-        if ($originalData['lokasi'] !== $updatedData['lokasi']) {
-            $changesMessage[] = "Lokasi diubah dari '{$originalData['lokasi']}' menjadi '{$updatedData['lokasi']}'";
+        
+        if ($originalData['tanggal_mulai'] !== $data['tanggal_mulai']) {
+            $changesMessage[] = "Tanggal mulai diubah dari '" . date('d/m/Y', strtotime($originalData['tanggal_mulai'])) . "' menjadi '" . date('d/m/Y', strtotime($data['tanggal_mulai'])) . "'";
         }
-        // Ensure date comparison is accurate by comparing formatted strings or timestamps
-        if (date('Y-m-d H:i:s', strtotime($originalData['tanggal_mulai'])) !== date('Y-m-d H:i:s', strtotime($updatedData['tanggal_mulai']))) {
-            $changesMessage[] = "Tanggal mulai diubah dari '" . date('d/m/Y H:i', strtotime($originalData['tanggal_mulai'])) . "' menjadi '" . date('d/m/Y H:i', strtotime($updatedData['tanggal_mulai'])) . "'";
+        
+        if ($originalData['tanggal_selesai'] !== $data['tanggal_selesai']) {
+            $changesMessage[] = "Tanggal selesai diubah dari '" . date('d/m/Y', strtotime($originalData['tanggal_selesai'])) . "' menjadi '" . date('d/m/Y', strtotime($data['tanggal_selesai'])) . "'";
         }
-        if (date('Y-m-d H:i:s', strtotime($originalData['tanggal_selesai'])) !== date('Y-m-d H:i:s', strtotime($updatedData['tanggal_selesai']))) {
-            $changesMessage[] = "Tanggal selesai diubah dari '" . date('d/m/Y H:i', strtotime($originalData['tanggal_selesai'])) . "' menjadi '" . date('d/m/Y H:i', strtotime($updatedData['tanggal_selesai'])) . "'";
+        
+        if ($originalData['status'] !== $data['status']) {
+            $changesMessage[] = "Status acara diubah dari '{$originalData['status']}' menjadi '{$data['status']}'";
         }
-        if ($originalData['status'] !== $updatedData['status']) {
-            $changesMessage[] = "Status acara diubah dari '{$originalData['status']}' menjadi '{$updatedData['status']}'";
-        }
-
-        // Detailed role change detection
-        $roleChangesStrings = [];
-        // Check for deleted roles
-        foreach ($originalRoles as $roleId => $roleDetails) {
-            if (!isset($updatedRoles[$roleId])) {
-                $roleChangesStrings[] = "Peran '{$roleDetails['name']}' telah dihapus.";
-            }
-        }
-        // Check for added or modified roles
-        foreach ($updatedRoles as $roleId => $roleDetails) {
-            if (!isset($originalRoles[$roleId])) {
-                $roleChangesStrings[] = "Peran '{$roleDetails['name']}' telah ditambahkan (Kebutuhan: {$roleDetails['slots_needed']} orang).";
-            } else {
-                $diff = array_diff_assoc($roleDetails, $originalRoles[$roleId]);
-                if (!empty($diff)) {
-                    $specificDetailChanges = [];
-                    foreach($diff as $key => $value) {
-                        $oldValue = $originalRoles[$roleId][$key] ?? 'N/A';
-                        $newValue = $value ?? 'N/A';
-                        $specificDetailChanges[] = "{$key} dari '{$oldValue}' menjadi '{$newValue}'";
-                    }
-                    $roleChangesStrings[] = "Peran '{$roleDetails['name']}' diperbarui: " . implode(', ', $specificDetailChanges) . ".";
-                }
-            }
-        }
-
-        if (!empty($roleChangesStrings)) {
-            $changesMessage[] = "Perubahan pada detail peran/tugas:
-- " . implode("
-- ", $roleChangesStrings);
-        }
-
+        
+        // If there are changes, send notification to all relawan in this event
         if (!empty($changesMessage)) {
-            $title = "Pembaruan Informasi Acara: {$updatedData['nama_acara']}";
-            $messageBody = "Admin telah melakukan pembaruan pada acara volunteer '{$updatedData['nama_acara']}'. Detail perubahan:
-" . implode("
-
-", $changesMessage);
+            $title = "Perubahan pada acara '{$data['nama_acara']}'";
+            $message = "Berikut perubahan pada acara volunteer yang Anda ikuti:\n" . implode("\n", $changesMessage);
             
-            $participants = $volunteer->relawan()->wherePivot('status_partisipasi', 'disetujui')->get();
-            foreach ($participants as $participant) {
-                if ($participant->user_id) { 
-                    $notificationController->sendNotificationToUser(
-                        $participant->user_id,
-                        $title,
-                        $messageBody,
-                        'volunteer_update', 
-                        $volunteer->id 
-                    );
-                }
-            }
+            // Send notification to all relawan in this event
+            VolunteerNotificationController::notifyVolunteers($id, $title, $message, 'warning');
         }
-
-        return redirect()->route('volunteer.show', $volunteer->id)->with('success', 'Acara volunteer berhasil diperbarui!');
+        
+        return redirect()->route('volunteer.index')->with('success', 'Acara volunteer berhasil diperbarui!');
     }
     
     /**
@@ -688,7 +598,7 @@ Silahkan cek halaman detail acara untuk informasi lebih lanjut.",
 
         try {
             $volunteer->relawan()->attach($relawan->id, [
-                'status_partisipasi' => 'menunggu', 
+                'status_partisipasi' => 'pending', 
                 'status_kehadiran' => 'belum hadir', // Default status kehadiran, aligned with ENUM
                 'volunteer_event_role_id' => $selectedRoleId,
                 'created_at' => now(),

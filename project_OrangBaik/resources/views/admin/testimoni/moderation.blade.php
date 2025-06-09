@@ -49,12 +49,14 @@
                                     </button>
                                 </form>
 
-                                <form method="POST" action="{{ route('testimoni.reject', $t->id) }}">
+                                <form method="POST" action="{{ route('testimoni.reject', $t->id) }}" class="flex flex-col gap-2 w-full">
                                     @csrf
-                                    <button class="inline-flex items-center px-4 py-2 bg-red-200 border border-transparent rounded-md font-semibold text-xs text-white-700 uppercase tracking-widest hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-red-400 transition">
+                                    <textarea name="alasan_penolakan" placeholder="Tulis alasan penolakan..." class="w-full p-2 border border-red-300 rounded-md text-sm" required></textarea>
+                                    <button class="inline-flex items-center justify-center px-4 py-2 bg-red-200 border border-transparent rounded-md font-semibold text-xs text-white-700 uppercase tracking-widest hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-red-400 transition">
                                         ✖ Tolak
                                     </button>
                                 </form>
+
                             </div>
                         </div>
                     @endforeach

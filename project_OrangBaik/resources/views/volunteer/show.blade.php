@@ -38,6 +38,13 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         <div class="md:col-span-2">
+                            @if($volunteer->image_url)
+                            <div class="mb-6">
+                                <h4 class="text-lg font-semibold mb-2">Gambar Acara</h4>
+                                <img src="{{ $volunteer->image_url }}" alt="{{ $volunteer->nama_acara }}" class="w-full h-auto rounded-lg">
+                            </div>
+                            @endif
+                            
                             <div class="bg-gray-50 rounded-lg p-6 mb-6">
                                 <h4 class="text-lg font-semibold mb-4">Informasi Acara</h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -65,10 +72,41 @@
                                 </div>
                             </div>
                             
-                            @if($volunteer->image_url)
-                            <div class="mb-6">
-                                <h4 class="text-lg font-semibold mb-2">Gambar Acara</h4>
-                                <img src="{{ $volunteer->image_url }}" alt="{{ $volunteer->nama_acara }}" class="w-full h-auto rounded-lg">
+                            <!-- Bagian untuk menampilkan detail peran/tugas volunteer -->
+                            @if($volunteer->roles->isNotEmpty())
+                            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                                <h4 class="text-lg font-semibold mb-4">Peran/Tugas Volunteer</h4>
+                                <div class="space-y-4">
+                                    @foreach($volunteer->roles as $role)
+                                        <div class="border border-gray-200 rounded-md p-4 bg-white">
+                                            <div class="flex justify-between items-start">
+                                                <h5 class="font-semibold text-gray-800">{{ $role->name }}</h5>
+                                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ $role->participants()->wherePivot('status_partisipasi', 'disetujui')->count() }}/{{ $role->slots_needed }} slot</span>
+                                            </div>
+                                            
+                                            @if($role->description)
+                                                <div class="mt-2">
+                                                    <p class="text-sm text-gray-700">{{ $role->description }}</p>
+                                                </div>
+                                            @endif
+                                            
+                                            <div class="mt-3 grid grid-cols-2 gap-2 text-sm">
+                                                @if($role->estimated_work_hours)
+                                                    <div>
+                                                        <span class="text-gray-500">Estimasi Jam Kerja:</span>
+                                                        <span class="font-medium ml-1">{{ $role->estimated_work_hours }} jam</span>
+                                                    </div>
+                                                @endif
+                                                <div>
+                                                    <span class="text-gray-500">Status:</span>
+                                                    <span class="font-medium ml-1 {{ $role->participants()->wherePivot('status_partisipasi', 'disetujui')->count() >= $role->slots_needed ? 'text-red-600' : 'text-green-600' }}">
+                                                        {{ $role->participants()->wherePivot('status_partisipasi', 'disetujui')->count() >= $role->slots_needed ? 'Penuh' : 'Tersedia' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
                             @endif
                         </div>
@@ -109,13 +147,6 @@
                                         @endif
 
                                         @if($statusPartisipasi == 'disetujui')
-                                        <p class="text-sm text-gray-500 mt-2">Status Kehadiran:</p>
-                                        <p class="font-medium {{ 
-                                            $statusKehadiran == 'hadir' ? 'text-green-600' : 
-                                            ($statusKehadiran == 'tidak hadir' ? 'text-red-600' : 'text-yellow-600') 
-                                        }}">
-                                            {{ ucfirst($statusKehadiran) }}
-                                        </p>
                                         @endif
                                     </div>
                                 @elseif($loggedInRelawanProfile && $loggedInRelawanProfile->verification_status !== 'approved')
@@ -216,7 +247,7 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            @if ($participant->pivot->status_partisipasi == 'pending')
+                                            @if ($participant->pivot->status_partisipasi == 'menunggu')
                                                 <form method="POST" action="{{ route('volunteer.manageParticipant', ['eventId' => $volunteer->id, 'relawanVolunteerId' => $participant->relawan_volunteer_id, 'status' => 'disetujui']) }}" class="inline-block">
                                                     @csrf
                                                     <button type="submit" class="text-indigo-600 hover:text-indigo-900">Setujui</button>

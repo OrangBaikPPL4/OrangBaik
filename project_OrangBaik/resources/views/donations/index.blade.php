@@ -356,19 +356,30 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Enhanced Export Button -->
-                    <div class="flex justify-end">
-                        <a href="{{ route('admin.admin.donations.export') }}" class="group inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
-                            <svg class="mr-3 h-5 w-5 group-hover:rotate-12 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                            </svg>
-                            Export PDF
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('toggleDashboardBtn');
+            const dashboardContent = document.getElementById('dashboardContent');
+            const btnText = document.getElementById('toggleDashboardBtnText');
+            const btnIcon = document.getElementById('toggleDashboardBtnIcon');
+            let visible = true;
+            toggleBtn.addEventListener('click', function() {
+                if (visible) {
+                    dashboardContent.style.display = 'none';
+                    btnText.textContent = 'Tampilkan Dashboard';
+                    btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />';
+                } else {
+                    dashboardContent.style.display = 'block';
+                    btnText.textContent = 'Sembunyikan Dashboard';
+                    btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />';
+                }
+                visible = !visible;
+            });
+        });
+        </script>
         @endif
 
         <!-- Enhanced Main Content -->
@@ -587,36 +598,14 @@
                                         </div>
 
                                         <div class="flex flex-col sm:flex-row lg:flex-col gap-3">
-                                            <a href="{{ route('donations.show', $donation) }}" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                </svg>
-                                                Detail
-                                            </a>
                                             @if(auth()->user() && auth()->user()->isAdmin())
-                                                <button onclick="toggleStatusForm('{{ $donation->id }}')" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                                    </svg>
-                                                    Update Status
-                                                </button>
-                                                @if($donation->paymentProof)
-                                                    <a href="{{ Storage::url($donation->paymentProof->proof_image) }}" target="_blank" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-                                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A2 2 0 0020 6.382V5a2 2 0 00-2-2H6a2 2 0 00-2 2v1.382a2 2 0 00.447 1.342L9 10m6 0v4m0 0l-6 3m6-3l-6-3" />
-                                                        </svg>
-                                                        Lihat Bukti Pembayaran
-                                                    </a>
-                                                @endif
+                                                <a href="{{ route('admin.donations.show', $donation->id) }}" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">Detail</a>
+                                                <button onclick="toggleStatusForm('{{ $donation->id }}')" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">Update Status</button>
                                                 @if($donation->status === 'confirmed')
-                                                    <button onclick="openDistributeModal({{ $donation->id }})" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-                                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                        </svg>
-                                                        Distribusikan
-                                                    </button>
+                                                    <button onclick="openDistributeModal({{ $donation->id }})" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">Distribusikan</button>
                                                 @endif
+                                            @else
+                                                <a href="{{ route('donations.show', $donation->id) }}" class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">Detail</a>
                                             @endif
                                         </div>
                                     </div>
@@ -640,17 +629,12 @@
                                                 
                                                 <div>
                                                     <label for="comment{{ $donation->id }}" class="block text-sm font-medium text-slate-700 mb-2">Komentar (Opsional)</label>
-                                                    <input type="text" id="comment{{ $donation->id }}" name="comment" class="block w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white" placeholder="Tambahkan komentar...">
+                                                    <input type="text" id="comment{{ $donation->id }}" name="comment" class="block w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
                                                 </div>
                                             </div>
                                             
-                                            <div class="flex justify-end gap-3">
-                                                <button type="button" onclick="toggleStatusForm('{{ $donation->id }}')" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors duration-200">
-                                                    Batal
-                                                </button>
-                                                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-                                                    Update Status
-                                                </button>
+                                            <div class="flex justify-end">
+                                                <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-xl font-semibold shadow hover:bg-indigo-700 transition">Update</button>
                                             </div>
                                         </form>
                                     </div>
@@ -766,4 +750,23 @@
         </form>
     </div>
 </div>
+
+<script>
+function toggleStatusForm(donationId) {
+    // Hide all status forms first
+    document.querySelectorAll('[id^="statusForm"]').forEach(el => el.classList.add('hidden'));
+    // Show the selected one
+    const form = document.getElementById('statusForm' + donationId);
+    if (form) form.classList.toggle('hidden');
+}
+function openDistributeModal(donationId) {
+    document.getElementById('distributeModal').classList.remove('hidden');
+    document.getElementById('distributeDonationId').value = donationId;
+    document.getElementById('distributeForm').action = `/admin/donations/${donationId}/distribute`;
+}
+function closeDistributeModal() {
+    document.getElementById('distributeModal').classList.add('hidden');
+    document.getElementById('distributeForm').reset();
+}
+</script>
 @endsection

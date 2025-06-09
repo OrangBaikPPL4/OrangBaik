@@ -97,10 +97,11 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-2">Peran/Tugas Volunteer</h3>
                             <div id="roles-container" class="space-y-4">
                                 {{-- Roles yang sudah ada --}}
-                                @if(old('roles') || (isset($event) && $event->roles))
+                                @if(old('roles') || (isset($volunteer) && $volunteer->roles))
                                     @php 
-                                        $roles_data = old('roles', $event->roles->map(function($role) {
+                                        $roles_data = old('roles', $volunteer->roles->map(function($role) {
                                             return [
+                                                'id' => $role->id,
                                                 'name' => $role->name,
                                                 'slots_needed' => $role->slots_needed,
                                                 'description' => $role->description,
@@ -118,6 +119,9 @@
                                             <div>
                                                 <label for="roles_{{ $index }}_name" class="block text-sm font-medium text-gray-700">Nama Peran*</label>
                                                 <input type="text" name="roles[{{ $index }}][name]" id="roles_{{ $index }}_name" value="{{ $role['name'] ?? '' }}" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                                                @if(isset($role['id']))
+                                                    <input type="hidden" name="roles[{{ $index }}][id]" value="{{ $role['id'] }}">
+                                                @endif
                                             </div>
                                             <div>
                                                 <label for="roles_{{ $index }}_slots_needed" class="block text-sm font-medium text-gray-700">Jumlah Slot Dibutuhkan*</label>
@@ -159,7 +163,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const rolesContainer = document.getElementById('roles-container');
     const addRoleButton = document.getElementById('add-role-button');
-    let roleIndex = {{ (old('roles') ? count(old('roles')) : (isset($event) && $event->roles ? $event->roles->count() : 0)) }};
+    let roleIndex = {{ (old('roles') ? count(old('roles')) : (isset($volunteer) && $volunteer->roles ? $volunteer->roles->count() : 0)) }};
 
     addRoleButton.addEventListener('click', function () {
         // Determine the next index. If roles were deleted, new roles should not reuse old indices to avoid conflicts on the backend
